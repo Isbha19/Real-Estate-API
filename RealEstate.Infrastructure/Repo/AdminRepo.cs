@@ -8,6 +8,7 @@ using RealEstate.Application.Extensions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Data;
 using RealEstate.Application.DTOs.Request.Account;
+using RealEstate.Application.DTOs.Account;
 
 
 namespace RealEstate.Infrastructure.Repo
@@ -146,11 +147,12 @@ namespace RealEstate.Infrastructure.Repo
                     EmailConfirmed = true
 
                 };
+
+
                 var result = await userManager.CreateAsync(user, model.Password);
-                if (!result.Succeeded)
-                {
-                    return new GeneralResponse(false, string.Join(",", result.Errors));
-                }
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                if (!result.Succeeded) return new GeneralResponse(false, errors);
+
             }
             else
             {
@@ -209,7 +211,17 @@ namespace RealEstate.Infrastructure.Repo
             var message = string.IsNullOrEmpty(model.Id)
         ? $"Member named {model.FirstName} has been created"
         : $"Member named {model.FirstName} has been updated";
-            return new GeneralResponse(true, message);
+            var newuser = new MemberAddEditDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.UserName,
+                Roles = string.Join(",", userRoles)
+            };
+            return new GeneralResponse(true, message, newuser);
+
+                
 
 
         }
