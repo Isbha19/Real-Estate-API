@@ -52,9 +52,12 @@ namespace RealEstate.Infrastructure.Dependency_Injection
                 });
             //Repos
             services.AddScoped<IUser, UserRepo>();
-            services.AddScoped<IAdmin, AdminRepo>();
+            services.AddScoped<IAdmin, AdminRepo>(); 
+            services.AddScoped<IProperty, PropertyRepo>();
+
             //Services
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<FileService>();
             services.AddScoped<IContextSeedService, ContextSeedService>();
             //to respond with an Array containing error messages when the model state is invalid
             services.Configure<ApiBehaviorOptions>(options =>

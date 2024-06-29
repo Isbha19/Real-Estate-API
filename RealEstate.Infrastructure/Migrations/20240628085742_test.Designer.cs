@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstate.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240628085742_test")]
+    partial class test
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,6 +188,12 @@ namespace RealEstate.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("LastUpdatedBy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -196,16 +205,22 @@ namespace RealEstate.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 6, 28, 12, 57, 42, 93, DateTimeKind.Local).AddTicks(1110),
                             Name = "Buy"
                         },
                         new
                         {
                             Id = 2,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 6, 28, 12, 57, 42, 93, DateTimeKind.Local).AddTicks(1134),
                             Name = "Rent"
                         },
                         new
                         {
                             Id = 3,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 6, 28, 12, 57, 42, 93, DateTimeKind.Local).AddTicks(1136),
                             Name = "Commercial"
                         });
                 });
@@ -296,8 +311,8 @@ namespace RealEstate.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AgentId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AgentName")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("AvailabilityDate")
                         .HasColumnType("date");

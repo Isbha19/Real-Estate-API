@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstate.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240628072317_propertyTableAdded")]
+    partial class propertyTableAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,29 +188,18 @@ namespace RealEstate.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("LastUpdatedBy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("ListingTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Buy"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Rent"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Commercial"
-                        });
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.Amenity", b =>
@@ -296,8 +288,8 @@ namespace RealEstate.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AgentId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AgentName")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("AvailabilityDate")
                         .HasColumnType("date");
@@ -345,9 +337,6 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.Property<int>("Size")
                         .HasColumnType("int");
-
-                    b.Property<string>("VideoTourUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VirtualTourUrl")
                         .HasColumnType("nvarchar(max)");
