@@ -26,12 +26,7 @@ namespace RealEstate.Infrastructure.Data
 
             base.OnModelCreating(modelBuilder);
           
-            modelBuilder.Entity<ListingType>().HasData(
-            new ListingType { Id = 1, Name = "Buy" },
-            new ListingType { Id = 2, Name = "Rent" },
-            new ListingType { Id = 3, Name = "Commercial" }
-        );
-
+           
 
         }
 

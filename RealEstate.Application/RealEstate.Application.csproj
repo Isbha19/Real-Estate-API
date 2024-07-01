@@ -14,4 +14,8 @@
     <ProjectReference Include="..\RealEstate.Core\RealEstate.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\Response\Property\" />
+  </ItemGroup>
+
 </Project>

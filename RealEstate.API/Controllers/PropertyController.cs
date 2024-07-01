@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts;
 using RealEstate.Application.DTOs.Account;
@@ -16,11 +17,49 @@ namespace RealEstate.API.Controllers
         {
             this.property = property;
         }
-        [HttpGet("get-properties")]
-        public async Task<IActionResult> GetPropertyList()
+        [HttpGet("get-properties/{listType}")]
+        public async Task<IActionResult> GetPropertyList(string listType)
         {
-            var result = await property.GetPropertiesAsync();
+            var result = await property.GetPropertiesByListingTypeAsync(listType);
             return Ok(result);
+        }
+        [HttpGet("get-property/{id}")]
+        public async Task<IActionResult> GetPropertyById(int id)
+        {
+            var result = await property.GetPropertyById(id);
+            return Ok(result);
+        }
+        [Authorize(Roles = "Agent")]
+
+        [HttpPost("add-property-photo")]
+        public async Task<IActionResult> AddPropertyPhoto(IFormFile file, int propertyId)
+        {
+            var result = await property.AddPropertyPhoto(file,propertyId);
+            return Ok(result);
+        }
+        [HttpPost("set-primary-photo/{propertyId}/{photoPublicId}")]
+        public async Task<IActionResult> SetPrimaryPhoto(int propertyId, string photoPublicId)
+        {
+            var result = await property.SetPrimaryPhoto(propertyId, photoPublicId);
+         
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+
+        }
+        [HttpDelete("delete-photo/{propertyId}/{photoPublicId}")]
+        public async Task<IActionResult> deletePhoto(int propertyId, string photoPublicId)
+        {
+            var result = await property.DeletePhoto(propertyId, photoPublicId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+
         }
         [HttpGet("get-property-type")]
         public async Task<IActionResult> GetPropertyTypes()
