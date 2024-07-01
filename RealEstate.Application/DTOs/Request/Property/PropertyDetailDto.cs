@@ -1,5 +1,4 @@
-﻿using RealEstate.Domain.Entities.Property.Property;
-
+﻿
 namespace RealEstate.Application.DTOs.Request.Property
 {
     public class PropertyDetailDto

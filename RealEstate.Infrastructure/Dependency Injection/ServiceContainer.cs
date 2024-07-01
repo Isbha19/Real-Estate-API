@@ -54,6 +54,8 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             services.AddScoped<IUser, UserRepo>();
             services.AddScoped<IAdmin, AdminRepo>(); 
             services.AddScoped<IProperty, PropertyRepo>();
+            services.AddScoped<IPropertyPhotoService, PropertyPhotoService>();
+
 
             //Services
             services.AddScoped<IEmailService, EmailService>();

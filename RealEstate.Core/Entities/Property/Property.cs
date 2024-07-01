@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RealEstate.Domain.Entities.Property.Property
+namespace RealEstate.Domain.Entities.Property
 {
     public class Property:baseEntity
     {

@@ -2,13 +2,14 @@
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using RealEstate.Application.Services;
 using System;
 
 namespace RealEstate.Infrastructure.Services
 {
     public class FileService
     {
-        private readonly Cloudinary cloudinary;
+        public readonly Cloudinary cloudinary;
         public FileService(IConfiguration config)
         {
             Account account = new Account(
@@ -38,7 +39,7 @@ namespace RealEstate.Infrastructure.Services
             return uploadResult;
 
         }
-        public async Task<DeletionResult> DeletePhotoAsync(string publicId)
+        public async Task<CloudinaryDotNet.Actions.DeletionResult> DeletePhotoAsync(string publicId)
         {
             var deleteParams = new DeletionParams(publicId);
             var result=await cloudinary.DestroyAsync(deleteParams);

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 
-namespace RealEstate.Domain.Entities.Property.Property
+namespace RealEstate.Domain.Entities.Property
 {
     [Table("Images")]
     public class Image : baseEntity

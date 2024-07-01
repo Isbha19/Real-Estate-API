@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts;
 using RealEstate.Application.DTOs.Account;
 using RealEstate.Application.DTOs.Request.Property;
+using RealEstate.Application.Services;
 
 namespace RealEstate.API.Controllers
 {
@@ -12,10 +13,12 @@ namespace RealEstate.API.Controllers
     public class PropertyController : ControllerBase
     {
         private readonly IProperty property;
+        private readonly IPropertyPhotoService propertyPhotoService;
 
-        public PropertyController(IProperty property)
+        public PropertyController(IProperty property,IPropertyPhotoService propertyPhotoService)
         {
             this.property = property;
+            this.propertyPhotoService = propertyPhotoService;
         }
         [HttpGet("get-properties/{listType}")]
         public async Task<IActionResult> GetPropertyList(string listType)
@@ -34,13 +37,13 @@ namespace RealEstate.API.Controllers
         [HttpPost("add-property-photo")]
         public async Task<IActionResult> AddPropertyPhoto(IFormFile file, int propertyId)
         {
-            var result = await property.AddPropertyPhoto(file,propertyId);
+            var result = await propertyPhotoService.AddPropertyPhotoAsync(file,propertyId);
             return Ok(result);
         }
         [HttpPost("set-primary-photo/{propertyId}/{photoPublicId}")]
         public async Task<IActionResult> SetPrimaryPhoto(int propertyId, string photoPublicId)
         {
-            var result = await property.SetPrimaryPhoto(propertyId, photoPublicId);
+            var result = await propertyPhotoService.SetPrimaryPhotoAsync(propertyId, photoPublicId);
          
             if (!result.Success)
             {
@@ -52,7 +55,7 @@ namespace RealEstate.API.Controllers
         [HttpDelete("delete-photo/{propertyId}/{photoPublicId}")]
         public async Task<IActionResult> deletePhoto(int propertyId, string photoPublicId)
         {
-            var result = await property.DeletePhoto(propertyId, photoPublicId);
+            var result = await propertyPhotoService.DeletePhotoAsync(propertyId, photoPublicId);
 
             if (!result.Success)
             {

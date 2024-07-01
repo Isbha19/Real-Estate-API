@@ -12,8 +12,8 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240629094541_AgentIdtoStringg")]
-    partial class AgentIdtoStringg
+    [Migration("20240701092842_seedValues")]
+    partial class seedValues
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,6 +158,191 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Amenity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("LastUpdatedBy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Amenities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(753),
+                            Name = "Central A/C"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(755),
+                            Name = "Balcony"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(756),
+                            Name = "Shared Spa"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(757),
+                            Name = "Concierge Service"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(757),
+                            Name = "View of Water"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(758),
+                            Name = "Pets Allowed"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(759),
+                            Name = "Private Garden"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(759),
+                            Name = "Private Gym"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(760),
+                            Name = "Built in Wardrobes"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(761),
+                            Name = "Built in Kitchen Appliances"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(761),
+                            Name = "Maids Room"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(762),
+                            Name = "Shared Pool"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(762),
+                            Name = "Shared Gym"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(763),
+                            Name = "Covered Parking"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(764),
+                            Name = "View of Landmark"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(764),
+                            Name = "Study"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(767),
+                            Name = "Private Pool"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(767),
+                            Name = "Private Jacuzzi"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(769),
+                            Name = "Walk-in Closet"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(769),
+                            Name = "Maid Service"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(770),
+                            Name = "Children's Play Area"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(771),
+                            Name = "Children's Pool"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(771),
+                            Name = "Barbecue Area"
+                        });
+                });
+
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Facility", b =>
                 {
                     b.Property<int>("Id")
@@ -180,45 +365,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("Facilities");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.ListingType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ListingTypes");
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.Amenity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("LastUpdatedBy")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastUpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Amenities");
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.FurnishingType", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.FurnishingType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -239,9 +386,32 @@ namespace RealEstate.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FurnishingTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(712),
+                            Name = "Furnished"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(713),
+                            Name = "Unfurnished"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(714),
+                            Name = "Partly Furnished"
+                        });
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.Image", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -250,6 +420,7 @@ namespace RealEstate.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsPrimary")
@@ -267,6 +438,10 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<int?>("PropertyId")
                         .HasColumnType("int");
 
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PropertyId");
@@ -274,7 +449,40 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("Images");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.Property", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.ListingType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ListingTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Rent"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Buy"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Commercial"
+                        });
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -354,7 +562,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("Properties");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.PropertyAmenties", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyAmenties", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -383,7 +591,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("PropertyAmenties");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.PropertyNearByFacilities", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyNearByFacilities", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -432,6 +640,92 @@ namespace RealEstate.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PropertyTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(533),
+                            Name = "Apartment"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(546),
+                            Name = "House"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(547),
+                            Name = "Townhouse"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(548),
+                            Name = "Penthouse"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(549),
+                            Name = "Compound"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(549),
+                            Name = "Duplex"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(550),
+                            Name = "Full Floor"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(551),
+                            Name = "Half Floor"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(551),
+                            Name = "Whole Building"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(552),
+                            Name = "Bulk Rent Unit"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(553),
+                            Name = "Bungalow"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 1, 13, 28, 41, 521, DateTimeKind.Local).AddTicks(553),
+                            Name = "Hotel & Apartment"
+                        });
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.User", b =>
@@ -564,18 +858,18 @@ namespace RealEstate.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.Image", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Image", b =>
                 {
-                    b.HasOne("RealEstate.Domain.Entities.Property.Property.Property", "Property")
+                    b.HasOne("RealEstate.Domain.Entities.Property.Property", "Property")
                         .WithMany("Images")
                         .HasForeignKey("PropertyId");
 
                     b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.Property", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property", b =>
                 {
-                    b.HasOne("RealEstate.Domain.Entities.Property.Property.FurnishingType", "FurnishingType")
+                    b.HasOne("RealEstate.Domain.Entities.Property.FurnishingType", "FurnishingType")
                         .WithMany()
                         .HasForeignKey("FurnishingTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -606,15 +900,15 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.PropertyAmenties", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyAmenties", b =>
                 {
-                    b.HasOne("RealEstate.Domain.Entities.Property.Property.Amenity", "Amenity")
+                    b.HasOne("RealEstate.Domain.Entities.Property.Amenity", "Amenity")
                         .WithMany("PropertyAmenities")
                         .HasForeignKey("AmenityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RealEstate.Domain.Entities.Property.Property.Property", "Property")
+                    b.HasOne("RealEstate.Domain.Entities.Property.Property", "Property")
                         .WithMany("PropertyAmenties")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -625,7 +919,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.PropertyNearByFacilities", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyNearByFacilities", b =>
                 {
                     b.HasOne("RealEstate.Domain.Entities.Property.Facility", "Facility")
                         .WithMany("PropertyNearByFacilities")
@@ -633,7 +927,7 @@ namespace RealEstate.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RealEstate.Domain.Entities.Property.Property.Property", "Property")
+                    b.HasOne("RealEstate.Domain.Entities.Property.Property", "Property")
                         .WithMany("PropertyNearByFacilities")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -644,17 +938,17 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Property");
                 });
 
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Amenity", b =>
+                {
+                    b.Navigation("PropertyAmenities");
+                });
+
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Facility", b =>
                 {
                     b.Navigation("PropertyNearByFacilities");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.Amenity", b =>
-                {
-                    b.Navigation("PropertyAmenities");
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property.Property", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property", b =>
                 {
                     b.Navigation("Images");
 
