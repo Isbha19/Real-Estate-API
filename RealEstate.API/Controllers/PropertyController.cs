@@ -32,7 +32,6 @@ namespace RealEstate.API.Controllers
             var result = await property.GetPropertyById(id);
             return Ok(result);
         }
-        [Authorize(Roles = "Agent")]
 
         [HttpPost("add-property-photo")]
         public async Task<IActionResult> AddPropertyPhoto(IFormFile file, int propertyId)

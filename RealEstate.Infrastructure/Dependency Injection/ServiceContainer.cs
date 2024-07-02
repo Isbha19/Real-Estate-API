@@ -52,9 +52,12 @@ namespace RealEstate.Infrastructure.Dependency_Injection
                 });
             //Repos
             services.AddScoped<IUser, UserRepo>();
-            services.AddScoped<IAdmin, AdminRepo>(); 
+            services.AddScoped<IAdmin, AdminRepo>();
+            services.AddScoped<ICompany, CompanyRepo>();
+
             services.AddScoped<IProperty, PropertyRepo>();
             services.AddScoped<IPropertyPhotoService, PropertyPhotoService>();
+            services.AddHttpContextAccessor();
 
 
             //Services

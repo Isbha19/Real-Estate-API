@@ -12,8 +12,8 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240701092305_initial")]
-    partial class initial
+    [Migration("20240701192346_companyLogoPrimaryKey")]
+    partial class companyLogoPrimaryKey
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,6 +156,177 @@ namespace RealEstate.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.Company.BusinessActivityType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("businessActivityTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Property management"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Real Estate Brokerage"
+                        });
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.Company.Company", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BusinessActivityTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BusinessDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyRegistrationDoc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyRegistrationNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CompanyStructureId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmailAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LicenseNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfEmployees")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RepresentativeContactNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RepresentativeId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RepresentativePosition")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReraCertificateCopy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReraCertificateNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TenancyContract")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TradeLicenseCopy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TradeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WebsiteUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessActivityTypeId");
+
+                    b.HasIndex("CompanyStructureId");
+
+                    b.HasIndex("RepresentativeId");
+
+                    b.ToTable("companies");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PublicId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId")
+                        .IsUnique();
+
+                    b.ToTable("CompanyFile");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyStructure", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("companyStructures");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Sole Proprietorship"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Limited Liability Company"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Civil Company"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Free Zone Establishment"
+                        });
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Amenity", b =>
@@ -569,6 +740,42 @@ namespace RealEstate.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RealEstate.Domain.Entities.Company.Company", b =>
+                {
+                    b.HasOne("RealEstate.Domain.Entities.Company.BusinessActivityType", "BusinessActivityType")
+                        .WithMany()
+                        .HasForeignKey("BusinessActivityTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RealEstate.Domain.Entities.Company.CompanyStructure", "CompanyStructure")
+                        .WithMany()
+                        .HasForeignKey("CompanyStructureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RealEstate.Domain.Entities.User", "Representative")
+                        .WithMany()
+                        .HasForeignKey("RepresentativeId");
+
+                    b.Navigation("BusinessActivityType");
+
+                    b.Navigation("CompanyStructure");
+
+                    b.Navigation("Representative");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyFile", b =>
+                {
+                    b.HasOne("RealEstate.Domain.Entities.Company.Company", "Company")
+                        .WithOne("CompanyLogo")
+                        .HasForeignKey("RealEstate.Domain.Entities.Company.CompanyFile", "CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Image", b =>
                 {
                     b.HasOne("RealEstate.Domain.Entities.Property.Property", "Property")
@@ -647,6 +854,11 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Facility");
 
                     b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.Company.Company", b =>
+                {
+                    b.Navigation("CompanyLogo");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Amenity", b =>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstate.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240701190325_images")]
+    partial class images
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -200,6 +203,9 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<string>("CompanyAddress")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CompanyLogoId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CompanyName")
                         .HasColumnType("nvarchar(max)");
 
@@ -255,37 +261,13 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("BusinessActivityTypeId");
 
+                    b.HasIndex("CompanyLogoId");
+
                     b.HasIndex("CompanyStructureId");
 
                     b.HasIndex("RepresentativeId");
 
                     b.ToTable("companies");
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyFile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PublicId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId")
-                        .IsUnique();
-
-                    b.ToTable("CompanyFile");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyStructure", b =>
@@ -745,6 +727,10 @@ namespace RealEstate.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RealEstate.Domain.Entities.Property.Image", "CompanyLogo")
+                        .WithMany()
+                        .HasForeignKey("CompanyLogoId");
+
                     b.HasOne("RealEstate.Domain.Entities.Company.CompanyStructure", "CompanyStructure")
                         .WithMany()
                         .HasForeignKey("CompanyStructureId")
@@ -757,20 +743,11 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.Navigation("BusinessActivityType");
 
+                    b.Navigation("CompanyLogo");
+
                     b.Navigation("CompanyStructure");
 
                     b.Navigation("Representative");
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyFile", b =>
-                {
-                    b.HasOne("RealEstate.Domain.Entities.Company.Company", "Company")
-                        .WithOne("CompanyLogo")
-                        .HasForeignKey("RealEstate.Domain.Entities.Company.CompanyFile", "CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Image", b =>
@@ -851,11 +828,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Facility");
 
                     b.Navigation("Property");
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.Company.Company", b =>
-                {
-                    b.Navigation("CompanyLogo");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Amenity", b =>
