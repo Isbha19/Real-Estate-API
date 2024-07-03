@@ -15,10 +15,10 @@ namespace RealEstate.Application.Contracts
     
         public interface ICompany
         {
-        Task<CompanyRegisterResponse> RegisterCompanyAsync(CompanyDto model);
+        Task<CompanyRegisterResponse> RegisterCompanyAsync(CompanyDto companyDto);
         Task<IEnumerable<CompanyStructure>> GetCompanyStructuresAsync();
         Task<IEnumerable<BusinessActivityType>> GetBusinessActivityTypesAsync();
-        Task<GeneralResponse> AddCompanyLogoAsync(IFormFile file, int companyId);
+        Task<GeneralResponse> AddCompanyLogoAsync(IFormFile logo, int companyId);
 
     }
 

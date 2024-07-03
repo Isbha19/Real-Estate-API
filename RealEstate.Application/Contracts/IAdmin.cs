@@ -7,12 +7,12 @@ namespace RealEstate.Application.Contracts
     public interface IAdmin
     {
         Task<GetMembersResponse> GetMembers();
-        Task<GetMemberResponse> GetMember(string Id);
-        Task<GeneralResponse> AddEditMember(MemberAddEditDto model);
+        Task<GetMemberResponse> GetMember(string userId);
+        Task<GeneralResponse> AddEditMember(MemberAddEditDto memberAddEditDto);
 
-        Task<GeneralResponse> LockMember(string Id);
-        Task<GeneralResponse> UnLockMember(string Id);
-        Task<GeneralResponse> DeleteMember(string Id);
+        Task<GeneralResponse> LockMember(string userId);
+        Task<GeneralResponse> UnLockMember(string userId);
+        Task<GeneralResponse> DeleteMember(string userId);
         Task<GetRolesResponse> GetApplicationRoles();
 
     }

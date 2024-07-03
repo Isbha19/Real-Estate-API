@@ -69,7 +69,7 @@ namespace RealEstate.Infrastructure.Repo
                 {
                     //lock the user for one day
                     await _userManager.SetLockoutEndDateAsync(user, DateTime.UtcNow.AddDays(1));
-                   return new GeneralResponseGen<UserDto>(false, $"Your account has been locked, You should wait until {user.LockoutEnd} (UTC time) to be able to login");
+                   return new GeneralResponseGen<UserDto>(false, $"Your account has been blocked due to multiple login attempts with invalid credentials, You should wait until {user.LockoutEnd} (UTC time) to be able to login");
 
                 }
                 return new GeneralResponseGen<UserDto>(false, "Invalid username or password"); 

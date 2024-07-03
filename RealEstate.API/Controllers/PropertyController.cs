@@ -26,10 +26,10 @@ namespace RealEstate.API.Controllers
             var result = await property.GetPropertiesByListingTypeAsync(listType);
             return Ok(result);
         }
-        [HttpGet("get-property/{id}")]
-        public async Task<IActionResult> GetPropertyById(int id)
+        [HttpGet("get-property/{propertyId}")]
+        public async Task<IActionResult> GetPropertyById(int propertyId)
         {
-            var result = await property.GetPropertyById(id);
+            var result = await property.GetPropertyById(propertyId);
             return Ok(result);
         }
 
