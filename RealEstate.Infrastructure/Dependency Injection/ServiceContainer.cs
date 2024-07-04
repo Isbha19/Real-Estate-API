@@ -65,6 +65,8 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             //Services
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<FileService>();
+            services.AddScoped<StripeService>();
+            services.AddScoped<StripeWebHookHandler>();
             services.AddScoped<IContextSeedService, ContextSeedService>();
             //to respond with an Array containing error messages when the model state is invalid
             services.Configure<ApiBehaviorOptions>(options =>

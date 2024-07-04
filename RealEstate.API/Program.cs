@@ -1,6 +1,7 @@
 using RealEstate.Infrastructure.Dependency_Injection;
 using RealEstate.Application.Services;
 using RealEstate.API.ExceptionHandling;
+using Stripe;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,6 +12,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 builder.Services.InfrastructureServices(builder.Configuration);
 var app = builder.Build();
+// Configure Stripe
+var configuration = builder.Configuration;
+StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
 
 app.UseCors(opt =>
 {

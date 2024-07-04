@@ -168,7 +168,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("businessActivityTypes");
+                    b.ToTable("businessActivityTypes", (string)null);
 
                     b.HasData(
                         new
@@ -259,7 +259,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("RepresentativeId");
 
-                    b.ToTable("companies");
+                    b.ToTable("companies", (string)null);
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyFile", b =>
@@ -285,7 +285,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.HasIndex("CompanyId")
                         .IsUnique();
 
-                    b.ToTable("CompanyFile");
+                    b.ToTable("CompanyFile", (string)null);
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyStructure", b =>
@@ -301,7 +301,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("companyStructures");
+                    b.ToTable("companyStructures", (string)null);
 
                     b.HasData(
                         new
@@ -345,7 +345,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Amenities");
+                    b.ToTable("Amenities", (string)null);
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Facility", b =>
@@ -367,7 +367,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Facilities");
+                    b.ToTable("Facilities", (string)null);
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.FurnishingType", b =>
@@ -390,7 +390,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FurnishingTypes");
+                    b.ToTable("FurnishingTypes", (string)null);
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Image", b =>
@@ -428,7 +428,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("Images");
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.ListingType", b =>
@@ -444,7 +444,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ListingTypes");
+                    b.ToTable("ListingTypes", (string)null);
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property", b =>
@@ -524,7 +524,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("Properties");
+                    b.ToTable("Properties", (string)null);
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyAmenties", b =>
@@ -553,7 +553,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("PropertyAmenties");
+                    b.ToTable("PropertyAmenties", (string)null);
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyNearByFacilities", b =>
@@ -582,7 +582,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("PropertyNearByFacilities");
+                    b.ToTable("PropertyNearByFacilities", (string)null);
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyType", b =>
@@ -604,7 +604,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PropertyTypes");
+                    b.ToTable("PropertyTypes", (string)null);
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.User", b =>
