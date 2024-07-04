@@ -4,7 +4,7 @@ using RealEstate.Application.DTOs.Response;
 using RealEstate.Domain.Entities.Property;
 
 
-namespace RealEstate.Application.Contracts
+namespace RealEstate.Application.Contracts.propery
 {
     public interface IProperty
     {

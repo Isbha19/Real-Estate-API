@@ -3,21 +3,21 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using RealEstate.Application.Contracts;
+using RealEstate.Application.Contracts.propery;
 using RealEstate.Application.DTOs.Response;
-using RealEstate.Application.Services;
 using RealEstate.Domain.Entities.Property;
 using RealEstate.Infrastructure.Data;
+using RealEstate.Infrastructure.Services;
 
-namespace RealEstate.Infrastructure.Services
+namespace RealEstate.Infrastructure.Repo.property
 {
-    public class PropertyPhotoService:IPropertyPhotoService
+    public class PropertyPhotoRepo : IPropertyPhoto
     {
         private readonly IProperty propertyRepository;
         private readonly FileService fileService;
         private readonly AppDbContext context;
 
-        public PropertyPhotoService(IProperty propertyRepository, FileService fileService,AppDbContext context)
+        public PropertyPhotoRepo(IProperty propertyRepository, FileService fileService, AppDbContext context)
         {
             this.propertyRepository = propertyRepository;
             this.fileService = fileService;
@@ -53,10 +53,7 @@ namespace RealEstate.Infrastructure.Services
             {
                 return new GeneralResponse(false, "No such property exist");
             }
-            //if (property.agent != userId)
-            //{
-            //    return new GeneralResponse(false, "you are not authorized to change the photo");
-            //}
+         
             var property = await context.Properties
                   .Include(p => p.Images)
                   .FirstOrDefaultAsync(p => p.Id == propertyId);

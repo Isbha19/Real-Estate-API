@@ -7,10 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RealEstate.Application.Contracts;
+using RealEstate.Application.Contracts.propery;
 using RealEstate.Application.Services;
 using RealEstate.Domain.Entities;
 using RealEstate.Infrastructure.Data;
 using RealEstate.Infrastructure.Repo;
+using RealEstate.Infrastructure.Repo.property;
 using RealEstate.Infrastructure.Services;
 using System.Text;
 
@@ -56,7 +58,7 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             services.AddScoped<ICompany, CompanyRepo>();
 
             services.AddScoped<IProperty, PropertyRepo>();
-            services.AddScoped<IPropertyPhotoService, PropertyPhotoService>();
+            services.AddScoped<IPropertyPhoto, PropertyPhotoRepo>();
             services.AddHttpContextAccessor();
 
 

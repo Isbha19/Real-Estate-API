@@ -12,9 +12,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RealEstate.Domain.Entities.Property;
-using RealEstate.Application.Contracts;
+using RealEstate.Application.Contracts.propery;
 
-namespace RealEstate.Infrastructure.Repo
+namespace RealEstate.Infrastructure.Repo.property
 {
     public class PropertyRepo : IProperty
     {
@@ -167,6 +167,6 @@ namespace RealEstate.Infrastructure.Repo
             return await context.Facilities.ToListAsync();
         }
 
-      
+
     }
 }

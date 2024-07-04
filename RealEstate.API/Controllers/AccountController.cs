@@ -62,7 +62,7 @@ namespace RealEstate.API.Controllers
                 return BadRequest(response);
             }
 
-            return Ok(response);
+            return Ok(response.Data);
         }
         [HttpPut("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
