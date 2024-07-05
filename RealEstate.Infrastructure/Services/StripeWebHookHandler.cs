@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using RealEstate.Application.DTOs.Request.Account;
 using RealEstate.Domain.Entities;
 using RealEstate.Infrastructure.Data;
 using Stripe;
@@ -13,15 +12,15 @@ namespace RealEstate.Infrastructure.Services
     public class StripeWebHookHandler
     {
         private readonly ILogger<StripeWebHookHandler> _logger;
-        private readonly UserManager<User> userManager;
-        private readonly AppDbContext context;
+        private readonly UserManager<User> _userManager;
+        private readonly AppDbContext _context;
 
         public StripeWebHookHandler(ILogger<StripeWebHookHandler> logger, UserManager<User> userManager,
             AppDbContext context)
         {
             _logger = logger;
-            this.userManager = userManager;
-            this.context = context;
+            _userManager = userManager;
+            _context = context;
         }
 
         public async Task HandleEventAsync(Event stripeEvent)
@@ -33,8 +32,14 @@ namespace RealEstate.Infrastructure.Services
                     case Events.CheckoutSessionCompleted:
                         await HandleCheckoutSessionCompletedEvent(stripeEvent);
                         break;
+                    case Events.CustomerSubscriptionCreated:
+                        await HandleCustomerSubscriptionCreatedEvent(stripeEvent);
+                        break;
                     case Events.CustomerSubscriptionDeleted:
                         await HandleCustomerSubscriptionDeletedEvent(stripeEvent);
+                        break;
+                    case Events.CustomerSubscriptionUpdated:
+                        await HandleCustomerSubscriptionUpdatedEvent(stripeEvent);
                         break;
                     default:
                         _logger.LogWarning($"Unhandled event type: {stripeEvent.Type}");
@@ -57,75 +62,15 @@ namespace RealEstate.Infrastructure.Services
 
             if (customer.Email != null)
             {
-                var user = await userManager.FindByEmailAsync(customer.Email);
-
+                var user = await _userManager.FindByEmailAsync(customer.Email);
                 if (user != null)
                 {
-                    var company = await context.companies
-        .FirstOrDefaultAsync(c => c.RepresentativeId == user.Id);
-                    if (company != null)
-                    {
-                        company.ReraCertificateCopy = "DONEE";
-                        await context.SaveChangesAsync();
-
-                    }
-                    else
-                    {
-                        // Handle case where company is not found for the user
-                    }
-                }
-
-
-                // Update user data and grant access to your product
-                //user.PriceId = session.LineItems.Data[0].Price.Id;
-                //user.HasAccess = true;
-                //await _userService.UpdateAsync(user);
-            }
-            if (stripeEvent.Type == Events.CheckoutSessionCompleted)
-            {
-            }
-            else if (stripeEvent.Type == Events.CheckoutSessionExpired)
-            {
-            }
-            else if (stripeEvent.Type == Events.CustomerSubscriptionCreated)
-            {
-            }
-            else if (stripeEvent.Type == Events.CustomerSubscriptionDeleted)
-            {
-
-            }
-            else if (stripeEvent.Type == Events.CustomerSubscriptionPaused)
-            {
-            }
-            else if (stripeEvent.Type == Events.CustomerSubscriptionUpdated)
-            {
-            }
-            else
-            {
-                _logger.LogError("No user found");
-                throw new Exception("No user found");
-            }
-        }
-
-        private async Task HandleCustomerSubscriptionDeletedEvent(Event stripeEvent)
-        {
-            var subscription = stripeEvent.Data.Object as Stripe.Subscription;
-
-            var customerService = new CustomerService();
-            var customer = await customerService.GetAsync(subscription.CustomerId);
-
-            if (customer.Email != null)
-            {
-                var user = await userManager.FindByEmailAsync(customer.Email);
-
-                if (user != null)
-                {
-                    var company = await context.companies
+                    var company = await _context.companies
                         .FirstOrDefaultAsync(c => c.RepresentativeId == user.Id);
                     if (company != null)
                     {
-                        company.ReraCertificateCopy = "NOT DONE";
-                        await context.SaveChangesAsync();
+                        company.ReraCertificateCopy = "Payment Successful";
+                        await _context.SaveChangesAsync();
                     }
                     else
                     {
@@ -140,5 +85,100 @@ namespace RealEstate.Infrastructure.Services
             }
         }
 
+        private async Task HandleCustomerSubscriptionCreatedEvent(Event stripeEvent)
+        {
+            var subscription = stripeEvent.Data.Object as Subscription;
+            var customerService = new CustomerService();
+            var customer = await customerService.GetAsync(subscription.CustomerId);
+
+            if (customer.Email != null)
+            {
+                var user = await _userManager.FindByEmailAsync(customer.Email);
+                if (user != null)
+                {
+                    var company = await _context.companies.FirstOrDefaultAsync(c => c.RepresentativeId == user.Id);
+                    if (company != null)
+                    {
+                        company.SubscriptionId = subscription.Id;
+                        company.SubscriptionStatus = subscription.Status;
+                        company.SubscriptionStartDate = subscription.StartDate;
+                        company.SubscriptionEndDate = subscription.CurrentPeriodEnd;
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Company not found for user.");
+                    }
+                }
+                else
+                {
+                    _logger.LogError("No user found");
+                    throw new Exception("No user found");
+                }
+            }
+        }
+
+        private async Task HandleCustomerSubscriptionDeletedEvent(Event stripeEvent)
+        {
+            var subscription = stripeEvent.Data.Object as Subscription;
+            var customerService = new CustomerService();
+            var customer = await customerService.GetAsync(subscription.CustomerId);
+
+            if (customer.Email != null)
+            {
+                var user = await _userManager.FindByEmailAsync(customer.Email);
+                if (user != null)
+                {
+                    var company = await _context.companies
+                        .FirstOrDefaultAsync(c => c.RepresentativeId == user.Id);
+                    if (company != null)
+                    {
+                        company.SubscriptionStatus = "canceled";
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Company not found for user.");
+                    }
+                }
+                else
+                {
+                    _logger.LogError("No user found");
+                    throw new Exception("No user found");
+                }
+            }
+        }
+
+        private async Task HandleCustomerSubscriptionUpdatedEvent(Event stripeEvent)
+        {
+            var subscription = stripeEvent.Data.Object as Subscription;
+            var customerService = new CustomerService();
+            var customer = await customerService.GetAsync(subscription.CustomerId);
+
+            if (customer.Email != null)
+            {
+                var user = await _userManager.FindByEmailAsync(customer.Email);
+                if (user != null)
+                {
+                    var company = await _context.companies
+                        .FirstOrDefaultAsync(c => c.RepresentativeId == user.Id);
+                    if (company != null)
+                    {
+                        company.SubscriptionStatus = subscription.Status;
+                        company.SubscriptionEndDate = subscription.CurrentPeriodEnd;
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Company not found for user.");
+                    }
+                }
+                else
+                {
+                    _logger.LogError("No user found");
+                    throw new Exception("No user found");
+                }
+            }
+        }
     }
-    }
+}

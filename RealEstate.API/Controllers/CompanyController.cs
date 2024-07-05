@@ -83,7 +83,13 @@ namespace RealEstate.API.Controllers
             }
 
         }
+        [HttpPost("create-customer-portal-session")]
+        public async Task<IActionResult> CreateCustomerPortalSession([FromBody] CustomerPortalRequest request)
+        {
+            var url = await company.CreateCustomerPortalSession(request.CustomerId);
+            return Ok(new { url = url });
+        }
 
-     
+
     }
 }

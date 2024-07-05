@@ -13,6 +13,7 @@ using System.Security.Claims;
 using RealEstate.Infrastructure.Services;
 using RealEstate.Domain.Entities.Property;
 using RealEstate.Application.DTOs.Response.Company;
+using Stripe.BillingPortal;
 
 namespace RealEstate.Infrastructure.Repo
 {
@@ -107,6 +108,22 @@ namespace RealEstate.Infrastructure.Repo
                 return new CompanyRegisterResponse(false, "An error occurred while saving the company details.");
             }
         }
+        public async Task<string> CreateCustomerPortalSession(string customerId)
+        {
+            var options = new SessionCreateOptions
+            {
+                Customer = customerId, 
+                ReturnUrl = "https://localhost:4200/"
+            };
+
+            var service = new SessionService();
+            var session = await service.CreateAsync(options); 
+
+            // session.Url contains the customer portal URL
+            // Return the URL to the frontend
+            return session.Url;
+        }
+
         private async Task<User> GetUser()
         {
             if (_httpContextAccessor.HttpContext == null)

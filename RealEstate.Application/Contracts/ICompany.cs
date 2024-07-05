@@ -20,6 +20,10 @@ namespace RealEstate.Application.Contracts
         Task<IEnumerable<BusinessActivityType>> GetBusinessActivityTypesAsync();
         Task<GeneralResponse> AddCompanyLogoAsync(IFormFile logo, int companyId);
 
+        Task<string> CreateCustomerPortalSession(string customerId);
+
+
+
     }
 
 }
