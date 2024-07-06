@@ -12,8 +12,8 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using RealEstate.Infrastructure.Services;
 using RealEstate.Domain.Entities.Property;
-using RealEstate.Application.DTOs.Response.Company;
 using Stripe.BillingPortal;
+using RealEstate.Application.DTOs.Response.Company;
 
 namespace RealEstate.Infrastructure.Repo
 {
@@ -97,10 +97,10 @@ namespace RealEstate.Infrastructure.Repo
             var result = await context.companies.AddAsync(company);
             try
             {
-                var userUpdateResult = await userManager.UpdateAsync(currentUser);
-                await userManager.AddToRoleAsync(currentUser, Constant.CompanyAdmin);
+                //var userUpdateResult = await userManager.UpdateAsync(currentUser);
+                //await userManager.AddToRoleAsync(currentUser, Constant.CompanyAdmin);
                 await context.SaveChangesAsync();
-                return new CompanyRegisterResponse(true, "Company details saved for verification.", company.Id);
+                return new CompanyRegisterResponse(true, "Company details saved for verification. You will be notified once the admin verifies your company.", company.Id);
             }
             catch (Exception ex)
             {
@@ -123,6 +123,81 @@ namespace RealEstate.Infrastructure.Repo
             // Return the URL to the frontend
             return session.Url;
         }
+        public async Task<IEnumerable<CompanyDetailsDto>> GetVerifiedCompaniesDetailsAsync()
+        {
+            var verifiedCompanies = await context.companies
+                .Where(c => c.isAdminVerified)
+                .Include(c => c.CompanyStructure)
+                .Include(c => c.BusinessActivityType)
+                .Include(c => c.Representative)
+                .Include(c => c.CompanyLogo)
+                .ToListAsync();
+
+            var companyDetailsList = verifiedCompanies.Select(company => new CompanyDetailsDto
+            {
+                CompanyName = company.CompanyName,
+                CompanyStructure = company.CompanyStructure.Name,
+                CompanyRegistrationNumber = company.CompanyRegistrationNumber,
+                LicenseNumber = company.LicenseNumber,
+                ReraCertificateNumber = company.ReraCertificateNumber,
+                BusinessActivity = company.BusinessActivityType.Name,
+                CompanyAddress = company.CompanyAddress,
+                PhoneNumber = company.PhoneNumber,
+                EmailAddress = company.EmailAddress,
+                WebsiteUrl = company.WebsiteUrl,
+                RepresentativeName = company.Representative.FirstName,
+                RepresentativeEmail = company.Representative.Email,
+                RepresentativePosition = company.RepresentativePosition,
+                RepresentativeContactNumber = company.RepresentativeContactNumber,
+                CompanyRegistrationDoc = company.CompanyRegistrationDoc,
+                TradeLicenseCopy = company.TradeLicenseCopy,
+                ReraCertificateCopy = company.ReraCertificateCopy,
+                TenancyContract = company.TenancyContract,
+                CompanyLogo = company.CompanyLogo?.ImageUrl,
+                BusinessDescription = company.BusinessDescription,
+                NumberOfEmployees = company.NumberOfEmployees
+            }).ToList();
+
+            return companyDetailsList;
+        }
+        public async Task<IEnumerable<CompanyDetailsDto>> GetUnVerifiedCompaniesDetailsAsync()
+        {
+            var verifiedCompanies = await context.companies
+                .Where(c => !c.isAdminVerified)
+                .Include(c => c.CompanyStructure)
+                .Include(c => c.BusinessActivityType)
+                .Include(c => c.Representative)
+                .Include(c => c.CompanyLogo)
+                .ToListAsync();
+
+            var companyDetailsList = verifiedCompanies.Select(company => new CompanyDetailsDto
+            {
+                CompanyName = company.CompanyName,
+                CompanyStructure = company.CompanyStructure.Name,
+                CompanyRegistrationNumber = company.CompanyRegistrationNumber,
+                LicenseNumber = company.LicenseNumber,
+                ReraCertificateNumber = company.ReraCertificateNumber,
+                BusinessActivity = company.BusinessActivityType.Name,
+                CompanyAddress = company.CompanyAddress,
+                PhoneNumber = company.PhoneNumber,
+                EmailAddress = company.EmailAddress,
+                WebsiteUrl = company.WebsiteUrl,
+                RepresentativeName = company.Representative.FirstName,
+                RepresentativeEmail = company.Representative.Email,
+                RepresentativePosition = company.RepresentativePosition,
+                RepresentativeContactNumber = company.RepresentativeContactNumber,
+                CompanyRegistrationDoc = company.CompanyRegistrationDoc,
+                TradeLicenseCopy = company.TradeLicenseCopy,
+                ReraCertificateCopy = company.ReraCertificateCopy,
+                TenancyContract = company.TenancyContract,
+                CompanyLogo = company.CompanyLogo?.ImageUrl,
+                BusinessDescription = company.BusinessDescription,
+                NumberOfEmployees = company.NumberOfEmployees
+            }).ToList();
+
+            return companyDetailsList;
+        }
+
 
         private async Task<User> GetUser()
         {

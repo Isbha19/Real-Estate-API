@@ -1,51 +1,38 @@
-﻿
+﻿using RealEstate.Domain.Entities.Company;
+using RealEstate.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-using RealEstate.Domain.Entities.Property;
-
-namespace RealEstate.Domain.Entities.Company
+namespace RealEstate.Application.DTOs.Response.Company
 {
-    public class Company
+    public class CompanyDetailsDto
     {
-        public int Id { get; set; }
+  
         public string CompanyName { get; set; }
-        public string TradeName { get; set; }
-        public int CompanyStructureId { get; set; }
-        public CompanyStructure CompanyStructure { get; set; }
-
+        public string CompanyStructure{ get; set; }
         public string CompanyRegistrationNumber { get; set; }
         public string LicenseNumber { get; set; }
         public string ReraCertificateNumber { get; set; }
-        public int BusinessActivityTypeId { get; set; }
-        public BusinessActivityType BusinessActivityType { get; set; }
-
+        public string BusinessActivity { get; set; }
         public string CompanyAddress { get; set; }
         public string PhoneNumber { get; set; }
         public string EmailAddress { get; set; }
         public string WebsiteUrl { get; set; }
 
-        public string RepresentativeId { get; set; }
-        public User Representative { get; set; }
+        public string RepresentativeName { get; set; }
+        public string RepresentativeEmail { get; set; }
         public string RepresentativePosition { get; set; }
         public string RepresentativeContactNumber { get; set; }
         public string CompanyRegistrationDoc { get; set; }
 
-        public bool isAdminVerified {  get; set; }
-        public VerificationStatus VerificationStatus { get; set; }
-        public string RejectionReason { get; set; }
         public string TradeLicenseCopy { get; set; }
         public string ReraCertificateCopy { get; set; }
         public string TenancyContract { get; set; }
-        public CompanyFile CompanyLogo { get; set; }
-
+        public string CompanyLogo { get; set; }
         public string BusinessDescription { get; set; }
         public int NumberOfEmployees { get; set; }
-
-       
-    }
-    public enum VerificationStatus
-    {
-        Pending,
-        Verified,
-        Rejected
     }
 }

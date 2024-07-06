@@ -99,10 +99,10 @@ namespace RealEstate.Infrastructure.Services
                     var company = await _context.companies.FirstOrDefaultAsync(c => c.RepresentativeId == user.Id);
                     if (company != null)
                     {
-                        company.SubscriptionId = subscription.Id;
-                        company.SubscriptionStatus = subscription.Status;
-                        company.SubscriptionStartDate = subscription.StartDate;
-                        company.SubscriptionEndDate = subscription.CurrentPeriodEnd;
+                        //company.SubscriptionId = subscription.Id;
+                        //company.SubscriptionStatus = subscription.Status;
+                        //company.SubscriptionStartDate = subscription.StartDate;
+                        //company.SubscriptionEndDate = subscription.CurrentPeriodEnd;
                         await _context.SaveChangesAsync();
                     }
                     else
@@ -133,7 +133,7 @@ namespace RealEstate.Infrastructure.Services
                         .FirstOrDefaultAsync(c => c.RepresentativeId == user.Id);
                     if (company != null)
                     {
-                        company.SubscriptionStatus = "canceled";
+                        //company.SubscriptionStatus = "canceled";
                         await _context.SaveChangesAsync();
                     }
                     else
@@ -164,8 +164,8 @@ namespace RealEstate.Infrastructure.Services
                         .FirstOrDefaultAsync(c => c.RepresentativeId == user.Id);
                     if (company != null)
                     {
-                        company.SubscriptionStatus = subscription.Status;
-                        company.SubscriptionEndDate = subscription.CurrentPeriodEnd;
+                        //company.SubscriptionStatus = subscription.Status;
+                        //company.SubscriptionEndDate = subscription.CurrentPeriodEnd;
                         await _context.SaveChangesAsync();
                     }
                     else

@@ -50,6 +50,20 @@ namespace RealEstate.API.Controllers
 
             return Ok(result);
         }
+        [HttpGet("get-verified-companies-details")]
+        public async Task<IActionResult> GetVerifiedCompanyDetails()
+        {
+            var result = await company.GetVerifiedCompaniesDetailsAsync();
+
+            return Ok(result);
+        }
+        [HttpGet("get-unverified-companies-details")]
+        public async Task<IActionResult> GetUnVerifiedCompanyDetails()
+        {
+            var result = await company.GetUnVerifiedCompaniesDetailsAsync();
+
+            return Ok(result);
+        }
         [HttpGet("get-business-activity-types")]
         public async Task<IActionResult> GetBusinessActivityTypes()
         {
@@ -63,6 +77,7 @@ namespace RealEstate.API.Controllers
             var result = await company.AddCompanyLogoAsync(file, companyId);
             return Ok(result);
         }
+
         [HttpPost("Webhook")]
         public async Task<IActionResult> WebhookHandler()
         {

@@ -12,8 +12,8 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240701192346_companyLogoPrimaryKey")]
-    partial class companyLogoPrimaryKey
+    [Migration("20240705140648_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -172,18 +172,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("businessActivityTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Property management"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Real Estate Brokerage"
-                        });
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Company.Company", b =>
@@ -227,6 +215,9 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RepresentativeContactNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -251,8 +242,14 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<string>("TradeName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("VerificationStatus")
+                        .HasColumnType("int");
+
                     b.Property<string>("WebsiteUrl")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isAdminVerified")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -305,28 +302,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("companyStructures");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Sole Proprietorship"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Limited Liability Company"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Civil Company"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Free Zone Establishment"
-                        });
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Amenity", b =>

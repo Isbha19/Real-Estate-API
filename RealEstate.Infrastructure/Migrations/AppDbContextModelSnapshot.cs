@@ -168,18 +168,18 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("businessActivityTypes", (string)null);
+                    b.ToTable("businessActivityTypes");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Name = "Property management"
+                            Name = "Real Estate Brokerage"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Real Estate Brokerage"
+                            Name = "Property Management"
                         });
                 });
 
@@ -224,6 +224,9 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RepresentativeContactNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -248,8 +251,14 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<string>("TradeName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("VerificationStatus")
+                        .HasColumnType("int");
+
                     b.Property<string>("WebsiteUrl")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isAdminVerified")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -259,7 +268,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("RepresentativeId");
 
-                    b.ToTable("companies", (string)null);
+                    b.ToTable("companies");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyFile", b =>
@@ -285,7 +294,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.HasIndex("CompanyId")
                         .IsUnique();
 
-                    b.ToTable("CompanyFile", (string)null);
+                    b.ToTable("CompanyFile");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyStructure", b =>
@@ -301,7 +310,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("companyStructures", (string)null);
+                    b.ToTable("companyStructures");
 
                     b.HasData(
                         new
@@ -322,7 +331,7 @@ namespace RealEstate.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            Name = "Free Zone Establishment"
+                            Name = "Free Zone Establishment)"
                         });
                 });
 
@@ -345,7 +354,170 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Amenities", (string)null);
+                    b.ToTable("Amenities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2795),
+                            Name = "Central A/C"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2814),
+                            Name = "Balcony"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2815),
+                            Name = "Shared Spa"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2817),
+                            Name = "Concierge Service"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2817),
+                            Name = "View of Water"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2818),
+                            Name = "Pets Allowed"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2819),
+                            Name = "Private Garden"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2821),
+                            Name = "Private Gym"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2821),
+                            Name = "Built in Wardrobes"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2822),
+                            Name = "Built in Kitchen Appliances"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2823),
+                            Name = "Children's Play Area"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2824),
+                            Name = "Maids Room"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2825),
+                            Name = "Shared Pool"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2826),
+                            Name = "Shared Gym"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2827),
+                            Name = "Covered Parking"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2828),
+                            Name = "View of Landmark"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2829),
+                            Name = "Study"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2830),
+                            Name = "Private Pool"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2831),
+                            Name = "Private Jacuzzi"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2833),
+                            Name = "Walk-in Closet"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2833),
+                            Name = "Maid Service"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2834),
+                            Name = "Children's Pool"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2835),
+                            Name = "Barbecue Area"
+                        });
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Facility", b =>
@@ -367,7 +539,51 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Facilities", (string)null);
+                    b.ToTable("Facilities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3231),
+                            Name = "School"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3234),
+                            Name = "Hospital"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3235),
+                            Name = "Public Transport"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3236),
+                            Name = "Shopping Mall"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3237),
+                            Name = "Park"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3238),
+                            Name = "Metro"
+                        });
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.FurnishingType", b =>
@@ -390,7 +606,30 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FurnishingTypes", (string)null);
+                    b.ToTable("FurnishingTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3267),
+                            Name = "Furnished"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3268),
+                            Name = "Unfurnished"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3269),
+                            Name = "Partly Furnished"
+                        });
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Image", b =>
@@ -428,7 +667,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("Images", (string)null);
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.ListingType", b =>
@@ -444,7 +683,24 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ListingTypes", (string)null);
+                    b.ToTable("ListingTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Rent"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Buy"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Commercial"
+                        });
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property", b =>
@@ -524,7 +780,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("Properties", (string)null);
+                    b.ToTable("Properties");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyAmenties", b =>
@@ -553,7 +809,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("PropertyAmenties", (string)null);
+                    b.ToTable("PropertyAmenties");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyNearByFacilities", b =>
@@ -582,7 +838,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("PropertyNearByFacilities", (string)null);
+                    b.ToTable("PropertyNearByFacilities");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyType", b =>
@@ -604,7 +860,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PropertyTypes", (string)null);
+                    b.ToTable("PropertyTypes");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.User", b =>

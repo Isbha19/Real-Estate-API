@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 
 namespace RealEstate.Application.Contracts
 {
-    
-        public interface ICompany
+
+    public interface ICompany
         {
         Task<CompanyRegisterResponse> RegisterCompanyAsync(CompanyDto companyDto);
         Task<IEnumerable<CompanyStructure>> GetCompanyStructuresAsync();
@@ -21,6 +21,8 @@ namespace RealEstate.Application.Contracts
         Task<GeneralResponse> AddCompanyLogoAsync(IFormFile logo, int companyId);
 
         Task<string> CreateCustomerPortalSession(string customerId);
+        Task<IEnumerable<CompanyDetailsDto>> GetVerifiedCompaniesDetailsAsync();
+        Task<IEnumerable<CompanyDetailsDto>> GetUnVerifiedCompaniesDetailsAsync();
 
 
 
