@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace RealEstate.Domain.Entities.Property
 {
-    public class FurnishingType:baseEntity
+    public class FurnishingType
     {
+        public int Id { get; set; }
         [Required]
         public string Name { get; set; }
     }

@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RealEstate.Domain.Entities;
-using RealEstate.Domain.Entities.Company;
+using RealEstate.Domain.Entities.AgentEntity;
+using RealEstate.Domain.Entities.CompanyEntity;
 using RealEstate.Domain.Entities.Property;
 
 namespace RealEstate.Infrastructure.Data
@@ -23,14 +24,24 @@ namespace RealEstate.Infrastructure.Data
         public DbSet<CompanyStructure> companyStructures { get; set; }
         public DbSet<BusinessActivityType> businessActivityTypes { get; set; }
 
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Plan> Plan { get; set; }
+
+        public DbSet<Agent> Agents { get; set; }
+        public DbSet<AgentImage> AgentImage { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+           
             modelBuilder.Entity<Company>()
        .HasOne(c => c.CompanyLogo)
        .WithOne(cf => cf.Company)
        .HasForeignKey<CompanyFile>(cf => cf.CompanyId)
        .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Notification>()
+           .HasOne(n => n.User)
+           .WithMany(u => u.Notifications)
+           .HasForeignKey(n => n.UserId);
 
             base.OnModelCreating(modelBuilder);
 
@@ -98,6 +109,12 @@ namespace RealEstate.Infrastructure.Data
                 new ListingType { Id = 1, Name = "Rent" },
                 new ListingType { Id = 2, Name = "Buy" },
                 new ListingType { Id = 3, Name = "Commercial" }
+
+            );
+            modelBuilder.Entity<Plan>().HasData(
+                new Plan { Id = "p1", Name = "Free Trial", Price =0 },
+                new Plan { Id = "price_1PZ4m0GFthNCZxNOoti2pHeh", Name = "Basic" ,Price=350},
+                new Plan { Id = "price_1PZ4mUGFthNCZxNOwjVLIVd6", Name = "Premium",Price=700 }
 
             );
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstate.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240707135039_adding-agent")]
+    partial class addingagent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,9 +172,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("LanguagesKnown")
                         .HasColumnType("nvarchar(max)");
 
@@ -181,17 +181,14 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<string>("Specialization")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("isCompanyAdminVerified")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("licenseNumber")
+                    b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("phoneNumber")
                         .HasColumnType("int");
+
+                    b.Property<string>("userId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("whatsAppNumber")
                         .HasColumnType("int");
@@ -203,7 +200,7 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("userId");
 
                     b.ToTable("Agents");
                 });
@@ -290,9 +287,6 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.Property<int>("CompanyStructureId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("EmailAddress")
                         .HasColumnType("nvarchar(max)");
@@ -669,6 +663,12 @@ namespace RealEstate.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("LastUpdatedBy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -680,31 +680,43 @@ namespace RealEstate.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 7, 17, 50, 38, 882, DateTimeKind.Local).AddTicks(196),
                             Name = "School"
                         },
                         new
                         {
                             Id = 2,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 7, 17, 50, 38, 882, DateTimeKind.Local).AddTicks(218),
                             Name = "Hospital"
                         },
                         new
                         {
                             Id = 3,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 7, 17, 50, 38, 882, DateTimeKind.Local).AddTicks(219),
                             Name = "Public Transport"
                         },
                         new
                         {
                             Id = 4,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 7, 17, 50, 38, 882, DateTimeKind.Local).AddTicks(221),
                             Name = "Shopping Mall"
                         },
                         new
                         {
                             Id = 5,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 7, 17, 50, 38, 882, DateTimeKind.Local).AddTicks(222),
                             Name = "Park"
                         },
                         new
                         {
                             Id = 6,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 7, 17, 50, 38, 882, DateTimeKind.Local).AddTicks(224),
                             Name = "Metro"
                         });
                 });
@@ -716,6 +728,12 @@ namespace RealEstate.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("LastUpdatedBy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -729,16 +747,22 @@ namespace RealEstate.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 7, 17, 50, 38, 882, DateTimeKind.Local).AddTicks(405),
                             Name = "Furnished"
                         },
                         new
                         {
                             Id = 2,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 7, 17, 50, 38, 882, DateTimeKind.Local).AddTicks(408),
                             Name = "Unfurnished"
                         },
                         new
                         {
                             Id = 3,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 7, 17, 50, 38, 882, DateTimeKind.Local).AddTicks(409),
                             Name = "Partly Furnished"
                         });
                 });
@@ -1107,14 +1131,14 @@ namespace RealEstate.Infrastructure.Migrations
             modelBuilder.Entity("RealEstate.Domain.Entities.AgentEntity.Agent", b =>
                 {
                     b.HasOne("RealEstate.Domain.Entities.CompanyEntity.Company", "company")
-                        .WithMany("Agents")
+                        .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RealEstate.Domain.Entities.User", "user")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("userId");
 
                     b.Navigation("company");
 
@@ -1281,8 +1305,6 @@ namespace RealEstate.Infrastructure.Migrations
 
             modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.Company", b =>
                 {
-                    b.Navigation("Agents");
-
                     b.Navigation("CompanyLogo");
 
                     b.Navigation("Subscription");

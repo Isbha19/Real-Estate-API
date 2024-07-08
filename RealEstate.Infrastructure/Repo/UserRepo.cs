@@ -1,28 +1,22 @@
 ﻿
 
 using AngularAuthAPI.Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RealEstate.Application.Contracts;
 using RealEstate.Application.DTOs.Account;
-using RealEstate.Application.DTOs.Request;
 using RealEstate.Application.DTOs.Request.Account;
 using RealEstate.Application.DTOs.Response.Account;
 using RealEstate.Application.Services;
 using RealEstate.Application.Extensions;
 using RealEstate.Domain.Entities;
-using RealEstate.Infrastructure.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Google.Apis.Auth;
 
 namespace RealEstate.Infrastructure.Repo

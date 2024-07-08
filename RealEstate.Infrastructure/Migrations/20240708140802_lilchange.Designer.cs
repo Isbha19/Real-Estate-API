@@ -12,8 +12,8 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240706042651_seedValues")]
-    partial class seedValues
+    [Migration("20240708140802_lilchange")]
+    partial class lilchange
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,7 +158,86 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Company.BusinessActivityType", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.AgentEntity.Agent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("About")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LanguagesKnown")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nationality")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Specialization")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("isCompanyAdminVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("licenseNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("phoneNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("whatsAppNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("yearsOfExperience")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Agents");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.AgentEntity.AgentImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AgentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PublicId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentId")
+                        .IsUnique();
+
+                    b.ToTable("AgentImage");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.BusinessActivityType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -186,7 +265,7 @@ namespace RealEstate.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Company.Company", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.Company", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -214,6 +293,9 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.Property<int>("CompanyStructureId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("EmailAddress")
                         .HasColumnType("nvarchar(max)");
@@ -274,7 +356,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("companies");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyFile", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.CompanyFile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -300,7 +382,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("CompanyFile");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyStructure", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.CompanyStructure", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -338,7 +420,85 @@ namespace RealEstate.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Amenity", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.Plan", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Plan");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "p1",
+                            Name = "Free Trial",
+                            Price = 0
+                        },
+                        new
+                        {
+                            Id = "price_1PZ4m0GFthNCZxNOoti2pHeh",
+                            Name = "Basic",
+                            Price = 350
+                        },
+                        new
+                        {
+                            Id = "price_1PZ4mUGFthNCZxNOwjVLIVd6",
+                            Name = "Premium",
+                            Price = 700
+                        });
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.Subscription", b =>
+                {
+                    b.Property<int>("SubscriptionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubscriptionId"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PlanId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StripeSubscriptionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SubscriptionEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("SubscriptionStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SubscriptionStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SubscriptionId");
+
+                    b.HasIndex("CompanyId")
+                        .IsUnique();
+
+                    b.HasIndex("PlanId");
+
+                    b.ToTable("Subscription");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.Notification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -346,11 +506,38 @@ namespace RealEstate.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("LastUpdatedBy")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime>("LastUpdatedOn")
-                        .HasColumnType("datetime2");
+                    b.Property<bool>("IsOpened")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Amenity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -363,162 +550,116 @@ namespace RealEstate.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2795),
                             Name = "Central A/C"
                         },
                         new
                         {
                             Id = 2,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2814),
                             Name = "Balcony"
                         },
                         new
                         {
                             Id = 3,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2815),
                             Name = "Shared Spa"
                         },
                         new
                         {
                             Id = 4,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2817),
                             Name = "Concierge Service"
                         },
                         new
                         {
                             Id = 5,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2817),
                             Name = "View of Water"
                         },
                         new
                         {
                             Id = 6,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2818),
                             Name = "Pets Allowed"
                         },
                         new
                         {
                             Id = 7,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2819),
                             Name = "Private Garden"
                         },
                         new
                         {
                             Id = 8,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2821),
                             Name = "Private Gym"
                         },
                         new
                         {
                             Id = 9,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2821),
                             Name = "Built in Wardrobes"
                         },
                         new
                         {
                             Id = 10,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2822),
                             Name = "Built in Kitchen Appliances"
                         },
                         new
                         {
                             Id = 11,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2823),
                             Name = "Children's Play Area"
                         },
                         new
                         {
                             Id = 12,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2824),
                             Name = "Maids Room"
                         },
                         new
                         {
                             Id = 13,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2825),
                             Name = "Shared Pool"
                         },
                         new
                         {
                             Id = 14,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2826),
                             Name = "Shared Gym"
                         },
                         new
                         {
                             Id = 15,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2827),
                             Name = "Covered Parking"
                         },
                         new
                         {
                             Id = 16,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2828),
                             Name = "View of Landmark"
                         },
                         new
                         {
                             Id = 17,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2829),
                             Name = "Study"
                         },
                         new
                         {
                             Id = 18,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2830),
                             Name = "Private Pool"
                         },
                         new
                         {
                             Id = 19,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2831),
                             Name = "Private Jacuzzi"
                         },
                         new
                         {
                             Id = 20,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2833),
                             Name = "Walk-in Closet"
                         },
                         new
                         {
                             Id = 21,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2833),
                             Name = "Maid Service"
                         },
                         new
                         {
                             Id = 22,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2834),
                             Name = "Children's Pool"
                         },
                         new
                         {
                             Id = 23,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(2835),
                             Name = "Barbecue Area"
                         });
                 });
@@ -531,12 +672,6 @@ namespace RealEstate.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("LastUpdatedBy")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastUpdatedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -548,43 +683,31 @@ namespace RealEstate.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3231),
                             Name = "School"
                         },
                         new
                         {
                             Id = 2,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3234),
                             Name = "Hospital"
                         },
                         new
                         {
                             Id = 3,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3235),
                             Name = "Public Transport"
                         },
                         new
                         {
                             Id = 4,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3236),
                             Name = "Shopping Mall"
                         },
                         new
                         {
                             Id = 5,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3237),
                             Name = "Park"
                         },
                         new
                         {
                             Id = 6,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3238),
                             Name = "Metro"
                         });
                 });
@@ -596,12 +719,6 @@ namespace RealEstate.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("LastUpdatedBy")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastUpdatedOn")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -615,22 +732,16 @@ namespace RealEstate.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3267),
                             Name = "Furnished"
                         },
                         new
                         {
                             Id = 2,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3268),
                             Name = "Unfurnished"
                         },
                         new
                         {
                             Id = 3,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 6, 8, 26, 51, 19, DateTimeKind.Local).AddTicks(3269),
                             Name = "Partly Furnished"
                         });
                 });
@@ -996,15 +1107,43 @@ namespace RealEstate.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Company.Company", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.AgentEntity.Agent", b =>
                 {
-                    b.HasOne("RealEstate.Domain.Entities.Company.BusinessActivityType", "BusinessActivityType")
+                    b.HasOne("RealEstate.Domain.Entities.CompanyEntity.Company", "company")
+                        .WithMany("Agents")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RealEstate.Domain.Entities.User", "user")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("company");
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.AgentEntity.AgentImage", b =>
+                {
+                    b.HasOne("RealEstate.Domain.Entities.AgentEntity.Agent", "Agent")
+                        .WithOne("ImageUrl")
+                        .HasForeignKey("RealEstate.Domain.Entities.AgentEntity.AgentImage", "AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.Company", b =>
+                {
+                    b.HasOne("RealEstate.Domain.Entities.CompanyEntity.BusinessActivityType", "BusinessActivityType")
                         .WithMany()
                         .HasForeignKey("BusinessActivityTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RealEstate.Domain.Entities.Company.CompanyStructure", "CompanyStructure")
+                    b.HasOne("RealEstate.Domain.Entities.CompanyEntity.CompanyStructure", "CompanyStructure")
                         .WithMany()
                         .HasForeignKey("CompanyStructureId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1021,15 +1160,41 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Representative");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Company.CompanyFile", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.CompanyFile", b =>
                 {
-                    b.HasOne("RealEstate.Domain.Entities.Company.Company", "Company")
+                    b.HasOne("RealEstate.Domain.Entities.CompanyEntity.Company", "Company")
                         .WithOne("CompanyLogo")
-                        .HasForeignKey("RealEstate.Domain.Entities.Company.CompanyFile", "CompanyId")
+                        .HasForeignKey("RealEstate.Domain.Entities.CompanyEntity.CompanyFile", "CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.Subscription", b =>
+                {
+                    b.HasOne("RealEstate.Domain.Entities.CompanyEntity.Company", "Company")
+                        .WithOne("Subscription")
+                        .HasForeignKey("RealEstate.Domain.Entities.CompanyEntity.Subscription", "CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RealEstate.Domain.Entities.CompanyEntity.Plan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Plan");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("RealEstate.Domain.Entities.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Image", b =>
@@ -1112,9 +1277,18 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Company.Company", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.AgentEntity.Agent", b =>
                 {
+                    b.Navigation("ImageUrl");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.Company", b =>
+                {
+                    b.Navigation("Agents");
+
                     b.Navigation("CompanyLogo");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Property.Amenity", b =>
@@ -1134,6 +1308,11 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("PropertyAmenties");
 
                     b.Navigation("PropertyNearByFacilities");
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.User", b =>
+                {
+                    b.Navigation("Notifications");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,7 +2,7 @@
 using RealEstate.Application.DTOs.Request.Company;
 using RealEstate.Application.DTOs.Response;
 using RealEstate.Application.DTOs.Response.Company;
-using RealEstate.Domain.Entities.Company;
+using RealEstate.Domain.Entities.CompanyEntity;
 using RealEstate.Domain.Entities.Property;
 using System;
 using System.Collections.Generic;
@@ -19,10 +19,17 @@ namespace RealEstate.Application.Contracts
         Task<IEnumerable<CompanyStructure>> GetCompanyStructuresAsync();
         Task<IEnumerable<BusinessActivityType>> GetBusinessActivityTypesAsync();
         Task<GeneralResponse> AddCompanyLogoAsync(IFormFile logo, int companyId);
+        Task<GeneralResponse> VerifyCompany(int companyId);
+        Task<GeneralResponse> ValidateUserForPayment();
+        Task<IEnumerable<CompanyNames>> GetCompanyNamesAsync();
+
+
 
         Task<string> CreateCustomerPortalSession(string customerId);
         Task<IEnumerable<CompanyDetailsDto>> GetVerifiedCompaniesDetailsAsync();
         Task<IEnumerable<CompanyDetailsDto>> GetUnVerifiedCompaniesDetailsAsync();
+        Task<CompanyDetailsDto> GetCompanyDetailByUser();
+
 
 
 

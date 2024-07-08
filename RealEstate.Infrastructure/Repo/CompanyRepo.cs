@@ -5,7 +5,6 @@ using RealEstate.Application.Contracts;
 using RealEstate.Application.DTOs.Request.Company;
 using RealEstate.Application.DTOs.Response;
 using RealEstate.Domain.Entities;
-using RealEstate.Domain.Entities.Company;
 using RealEstate.Infrastructure.Data;
 using RealEstate.Application.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +13,9 @@ using RealEstate.Infrastructure.Services;
 using RealEstate.Domain.Entities.Property;
 using Stripe.BillingPortal;
 using RealEstate.Application.DTOs.Response.Company;
+using System.ComponentModel.Design;
+using RealEstate.Application.Services;
+using RealEstate.Domain.Entities.CompanyEntity;
 
 namespace RealEstate.Infrastructure.Repo
 {
@@ -22,14 +24,20 @@ namespace RealEstate.Infrastructure.Repo
         private readonly UserManager<User> userManager;
         private readonly AppDbContext context;
         private readonly FileService fileService;
+        private readonly NotificationService _notificationService;
+        private readonly ICompanyService companyService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CompanyRepo(UserManager<User> userManager, AppDbContext context, IHttpContextAccessor httpContextAccess,
-            FileService fileService)
+            FileService fileService,
+            NotificationService notificationService,
+            ICompanyService companyService)
         {
             this.userManager = userManager;
             this.context = context;
             this.fileService = fileService;
+            this._notificationService = notificationService;
+            this.companyService = companyService;
             this._httpContextAccessor = httpContextAccess;
 
         }
@@ -135,6 +143,7 @@ namespace RealEstate.Infrastructure.Repo
 
             var companyDetailsList = verifiedCompanies.Select(company => new CompanyDetailsDto
             {
+                CompanyId = company.Id,
                 CompanyName = company.CompanyName,
                 CompanyStructure = company.CompanyStructure.Name,
                 CompanyRegistrationNumber = company.CompanyRegistrationNumber,
@@ -159,6 +168,30 @@ namespace RealEstate.Infrastructure.Repo
             }).ToList();
 
             return companyDetailsList;
+        }
+        public async Task<GeneralResponse> VerifyCompany(int companyId)
+        {
+            var company = await context.companies.FindAsync(companyId);
+            if (company == null)
+            {
+                return new GeneralResponse(false, "company not found");
+            }
+            if (company.isAdminVerified)
+            {
+                return new GeneralResponse(false, "company already verified");
+
+            }
+            company.isAdminVerified = true;
+            await context.SaveChangesAsync();
+
+            var userId = company.RepresentativeId;
+            var message = "Congratulations!🎉 Your company is verified. Choose your subscription package to list properties.";
+            var url = "/subscription-package";
+        
+                await _notificationService.NotifyUserAsync(userId, message, url);
+           
+            return new GeneralResponse(true, "company verified");
+
         }
         public async Task<IEnumerable<CompanyDetailsDto>> GetUnVerifiedCompaniesDetailsAsync()
         {
@@ -172,6 +205,7 @@ namespace RealEstate.Infrastructure.Repo
 
             var companyDetailsList = verifiedCompanies.Select(company => new CompanyDetailsDto
             {
+                CompanyId = company.Id,
                 CompanyName = company.CompanyName,
                 CompanyStructure = company.CompanyStructure.Name,
                 CompanyRegistrationNumber = company.CompanyRegistrationNumber,
@@ -197,7 +231,75 @@ namespace RealEstate.Infrastructure.Repo
 
             return companyDetailsList;
         }
+        public async Task<GeneralResponse> ValidateUserForPayment()
+        {
+            var user =await GetUser();
+            if (user == null)
+            {
+                return new GeneralResponse(false, "user not found");
+            }
+            string userId = user.Id;
 
+            var isRegistered = await companyService.IsUserRegistered(userId);
+            var isValidated = await companyService.IsUserValidated(userId);
+            var isCompanyAdmin = await companyService.IsUserCompanyAdmin(userId);
+
+            if (!isRegistered)
+            {
+                return new GeneralResponse (false,"User has not filled the company registration form. Please fill the form and get admin verified!");
+            }
+
+            if (!isValidated)
+            {
+                return new GeneralResponse(false,"User has not been validated by admin.");
+            }
+
+            if (isCompanyAdmin)
+            {
+                return new GeneralResponse(false,"You are already a company admin!");
+            }
+
+            return new GeneralResponse(true,"User is eligible for payment.");
+        }
+        public async Task<CompanyDetailsDto> GetCompanyDetailByUser()
+        {
+            var user = await GetUser();
+            string userId = user.Id;
+
+            // Fetch company details for the authorized user
+            var company = await context.companies
+      .Include(c => c.CompanyStructure)
+      .Include(c => c.BusinessActivityType)
+      .Include(c => c.Representative)
+      .Include(c => c.CompanyLogo)
+      .FirstOrDefaultAsync(c => c.RepresentativeId == userId && c.isAdminVerified);
+            var companyDetailsDto =new CompanyDetailsDto
+            {
+                CompanyId = company.Id,
+                CompanyName = company.CompanyName,
+                CompanyStructure = company.CompanyStructure.Name,
+                CompanyRegistrationNumber = company.CompanyRegistrationNumber,
+                LicenseNumber = company.LicenseNumber,
+                ReraCertificateNumber = company.ReraCertificateNumber,
+                BusinessActivity = company.BusinessActivityType.Name,
+                CompanyAddress = company.CompanyAddress,
+                PhoneNumber = company.PhoneNumber, // Assuming 'CompanyPhone' corresponds to 'PhoneNumber' in DTO
+                EmailAddress = company.EmailAddress, // Assuming 'CompanyEmail' corresponds to 'EmailAddress' in DTO
+                WebsiteUrl = company.WebsiteUrl,
+                RepresentativeName =company.Representative.FirstName,
+                RepresentativeEmail = company.Representative.Email,
+                RepresentativePosition = company.RepresentativePosition,
+                RepresentativeContactNumber = company.RepresentativeContactNumber,
+                CompanyRegistrationDoc = company.CompanyRegistrationDoc,
+                TradeLicenseCopy = company.TradeLicenseCopy,
+                ReraCertificateCopy = company.ReraCertificateCopy,
+                TenancyContract = company.TenancyContract,
+                CompanyLogo = company.CompanyLogo.ImageUrl,
+                BusinessDescription = company.BusinessDescription,
+                NumberOfEmployees = company.NumberOfEmployees
+            };
+            return companyDetailsDto;
+        }
 
         private async Task<User> GetUser()
         {
@@ -238,6 +340,20 @@ namespace RealEstate.Infrastructure.Repo
             await context.SaveChangesAsync();
             return new GeneralResponse(true, "Image Uploaded");
         }
+        public async Task<IEnumerable<CompanyNames>> GetCompanyNamesAsync()
+        {
+            var companies = await context.companies
+                       .Select(c => new CompanyNames
+                       {
+                           CompanyId = c.Id,
+                           CompanyName = c.CompanyName
+                       })
+                       .ToListAsync();
+
+            return companies;
+        }
+
+
         private async Task<Company> GetCompanyAsync(int companyId)
         {
             return await context.companies
@@ -245,5 +361,6 @@ namespace RealEstate.Infrastructure.Repo
                 .FirstOrDefaultAsync(c => c.Id == companyId);
         }
 
+       
     }
 }

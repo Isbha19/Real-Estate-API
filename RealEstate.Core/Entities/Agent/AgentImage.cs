@@ -5,16 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RealEstate.Domain.Entities.CompanyEntity
+namespace RealEstate.Domain.Entities.AgentEntity
 {
-    public class CompanyFile
+    public class AgentImage
     {
         [Required]
         public int Id { get; set; }
         [Required]
         public string ImageUrl { get; set; }
-        public int CompanyId { get; set; }
+        public int AgentId { get; set; }
+        public Agent Agent { get; set; }
+
         public string PublicId { get; set; }
-        public Company Company { get; set; }
     }
 }

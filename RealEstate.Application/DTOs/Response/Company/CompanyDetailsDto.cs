@@ -1,5 +1,4 @@
-﻿using RealEstate.Domain.Entities.Company;
-using RealEstate.Domain.Entities;
+﻿using RealEstate.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,7 @@ namespace RealEstate.Application.DTOs.Response.Company
     public class CompanyDetailsDto
     {
   
+        public int CompanyId { get; set; }
         public string CompanyName { get; set; }
         public string CompanyStructure{ get; set; }
         public string CompanyRegistrationNumber { get; set; }

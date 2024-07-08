@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RealEstate.Domain.Entities.Company
+namespace RealEstate.Domain.Entities.CompanyEntity
 {
     public class CompanyStructure
     {

@@ -13,6 +13,7 @@ namespace RealEstate.Domain.Entities
 
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
         public string Provider { get; set; }
+        public ICollection<Notification> Notifications { get; set; }
 
     }
 }

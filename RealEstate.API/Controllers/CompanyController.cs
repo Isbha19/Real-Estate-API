@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RealEstate.Application.Contracts;
 using RealEstate.Application.DTOs.Request.Company;
 using RealEstate.Application.DTOs.Request.Property;
@@ -11,7 +12,6 @@ namespace RealEstate.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
 
     public class CompanyController : ControllerBase
     {
@@ -33,7 +33,9 @@ namespace RealEstate.API.Controllers
 
         }
         [HttpPost("add-company")]
-        public async Task<IActionResult> AddProperty(CompanyDto model)
+        [Authorize]
+
+        public async Task<IActionResult> AddCompany(CompanyDto model)
         {
             var result = await company.RegisterCompanyAsync(model);
 
@@ -44,13 +46,25 @@ namespace RealEstate.API.Controllers
             return Ok(result);
         }
         [HttpGet("get-company-structures")]
+        [Authorize]
+
         public async Task<IActionResult> GetCompanyStructures()
         {
             var result = await company.GetCompanyStructuresAsync();
 
             return Ok(result);
         }
+        [HttpGet("get-company-names")]
+
+        public async Task<IActionResult> GetCompanyNames()
+        {
+            var result = await company.GetCompanyNamesAsync();
+
+            return Ok(result);
+        }
         [HttpGet("get-verified-companies-details")]
+        [Authorize]
+
         public async Task<IActionResult> GetVerifiedCompanyDetails()
         {
             var result = await company.GetVerifiedCompaniesDetailsAsync();
@@ -58,6 +72,8 @@ namespace RealEstate.API.Controllers
             return Ok(result);
         }
         [HttpGet("get-unverified-companies-details")]
+        [Authorize]
+
         public async Task<IActionResult> GetUnVerifiedCompanyDetails()
         {
             var result = await company.GetUnVerifiedCompaniesDetailsAsync();
@@ -65,6 +81,8 @@ namespace RealEstate.API.Controllers
             return Ok(result);
         }
         [HttpGet("get-business-activity-types")]
+        [Authorize]
+
         public async Task<IActionResult> GetBusinessActivityTypes()
         {
             var result = await company.GetBusinessActivityTypesAsync();
@@ -72,9 +90,41 @@ namespace RealEstate.API.Controllers
             return Ok(result);
         }
         [HttpPost("add-company-logo")]
+        [Authorize]
+
         public async Task<IActionResult> AddCompanyLogo(IFormFile file, int companyId)
         {
             var result = await company.AddCompanyLogoAsync(file, companyId);
+            return Ok(result);
+        }
+
+        [HttpPost("verify/{companyId}")]
+        [Authorize]
+
+        public async Task<IActionResult> VerifyCompany(int companyId)
+        {
+            var result = await company.VerifyCompany(companyId);
+            return Ok(result);
+
+        }
+        [HttpGet("validate-user-for-payment")]
+        [Authorize]
+
+        public async Task<IActionResult> ValidateUserForPayment()
+        {
+            var result = await company.ValidateUserForPayment();
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpGet("Get-company-by-User")]
+        [Authorize]
+
+        public async Task<IActionResult> GetCompanyByUser()
+        {
+            var result = await company.GetCompanyDetailByUser();
             return Ok(result);
         }
 
@@ -99,6 +149,8 @@ namespace RealEstate.API.Controllers
 
         }
         [HttpPost("create-customer-portal-session")]
+        [Authorize]
+
         public async Task<IActionResult> CreateCustomerPortalSession([FromBody] CustomerPortalRequest request)
         {
             var url = await company.CreateCustomerPortalSession(request.CustomerId);

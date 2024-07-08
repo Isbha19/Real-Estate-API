@@ -9,8 +9,9 @@ namespace RealEstate.Domain.Entities.Property
 {
     [Table("Facilities")]
 
-    public class Facility:baseEntity
+    public class Facility
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public ICollection<PropertyNearByFacilities> PropertyNearByFacilities { get; set; }
     }

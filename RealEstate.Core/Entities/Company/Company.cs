@@ -1,8 +1,9 @@
 ﻿
 
-using RealEstate.Domain.Entities.Property;
 
-namespace RealEstate.Domain.Entities.Company
+using RealEstate.Domain.Entities.AgentEntity;
+
+namespace RealEstate.Domain.Entities.CompanyEntity
 {
     public class Company
     {
@@ -36,11 +37,14 @@ namespace RealEstate.Domain.Entities.Company
         public string ReraCertificateCopy { get; set; }
         public string TenancyContract { get; set; }
         public CompanyFile CompanyLogo { get; set; }
+        public ICollection<Agent> Agents { get; set; }
 
         public string BusinessDescription { get; set; }
         public int NumberOfEmployees { get; set; }
+        public Subscription Subscription { get; set; }
 
-       
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     }
     public enum VerificationStatus
     {

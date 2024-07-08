@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RealEstate.Application.Contracts;
 using RealEstate.Application.Contracts.propery;
+using RealEstate.Application.Helpers;
 using RealEstate.Application.Services;
 using RealEstate.Domain.Entities;
 using RealEstate.Infrastructure.Data;
@@ -59,15 +60,24 @@ namespace RealEstate.Infrastructure.Dependency_Injection
 
             services.AddScoped<IProperty, PropertyRepo>();
             services.AddScoped<IPropertyPhoto, PropertyPhotoRepo>();
+            services.AddScoped<INotification, NotificationRepo>();
+            services.AddScoped<ICompanyService, companyService>();
+            services.AddScoped<IAgent, AgentRepo>();
+
+
+
             services.AddHttpContextAccessor();
-
-
+        
             //Services
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<FileService>();
             services.AddScoped<StripeService>();
             services.AddScoped<StripeWebHookHandler>();
             services.AddScoped<IContextSeedService, ContextSeedService>();
+            services.AddScoped<NotificationService>();
+            services.AddScoped<GetUserHelper>();
+
+
             //to respond with an Array containing error messages when the model state is invalid
             services.Configure<ApiBehaviorOptions>(options =>
             {

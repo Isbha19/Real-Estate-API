@@ -9,8 +9,9 @@ namespace RealEstate.Domain.Entities.Property
 {
     [Table("Amenities")]
 
-    public class Amenity:baseEntity
+    public class Amenity
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public ICollection<PropertyAmenties> PropertyAmenities { get; set; }
     }

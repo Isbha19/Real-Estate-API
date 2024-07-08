@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace RealEstate.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -139,6 +141,19 @@ namespace RealEstate.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Plan",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Plan", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PropertyTypes",
                 columns: table => new
                 {
@@ -257,6 +272,29 @@ namespace RealEstate.Infrastructure.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsOpened = table.Column<bool>(type: "bit", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notifications_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -386,6 +424,37 @@ namespace RealEstate.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Subscription",
+                columns: table => new
+                {
+                    SubscriptionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StripeCustomerId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StripeSubscriptionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubscriptionStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubscriptionStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SubscriptionEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PlanId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CompanyId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subscription", x => x.SubscriptionId);
+                    table.ForeignKey(
+                        name: "FK_Subscription_Plan_PlanId",
+                        column: x => x.PlanId,
+                        principalTable: "Plan",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Subscription_companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Images",
                 columns: table => new
                 {
@@ -465,6 +534,99 @@ namespace RealEstate.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Amenities",
+                columns: new[] { "Id", "LastUpdatedBy", "LastUpdatedOn", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4501), "Central A/C" },
+                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4518), "Balcony" },
+                    { 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4520), "Shared Spa" },
+                    { 4, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4521), "Concierge Service" },
+                    { 5, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4521), "View of Water" },
+                    { 6, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4522), "Pets Allowed" },
+                    { 7, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4523), "Private Garden" },
+                    { 8, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4524), "Private Gym" },
+                    { 9, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4525), "Built in Wardrobes" },
+                    { 10, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4526), "Built in Kitchen Appliances" },
+                    { 11, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4526), "Children's Play Area" },
+                    { 12, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4527), "Maids Room" },
+                    { 13, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4528), "Shared Pool" },
+                    { 14, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4529), "Shared Gym" },
+                    { 15, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4529), "Covered Parking" },
+                    { 16, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4530), "View of Landmark" },
+                    { 17, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4531), "Study" },
+                    { 18, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4532), "Private Pool" },
+                    { 19, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4534), "Private Jacuzzi" },
+                    { 20, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4535), "Walk-in Closet" },
+                    { 21, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4536), "Maid Service" },
+                    { 22, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4537), "Children's Pool" },
+                    { 23, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4537), "Barbecue Area" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Facilities",
+                columns: new[] { "Id", "LastUpdatedBy", "LastUpdatedOn", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4765), "School" },
+                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4768), "Hospital" },
+                    { 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4769), "Public Transport" },
+                    { 4, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4770), "Shopping Mall" },
+                    { 5, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4771), "Park" },
+                    { 6, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4771), "Metro" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "FurnishingTypes",
+                columns: new[] { "Id", "LastUpdatedBy", "LastUpdatedOn", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4797), "Furnished" },
+                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4800), "Unfurnished" },
+                    { 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4800), "Partly Furnished" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ListingTypes",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Rent" },
+                    { 2, "Buy" },
+                    { 3, "Commercial" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Plan",
+                columns: new[] { "Id", "Name", "Price" },
+                values: new object[,]
+                {
+                    { "p1", "Free Trial", 0 },
+                    { "price_1PZ4m0GFthNCZxNOoti2pHeh", "Basic", 350 },
+                    { "price_1PZ4mUGFthNCZxNOwjVLIVd6", "Premium", 700 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "businessActivityTypes",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Real Estate Brokerage" },
+                    { 2, "Property Management" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "companyStructures",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Sole Proprietorship" },
+                    { 2, "Limited Liability Company" },
+                    { 3, "Civil Company" },
+                    { 4, "Free Zone Establishment)" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -531,6 +693,11 @@ namespace RealEstate.Infrastructure.Migrations
                 column: "PropertyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Properties_FurnishingTypeId",
                 table: "Properties",
                 column: "FurnishingTypeId");
@@ -569,6 +736,17 @@ namespace RealEstate.Infrastructure.Migrations
                 name: "IX_PropertyNearByFacilities_PropertyId",
                 table: "PropertyNearByFacilities",
                 column: "PropertyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscription_CompanyId",
+                table: "Subscription",
+                column: "CompanyId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscription_PlanId",
+                table: "Subscription",
+                column: "PlanId");
         }
 
         /// <inheritdoc />
@@ -596,16 +774,19 @@ namespace RealEstate.Infrastructure.Migrations
                 name: "Images");
 
             migrationBuilder.DropTable(
+                name: "Notifications");
+
+            migrationBuilder.DropTable(
                 name: "PropertyAmenties");
 
             migrationBuilder.DropTable(
                 name: "PropertyNearByFacilities");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "Subscription");
 
             migrationBuilder.DropTable(
-                name: "companies");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Amenities");
@@ -617,13 +798,10 @@ namespace RealEstate.Infrastructure.Migrations
                 name: "Properties");
 
             migrationBuilder.DropTable(
-                name: "businessActivityTypes");
+                name: "Plan");
 
             migrationBuilder.DropTable(
-                name: "companyStructures");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "companies");
 
             migrationBuilder.DropTable(
                 name: "FurnishingTypes");
@@ -633,6 +811,15 @@ namespace RealEstate.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "PropertyTypes");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "businessActivityTypes");
+
+            migrationBuilder.DropTable(
+                name: "companyStructures");
         }
     }
 }

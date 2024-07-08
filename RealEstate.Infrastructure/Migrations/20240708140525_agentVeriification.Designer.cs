@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstate.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240708140525_agentVeriification")]
+    partial class agentVeriification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,9 +172,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("LanguagesKnown")
                         .HasColumnType("nvarchar(max)");
 
@@ -290,9 +290,6 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.Property<int>("CompanyStructureId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("EmailAddress")
                         .HasColumnType("nvarchar(max)");
@@ -669,6 +666,12 @@ namespace RealEstate.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("LastUpdatedBy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -680,31 +683,43 @@ namespace RealEstate.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 8, 18, 5, 24, 998, DateTimeKind.Local).AddTicks(5400),
                             Name = "School"
                         },
                         new
                         {
                             Id = 2,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 8, 18, 5, 24, 998, DateTimeKind.Local).AddTicks(5418),
                             Name = "Hospital"
                         },
                         new
                         {
                             Id = 3,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 8, 18, 5, 24, 998, DateTimeKind.Local).AddTicks(5419),
                             Name = "Public Transport"
                         },
                         new
                         {
                             Id = 4,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 8, 18, 5, 24, 998, DateTimeKind.Local).AddTicks(5420),
                             Name = "Shopping Mall"
                         },
                         new
                         {
                             Id = 5,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 8, 18, 5, 24, 998, DateTimeKind.Local).AddTicks(5421),
                             Name = "Park"
                         },
                         new
                         {
                             Id = 6,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 8, 18, 5, 24, 998, DateTimeKind.Local).AddTicks(5422),
                             Name = "Metro"
                         });
                 });
@@ -716,6 +731,12 @@ namespace RealEstate.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("LastUpdatedBy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -729,16 +750,22 @@ namespace RealEstate.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 8, 18, 5, 24, 998, DateTimeKind.Local).AddTicks(5452),
                             Name = "Furnished"
                         },
                         new
                         {
                             Id = 2,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 8, 18, 5, 24, 998, DateTimeKind.Local).AddTicks(5453),
                             Name = "Unfurnished"
                         },
                         new
                         {
                             Id = 3,
+                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedOn = new DateTime(2024, 7, 8, 18, 5, 24, 998, DateTimeKind.Local).AddTicks(5454),
                             Name = "Partly Furnished"
                         });
                 });

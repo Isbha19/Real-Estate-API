@@ -2,6 +2,7 @@ using RealEstate.Infrastructure.Dependency_Injection;
 using RealEstate.Application.Services;
 using RealEstate.API.ExceptionHandling;
 using Stripe;
+using RealEstate.Infrastructure.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -32,6 +33,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 #region contextSeed
 using var scope = app.Services.CreateScope();
 try
