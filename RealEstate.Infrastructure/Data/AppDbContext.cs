@@ -116,7 +116,7 @@ namespace RealEstate.Infrastructure.Data
 
             );
             modelBuilder.Entity<Plan>().HasData(
-                new Plan { Id = "p1", Name = "Free Trial", Price =0 },
+                new Plan { Id = "price_1PaegrGFthNCZxNO1kdaJ4ct", Name = "Starter", Price = 100 },
                 new Plan { Id = "price_1PZ4m0GFthNCZxNOoti2pHeh", Name = "Basic" ,Price=350},
                 new Plan { Id = "price_1PZ4mUGFthNCZxNOwjVLIVd6", Name = "Premium",Price=700 }
 

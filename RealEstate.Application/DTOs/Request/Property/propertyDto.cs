@@ -47,14 +47,13 @@ namespace RealEstate.Application.DTOs.Request.Property
         public int Size { get; set; }
         public int FurnishingTypeId { get; set; }
         public List<IFormFile> Images { get; set; }
-        //public ICollection<PropertyAmenties> PropertyAmenties { get; set; }
-        //public ICollection<PropertyNearByFacilities> PropertyNearByFacilities { get; set; }
-        //public string VirtualTourUrl { get; set; }
-        //public string VideoTourUrl { get; set; }
+        public string PropertyAmenties { get; set; }
+        public string PropertyNearByFacilities { get; set; }
+        public string VirtualTourUrl { get; set; }
+        public string VideoTourUrl { get; set; }
 
 
-        //public string AgentName { get; set; }
-        //public DateOnly AvailabilityDate { get; set; }
+       public DateOnly AvailabilityDate { get; set; }
 
     }
 }

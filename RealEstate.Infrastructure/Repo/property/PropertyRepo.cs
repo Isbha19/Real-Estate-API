@@ -20,6 +20,7 @@ using CloudinaryDotNet;
 using System.Management;
 using Stripe;
 using FileService = RealEstate.Infrastructure.Services.FileService;
+using Newtonsoft.Json;
 
 namespace RealEstate.Infrastructure.Repo.property
 {
@@ -46,17 +47,18 @@ namespace RealEstate.Infrastructure.Repo.property
               .ThenInclude(pa => pa.Amenity)
           .Include(p => p.PropertyNearByFacilities)
               .ThenInclude(nf => nf.Facility)
-          //.Include(p => p.agent)
-          //    .ThenInclude(agent => agent.ImageUrl)
-          //.Include(p => p.agent)
-          //    .ThenInclude(agent => agent.company)
-          //        .ThenInclude(company => company.CompanyLogo)
+          .Include(p => p.Agent)
+              .ThenInclude(agent => agent.ImageUrl)
+              .Include(p => p.Agent)
+              .ThenInclude(agent => agent.user)
+          .Include(p => p.Agent)
+              .ThenInclude(agent => agent.company)
+                  .ThenInclude(company => company.CompanyLogo)
           .FirstOrDefaultAsync(p => p.Id == id);
 
 
             if (property == null)
                 return null; // Or handle not found scenario as needed
-
 
 
 
@@ -82,14 +84,14 @@ namespace RealEstate.Infrastructure.Repo.property
                 AvailableFrom = property.AvailabilityDate,
                 Amenities = property.PropertyAmenties.Select(pa => pa.Amenity.Name).ToList(),
                 NearByFacilities = property.PropertyNearByFacilities.Select(nf => nf.Facility.Name).ToList(),
-                //AgentName = property.agent.user.FirstName + " " + property.agent.user.LastName,
-                //AgentImage = property.agent.ImageUrl?.ImageUrl, // Assuming ImageUrl is a string property in AgentImage entity
-                //AgentPhoneNumber = property.agent.phoneNumber,
-                //AgentEmail = property.agent.user.Email,
-                //AgentWhatsapp = property.agent.whatsAppNumber,
-                //CompanyName = property.agent.company.CompanyName,
-                //CompanyLogo = property.agent.company.CompanyLogo?.ImageUrl, // Assuming CompanyLogo is a string property in CompanyFile entity
-                //AgentPropertyCounts = property.agent.company.Agents.Count.ToString()
+                AgentName = property.Agent.user.FirstName + " " + property.Agent.user.LastName,
+                AgentImage = property.Agent.ImageUrl?.ImageUrl, // Assuming ImageUrl is a string property in AgentImage entity
+                AgentPhoneNumber = property.Agent.phoneNumber,
+                AgentEmail = property.Agent.user.Email,
+                AgentWhatsapp = property.Agent.whatsAppNumber,
+                CompanyName = property.Agent.company.CompanyName,
+                CompanyLogo = property.Agent.company.CompanyLogo?.ImageUrl, // Assuming CompanyLogo is a string property in CompanyFile entity
+                AgentPropertyCounts = property.Agent.company.Agents.Count.ToString()
             };
         }
         public async Task<Property> GetPropertyAsync(int id)
@@ -156,8 +158,35 @@ namespace RealEstate.Infrastructure.Repo.property
                 FurnishingTypeId = propertyDto.FurnishingTypeId,
                 AgentId = agent.Id, // Assuming AgentId is set correctly
                 PostedOn = DateTime.Now,
-                Images = new List<Image>()
+                Images = new List<Image>(),
+                PropertyAmenties = new List<PropertyAmenties>(), // Initialize Amenities collection
+                PropertyNearByFacilities = new List<PropertyNearByFacilities>(),
+                AvailabilityDate=propertyDto.AvailabilityDate,
+                VirtualTourUrl=propertyDto.VirtualTourUrl,
             };
+            var propertyAmenties = JsonConvert.DeserializeObject<List<string>>(propertyDto.PropertyAmenties);
+
+            foreach (var amenityName in propertyAmenties)
+            {
+                var amenity = await context.Amenities.FirstOrDefaultAsync(a => a.Name == amenityName);
+                if (amenity != null)
+                {
+                    newProperty.PropertyAmenties.Add(new PropertyAmenties { AmenityId = amenity.Id });
+                }
+                // Handle case where amenity does not exist or other error handling
+            }
+
+            var propertyNearByFacilities = JsonConvert.DeserializeObject<List<string>>(propertyDto.PropertyNearByFacilities);
+
+            foreach (var facilityName in propertyNearByFacilities)
+            {
+                var facility = await context.Facilities.FirstOrDefaultAsync(f => f.Name == facilityName);
+                if (facility != null)
+                {
+                    newProperty.PropertyNearByFacilities.Add(new PropertyNearByFacilities { FacilityId = facility.Id });
+                }
+                // Handle case where facility does not exist or other error handling
+            }
 
             try
             {
