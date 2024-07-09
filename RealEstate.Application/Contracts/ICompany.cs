@@ -3,7 +3,6 @@ using RealEstate.Application.DTOs.Request.Company;
 using RealEstate.Application.DTOs.Response;
 using RealEstate.Application.DTOs.Response.Company;
 using RealEstate.Domain.Entities.CompanyEntity;
-using RealEstate.Domain.Entities.Property;
 using System;
 using System.Collections.Generic;
 using System.Linq;

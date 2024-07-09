@@ -11,8 +11,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RealEstate.Domain.Entities.Property;
-using RealEstate.Application.Contracts.propery;
+using RealEstate.Application.DTOs.Response.Property;
+using RealEstate.Domain.Entities.PropertyEntity;
+using RealEstate.Application.Contracts.property;
 
 namespace RealEstate.Infrastructure.Repo.property
 {
@@ -121,7 +122,7 @@ namespace RealEstate.Infrastructure.Repo.property
             try
             {
                 // Adding and saving the entity
-                await context.Properties.AddAsync(newProperty);
+                //await context.Properties.AddAsync(newProperty);
                 await context.SaveChangesAsync();
                 return new GeneralResponse(true, "Property Added Successfully");
             }

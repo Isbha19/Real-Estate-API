@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RealEstate.Domain.Entities;
 using RealEstate.Domain.Entities.AgentEntity;
 using RealEstate.Domain.Entities.CompanyEntity;
-using RealEstate.Domain.Entities.Property;
+using RealEstate.Domain.Entities.PropertyEntity;
 
 namespace RealEstate.Infrastructure.Data
 {

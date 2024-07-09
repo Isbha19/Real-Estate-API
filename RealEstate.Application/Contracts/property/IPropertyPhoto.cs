@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RealEstate.Application.Contracts.propery
+namespace RealEstate.Application.Contracts.property
 {
 
     public interface IPropertyPhoto

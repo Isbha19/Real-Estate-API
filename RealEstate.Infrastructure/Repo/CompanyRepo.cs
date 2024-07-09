@@ -10,7 +10,6 @@ using RealEstate.Application.Extensions;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using RealEstate.Infrastructure.Services;
-using RealEstate.Domain.Entities.Property;
 using Stripe.BillingPortal;
 using RealEstate.Application.DTOs.Response.Company;
 using System.ComponentModel.Design;

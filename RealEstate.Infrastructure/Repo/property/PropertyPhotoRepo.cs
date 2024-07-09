@@ -3,9 +3,9 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using RealEstate.Application.Contracts.propery;
+using RealEstate.Application.Contracts.property;
 using RealEstate.Application.DTOs.Response;
-using RealEstate.Domain.Entities.Property;
+using RealEstate.Domain.Entities.PropertyEntity;
 using RealEstate.Infrastructure.Data;
 using RealEstate.Infrastructure.Services;
 

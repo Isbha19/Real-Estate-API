@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RealEstate.Application.Contracts;
-using RealEstate.Application.Contracts.propery;
+using RealEstate.Application.Contracts.property;
 using RealEstate.Application.Helpers;
 using RealEstate.Application.Services;
 using RealEstate.Domain.Entities;

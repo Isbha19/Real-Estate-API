@@ -1,5 +1,4 @@
-﻿using RealEstate.Domain.Entities.Property;
-using RealEstate.Domain.Entities;
+﻿using RealEstate.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;

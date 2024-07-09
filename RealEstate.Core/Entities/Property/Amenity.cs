@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RealEstate.Domain.Entities.Property
+namespace RealEstate.Domain.Entities.PropertyEntity
 {
     [Table("Amenities")]
 

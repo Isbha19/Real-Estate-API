@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RealEstate.Application.Contracts.propery;
-using RealEstate.Application.DTOs.Account;
+using RealEstate.Application.Contracts.property;
 using RealEstate.Application.DTOs.Request.Property;
 
 namespace RealEstate.API.Controllers

@@ -1,10 +1,11 @@
 ﻿using RealEstate.Application.DTOs.Request.Property;
 
 using RealEstate.Application.DTOs.Response;
-using RealEstate.Domain.Entities.Property;
+using RealEstate.Application.DTOs.Response.Property;
+using RealEstate.Domain.Entities.PropertyEntity;
 
 
-namespace RealEstate.Application.Contracts.propery
+namespace RealEstate.Application.Contracts.property
 {
     public interface IProperty
     {
