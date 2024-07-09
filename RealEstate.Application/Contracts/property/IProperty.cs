@@ -12,6 +12,10 @@ namespace RealEstate.Application.Contracts.property
         Task<PropertyDetailDto> GetPropertyById(int propertyId);
 
         Task<IEnumerable<PropertyListDto>> GetPropertiesByListingTypeAsync(string listingType);
+        Task<IEnumerable<PropertyDetailForDashboardDto>> GetCompanyPropertiesAsync();
+        Task<IEnumerable<PropertyDetailForDashboardDto>> GetCompanyUnVerifiedPropertiesAsync();
+        Task<GeneralResponse> VerifyProperty(int propertyId);
+
         Task<Property> GetPropertyAsync(int propertyId);
 
         Task<GeneralResponse> AddProperty(propertyDto propertyDto);

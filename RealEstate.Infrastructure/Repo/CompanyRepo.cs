@@ -15,6 +15,8 @@ using RealEstate.Application.DTOs.Response.Company;
 using System.ComponentModel.Design;
 using RealEstate.Application.Services;
 using RealEstate.Domain.Entities.CompanyEntity;
+using RealEstate.Application.Helpers;
+using RealEstate.Application.DTOs.Response.Property;
 
 namespace RealEstate.Infrastructure.Repo
 {
@@ -25,18 +27,20 @@ namespace RealEstate.Infrastructure.Repo
         private readonly FileService fileService;
         private readonly NotificationService _notificationService;
         private readonly ICompanyService companyService;
+        private readonly GetUserHelper getUserHelper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CompanyRepo(UserManager<User> userManager, AppDbContext context, IHttpContextAccessor httpContextAccess,
             FileService fileService,
             NotificationService notificationService,
-            ICompanyService companyService)
+            ICompanyService companyService,GetUserHelper getUserHelper)
         {
             this.userManager = userManager;
             this.context = context;
             this.fileService = fileService;
             this._notificationService = notificationService;
             this.companyService = companyService;
+            this.getUserHelper = getUserHelper;
             this._httpContextAccessor = httpContextAccess;
 
         }
@@ -115,12 +119,34 @@ namespace RealEstate.Infrastructure.Repo
                 return new CompanyRegisterResponse(false, "An error occurred while saving the company details.");
             }
         }
+        public async Task<SubscriptionPackageDto> GetSubscriptionPackage()
+        {
+            var currentUser = await getUserHelper.GetUser();
+           
+
+            var company = await context.companies
+                .Include(c => c.Subscription)
+                .FirstOrDefaultAsync(c => c.RepresentativeId == currentUser.Id);
+
+
+            var plan = await context.Plan.FindAsync(company.Subscription.PlanId);
+           
+            var subscriptionPackageDto = new SubscriptionPackageDto
+            {
+                PlanName = plan.Name,
+                SubscriptionStartDate = (DateTime)company.Subscription.SubscriptionStartDate,
+                SubscriptionEndDate = (DateTime)company.Subscription.SubscriptionEndDate,
+                IsActive = company.Subscription.IsActive
+            };
+
+            return subscriptionPackageDto;
+        }
         public async Task<string> CreateCustomerPortalSession(string customerId)
         {
             var options = new SessionCreateOptions
             {
                 Customer = customerId, 
-                ReturnUrl = "https://localhost:4200/"
+                ReturnUrl = "https://localhost:4200/company-dashboard"
             };
 
             var service = new SessionService();
@@ -130,6 +156,31 @@ namespace RealEstate.Infrastructure.Repo
             // Return the URL to the frontend
             return session.Url;
         }
+
+        public async Task<CompanyStripeDto> GetCurrentUserStripeCustomerIdAsync()
+        {
+            var currentUser = await getUserHelper.GetUser();
+            if (currentUser == null)
+            {
+                throw new ApplicationException("Current user not found.");
+            }
+
+            var company = await context.companies
+                .Include(c => c.Subscription)
+                .FirstOrDefaultAsync(c => c.RepresentativeId == currentUser.Id);
+
+            if (company?.Subscription != null)
+            {
+                return new CompanyStripeDto
+                {
+                    CompanyName = company.CompanyName, // Assuming there's a property like this in your Company entity
+                    StripeCustomerId = company.Subscription.StripeCustomerId
+                };
+            }
+
+            return null; // Handle scenario where company or subscription is not found
+        }
+
         public async Task<IEnumerable<CompanyDetailsDto>> GetVerifiedCompaniesDetailsAsync()
         {
             var verifiedCompanies = await context.companies

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.property;
 using RealEstate.Application.DTOs.Request.Property;
+using RealEstate.Domain.Entities.CompanyEntity;
 
 namespace RealEstate.API.Controllers
 {
@@ -28,6 +29,28 @@ namespace RealEstate.API.Controllers
         public async Task<IActionResult> GetPropertyById(int propertyId)
         {
             var result = await property.GetPropertyById(propertyId);
+            return Ok(result);
+        }
+        [HttpPost("verify/{propertyId}")]
+        [Authorize]
+
+        public async Task<IActionResult> VerifyProperty(int propertyId)
+        {
+            var result = await property.VerifyProperty(propertyId);
+            return Ok(result);
+
+        }
+
+        [HttpGet("get-company-properties")]
+        public async Task<IActionResult> GetCompanyProperties()
+        {
+            var result = await property.GetCompanyPropertiesAsync();
+            return Ok(result);
+        }
+        [HttpGet("get-unverified-company-properties")]
+        public async Task<IActionResult> GetUnverifiedCompanyProperties()
+        {
+            var result = await property.GetCompanyUnVerifiedPropertiesAsync();
             return Ok(result);
         }
 

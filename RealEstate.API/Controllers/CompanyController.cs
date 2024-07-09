@@ -127,6 +127,23 @@ namespace RealEstate.API.Controllers
             var result = await company.GetCompanyDetailByUser();
             return Ok(result);
         }
+        [HttpGet("get-stripe-customerId")]
+        [Authorize]
+
+        public async Task<IActionResult> GetStripeCustomerId()
+        {
+            var result = await company.GetCurrentUserStripeCustomerIdAsync();
+            return Ok(result);
+        }
+        [HttpGet("get-subscription-package")]
+        [Authorize]
+
+        public async Task<IActionResult> GetSubscriptionPackage()
+        {
+            var result = await company.GetSubscriptionPackage();
+            return Ok(result);
+        }
+
 
         [HttpPost("Webhook")]
         public async Task<IActionResult> WebhookHandler()
@@ -148,12 +165,12 @@ namespace RealEstate.API.Controllers
             }
 
         }
-        [HttpPost("create-customer-portal-session")]
+        [HttpPost("create-customer-portal-session/{customerId}")]
         [Authorize]
 
-        public async Task<IActionResult> CreateCustomerPortalSession([FromBody] CustomerPortalRequest request)
+        public async Task<IActionResult> CreateCustomerPortalSession(string customerId)
         {
-            var url = await company.CreateCustomerPortalSession(request.CustomerId);
+            var url = await company.CreateCustomerPortalSession(customerId);
             return Ok(new { url = url });
         }
 

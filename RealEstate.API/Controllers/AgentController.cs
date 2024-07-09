@@ -39,6 +39,14 @@ namespace RealEstate.API.Controllers
 
             return Ok(result);
         }
+        [HttpGet("get-verified-agents-details")]
+
+        public async Task<IActionResult> GetVerifiedAgentDetails()
+        {
+            var result = await agent.GetVerifiedAgentDetailsAsync();
+
+            return Ok(result);
+        }
         [HttpPost("verify/{agentId}")]
         [Authorize]
 

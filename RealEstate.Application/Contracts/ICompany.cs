@@ -6,6 +6,7 @@ using RealEstate.Domain.Entities.CompanyEntity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +18,9 @@ namespace RealEstate.Application.Contracts
         Task<CompanyRegisterResponse> RegisterCompanyAsync(CompanyDto companyDto);
         Task<IEnumerable<CompanyStructure>> GetCompanyStructuresAsync();
         Task<IEnumerable<BusinessActivityType>> GetBusinessActivityTypesAsync();
+        Task<CompanyStripeDto> GetCurrentUserStripeCustomerIdAsync();
+        Task<SubscriptionPackageDto> GetSubscriptionPackage();
+
         Task<GeneralResponse> AddCompanyLogoAsync(IFormFile logo, int companyId);
         Task<GeneralResponse> VerifyCompany(int companyId);
         Task<GeneralResponse> ValidateUserForPayment();

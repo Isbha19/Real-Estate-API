@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstate.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240709182522_propertyVerify")]
+    partial class propertyVerify
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -429,9 +432,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumberOfListings")
-                        .HasColumnType("int");
-
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
@@ -444,21 +444,18 @@ namespace RealEstate.Infrastructure.Migrations
                         {
                             Id = "price_1PaegrGFthNCZxNO1kdaJ4ct",
                             Name = "Starter",
-                            NumberOfListings = 5,
                             Price = 100
                         },
                         new
                         {
                             Id = "price_1PZ4m0GFthNCZxNOoti2pHeh",
                             Name = "Basic",
-                            NumberOfListings = 20,
                             Price = 350
                         },
                         new
                         {
                             Id = "price_1PZ4mUGFthNCZxNOwjVLIVd6",
                             Name = "Premium",
-                            NumberOfListings = 50,
                             Price = 700
                         });
                 });
@@ -991,28 +988,28 @@ namespace RealEstate.Infrastructure.Migrations
                         {
                             Id = 1,
                             LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 10, 1, 8, 20, 965, DateTimeKind.Local).AddTicks(9870),
+                            LastUpdatedOn = new DateTime(2024, 7, 9, 22, 25, 22, 118, DateTimeKind.Local).AddTicks(7873),
                             Name = "Apartment"
                         },
                         new
                         {
                             Id = 2,
                             LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 10, 1, 8, 20, 965, DateTimeKind.Local).AddTicks(9886),
+                            LastUpdatedOn = new DateTime(2024, 7, 9, 22, 25, 22, 118, DateTimeKind.Local).AddTicks(7887),
                             Name = "Villa"
                         },
                         new
                         {
                             Id = 3,
                             LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 10, 1, 8, 20, 965, DateTimeKind.Local).AddTicks(9887),
+                            LastUpdatedOn = new DateTime(2024, 7, 9, 22, 25, 22, 118, DateTimeKind.Local).AddTicks(7888),
                             Name = "Townhouse"
                         },
                         new
                         {
                             Id = 4,
                             LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 10, 1, 8, 20, 965, DateTimeKind.Local).AddTicks(9888),
+                            LastUpdatedOn = new DateTime(2024, 7, 9, 22, 25, 22, 118, DateTimeKind.Local).AddTicks(7889),
                             Name = "Penthouse"
                         });
                 });

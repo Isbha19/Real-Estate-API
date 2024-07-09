@@ -1,26 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using RealEstate.Application.Contracts.property;
 using RealEstate.Application.DTOs.Request.Property;
 using RealEstate.Application.DTOs.Response;
+using RealEstate.Application.DTOs.Response.Property;
+using RealEstate.Application.Helpers;
+using RealEstate.Domain.Entities.PropertyEntity;
 using RealEstate.Infrastructure.Data;
 using RealEstate.Infrastructure.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RealEstate.Application.DTOs.Response.Property;
-using RealEstate.Domain.Entities.PropertyEntity;
-using RealEstate.Application.Contracts.property;
-using RealEstate.Application.Helpers;
-using CloudinaryDotNet.Actions;
-using CloudinaryDotNet;
-using System.Management;
-using Stripe;
 using FileService = RealEstate.Infrastructure.Services.FileService;
-using Newtonsoft.Json;
 
 namespace RealEstate.Infrastructure.Repo.property
 {
@@ -29,12 +17,15 @@ namespace RealEstate.Infrastructure.Repo.property
         private readonly AppDbContext context;
         private readonly GetUserHelper getuserHelper;
         private readonly Services.FileService fileService;
+        private readonly NotificationService notificationService;
 
-        public PropertyRepo(AppDbContext context,GetUserHelper getuserHelper,FileService fileService)
+        public PropertyRepo(AppDbContext context, GetUserHelper getuserHelper, FileService fileService,
+            NotificationService notificationService)
         {
             this.context = context;
             this.getuserHelper = getuserHelper;
             this.fileService = fileService;
+            this.notificationService = notificationService;
         }
         public async Task<PropertyDetailDto> GetPropertyById(int id)
         {
@@ -60,6 +51,10 @@ namespace RealEstate.Infrastructure.Repo.property
             if (property == null)
                 return null; // Or handle not found scenario as needed
 
+            if (property != null)
+            {
+                await IncrementPropertyViewsAsync(id);
+            }
 
 
             return new PropertyDetailDto
@@ -94,6 +89,17 @@ namespace RealEstate.Infrastructure.Repo.property
                 AgentPropertyCounts = property.Agent.company.Agents.Count.ToString()
             };
         }
+        public async Task IncrementPropertyViewsAsync(int propertyId)
+        {
+            var property = await context.Properties.FindAsync(propertyId);
+
+            if (property != null)
+            {
+                property.PropertyViews++;
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task<Property> GetPropertyAsync(int id)
         {
             var property = await context.Properties
@@ -112,9 +118,10 @@ namespace RealEstate.Infrastructure.Repo.property
               .Include(p => p.Images)
 
        .ToListAsync();
+          
 
             return properties
-                .Where(p => p.ListingType.Name.Equals(listingType, StringComparison.OrdinalIgnoreCase))
+                .Where(p => p.ListingType.Name.Equals(listingType, StringComparison.OrdinalIgnoreCase)&& p.IsCompanyAdminVerified)
                 .Select(p => new PropertyListDto
                 {
                     Id = p.Id,
@@ -161,8 +168,8 @@ namespace RealEstate.Infrastructure.Repo.property
                 Images = new List<Image>(),
                 PropertyAmenties = new List<PropertyAmenties>(), // Initialize Amenities collection
                 PropertyNearByFacilities = new List<PropertyNearByFacilities>(),
-                AvailabilityDate=propertyDto.AvailabilityDate,
-                VirtualTourUrl=propertyDto.VirtualTourUrl,
+                AvailabilityDate = propertyDto.AvailabilityDate,
+                VirtualTourUrl = propertyDto.VirtualTourUrl,
             };
             var propertyAmenties = JsonConvert.DeserializeObject<List<string>>(propertyDto.PropertyAmenties);
 
@@ -214,7 +221,7 @@ namespace RealEstate.Infrastructure.Repo.property
                     };
 
                     // Associate Image with Property
-                    newImage.PropertId = newProperty.Id; 
+                    newImage.PropertId = newProperty.Id;
                     newImage.Property = newProperty;
 
                     newProperty.Images.Add(newImage);
@@ -222,7 +229,7 @@ namespace RealEstate.Infrastructure.Repo.property
 
                 // Save changes to include Images
                 await context.SaveChangesAsync();
-                
+
                 return new GeneralResponse(true, "Property Added Successfully");
             }
             catch (DbUpdateException ex)
@@ -237,7 +244,150 @@ namespace RealEstate.Infrastructure.Repo.property
             }
         }
 
+    
+        //verified properties
+        public async Task<IEnumerable<PropertyDetailForDashboardDto>> GetCompanyPropertiesAsync()
+        {
+            var user = await getuserHelper.GetUser();
+            var representativeId = user.Id;
 
+            if (string.IsNullOrEmpty(representativeId))
+            {
+                return Enumerable.Empty<PropertyDetailForDashboardDto>(); // Handle no representative ID scenario
+            }
+
+            // Step 2: Find the company associated with the representativeId
+            var company = await context.companies
+          .Include(c => c.Agents)
+              .ThenInclude(a => a.Properties)
+                  .ThenInclude(p => p.PropertyType)
+          .Include(c => c.Agents)
+              .ThenInclude(a => a.Properties)
+                  .ThenInclude(p => p.ListingType)
+          .Include(c => c.Agents)
+              .ThenInclude(a => a.Properties)
+                  .ThenInclude(p => p.Images)
+          .Include(c => c.Agents)
+              .ThenInclude(a => a.user) // Assuming Agent has a navigation property 'User'
+          .FirstOrDefaultAsync(c => c.RepresentativeId == representativeId);
+
+            if (company == null)
+            {
+                return Enumerable.Empty<PropertyDetailForDashboardDto>(); // Handle company not found scenario
+            }
+
+            //    // Step 3: Retrieve all properties associated with the agents of the found company
+            var properties = company.Agents
+    .Where(a => a.isCompanyAdminVerified)
+    .SelectMany(a => a.Properties)
+    .Where(p => p.IsCompanyAdminVerified)
+    .ToList();
+
+
+            // Step 4: Map properties to PropertyListDto
+            var propertyList = properties.Select(p => new PropertyDetailForDashboardDto
+            {
+                PropertyId = p.Id,
+                PropertyTitle = p.PropertyTitle,
+                PropertyType = p.PropertyType.Name,
+                ListingType = p.ListingType.Name,
+                Location = p.Location,
+                Size = p.Size,
+                Price = p.Price,
+                Bathrooms = p.Bathrooms,
+                Bedrooms = p.Bedrooms,
+                PostedOn = p.PostedOn,
+                PrimaryImageUrl = p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl,
+                AgentName = p.Agent.user.FirstName + " " + p.Agent.user.LastName, 
+                PropertyViews = p.PropertyViews
+            }).ToList();
+
+            return propertyList;
+        }
+        //unverified properties
+        public async Task<IEnumerable<PropertyDetailForDashboardDto>> GetCompanyUnVerifiedPropertiesAsync()
+        {
+            var user = await getuserHelper.GetUser();
+            var representativeId = user.Id;
+
+            if (string.IsNullOrEmpty(representativeId))
+            {
+                return Enumerable.Empty<PropertyDetailForDashboardDto>(); // Handle no representative ID scenario
+            }
+
+            // Step 2: Find the company associated with the representativeId
+            var company = await context.companies
+          .Include(c => c.Agents)
+              .ThenInclude(a => a.Properties)
+                  .ThenInclude(p => p.PropertyType)
+          .Include(c => c.Agents)
+              .ThenInclude(a => a.Properties)
+                  .ThenInclude(p => p.ListingType)
+          .Include(c => c.Agents)
+              .ThenInclude(a => a.Properties)
+                  .ThenInclude(p => p.Images)
+          .Include(c => c.Agents)
+              .ThenInclude(a => a.user) // Assuming Agent has a navigation property 'User'
+          .FirstOrDefaultAsync(c => c.RepresentativeId == representativeId);
+
+            if (company == null)
+            {
+                return Enumerable.Empty<PropertyDetailForDashboardDto>(); // Handle company not found scenario
+            }
+
+            //    // Step 3: Retrieve all properties associated with the agents of the found company
+            var properties = company.Agents
+   .SelectMany(a => a.Properties)
+   .Where(p => !p.IsCompanyAdminVerified)
+   .ToList();
+
+            // Step 4: Map properties to PropertyListDto
+            var propertyList = properties.Select(p => new PropertyDetailForDashboardDto
+            {
+                PropertyId = p.Id,
+                PropertyTitle = p.PropertyTitle,
+                PropertyType = p.PropertyType.Name,
+                ListingType = p.ListingType.Name,
+                Location = p.Location,
+                Size = p.Size,
+                Price = p.Price,
+                Bathrooms = p.Bathrooms,
+                Bedrooms = p.Bedrooms,
+                PostedOn = p.PostedOn,
+                PrimaryImageUrl = p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl,
+                AgentName = p.Agent.user.FirstName + " " + p.Agent.user.LastName,
+                PropertyViews = p.PropertyViews
+            }).ToList();
+
+            return propertyList;
+        }
+        public async Task<GeneralResponse> VerifyProperty(int propertyId)
+        {
+            var property = await context.Properties
+        .Include(p => p.Agent)
+        .ThenInclude(a => a.user)
+        .FirstOrDefaultAsync(p => p.Id == propertyId);
+            if (property == null)
+            {
+                return new GeneralResponse(false, "property not found");
+            }
+            if (property.IsCompanyAdminVerified)
+            {
+                return new GeneralResponse(false, "property already verified");
+
+            }
+            property.IsCompanyAdminVerified = true;
+            await context.SaveChangesAsync();
+
+            var userId = property.Agent.UserId;
+            var message = "🎉 Congratulations! The property you submitted has been successfully verified by our admin team. To view your listing, please click here. 🏡✅";
+            var url = $"/property-detail/{property.Id}";
+
+            await notificationService.NotifyUserAsync(userId, message, url);
+
+            return new GeneralResponse(true, "company verified");
+
+        }
         public void DeleteProperty(int Id)
         {
             throw new NotImplementedException();

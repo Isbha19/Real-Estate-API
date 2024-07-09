@@ -52,8 +52,10 @@ namespace RealEstate.Domain.Entities.PropertyEntity
 
         public string VirtualTourUrl { get; set; }
         public string VideoTourUrl { get; set; }
-
+        public bool IsCompanyAdminVerified { get; set; }
         public DateTime PostedOn { get; set; } = DateTime.Now;
+        public int PropertyViews { get; set; } = 0;
+
 
         [ForeignKey("Agent")]
         public int AgentId { get; set; }  // Foreign key to Agent entity

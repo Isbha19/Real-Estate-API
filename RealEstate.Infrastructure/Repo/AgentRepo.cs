@@ -128,6 +128,49 @@ namespace RealEstate.Infrastructure.Repo
 
             return new GeneralResponse(true, "Agent verified successfully");
         }
+        public async Task<IEnumerable<AgentDetailDto>> GetVerifiedAgentDetailsAsync()
+        {
+            var user = await getuserHelper.GetUser();
+            if (user == null)
+            {
+                return Enumerable.Empty<AgentDetailDto>();
+            }
+
+            var companyId = await context.companies
+                .Where(c => c.RepresentativeId == user.Id)
+                .Select(c => c.Id)
+                .FirstOrDefaultAsync();
+
+            if (companyId == 0)
+            {
+                return Enumerable.Empty<AgentDetailDto>();
+            }
+
+            var unverifiedAgents = await context.Agents
+                .Where(a => a.isCompanyAdminVerified && a.CompanyId == companyId)
+                .Include(a => a.company)
+                .Include(a => a.user)
+                .Include(a => a.ImageUrl)
+                .ToListAsync();
+
+            var agentList = unverifiedAgents.Select(agent => new AgentDetailDto
+            {
+                AgentId = agent.Id,
+                UserName = agent.user.FirstName,
+                UserEmail = agent.user.Email,
+                phoneNumber = agent.phoneNumber,
+                whatsAppNumber = agent.whatsAppNumber,
+                licenseNumber = agent.licenseNumber,
+                Nationality = agent.Nationality,
+                LanguagesKnown = agent.LanguagesKnown,
+                Specialization = agent.Specialization,
+                ImageUrl = agent.ImageUrl.ImageUrl,
+                About = agent.About,
+                yearsOfExperience = agent.yearsOfExperience
+            }).ToList();
+
+            return agentList;
+        }
         public async Task<IEnumerable<AgentDetailDto>> GetUnVerifiedAgentsDetailsAsync()
         {
             var user = await getuserHelper.GetUser();
