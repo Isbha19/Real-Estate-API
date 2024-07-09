@@ -38,6 +38,10 @@ namespace RealEstate.Infrastructure.Data
        .WithOne(cf => cf.Company)
        .HasForeignKey<CompanyFile>(cf => cf.CompanyId)
        .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Agent)
+                .WithOne(a => a.user)
+                .HasForeignKey<Agent>(a => a.UserId);
             modelBuilder.Entity<Notification>()
            .HasOne(n => n.User)
            .WithMany(u => u.Notifications)
@@ -117,7 +121,14 @@ namespace RealEstate.Infrastructure.Data
                 new Plan { Id = "price_1PZ4mUGFthNCZxNOwjVLIVd6", Name = "Premium",Price=700 }
 
             );
+            modelBuilder.Entity<PropertyType>().HasData(
+             new PropertyType { Id = 1, Name = "Apartment"},
+             new PropertyType { Id = 2, Name = "Villa" },
+             new PropertyType { Id = 3, Name = "Townhouse" },
+            new PropertyType { Id = 4, Name = "Penthouse" }
 
+
+         );
         }
 
 

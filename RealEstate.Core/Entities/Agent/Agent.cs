@@ -1,4 +1,5 @@
 ﻿using RealEstate.Domain.Entities.CompanyEntity;
+using RealEstate.Domain.Entities.PropertyEntity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,6 @@ namespace RealEstate.Domain.Entities.AgentEntity
         public int yearsOfExperience { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-
+        public ICollection<Property> Properties { get; set; }
     }
 }

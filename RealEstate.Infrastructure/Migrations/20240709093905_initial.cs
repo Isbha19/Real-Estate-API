@@ -19,9 +19,7 @@ namespace RealEstate.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastUpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdatedBy = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -103,9 +101,7 @@ namespace RealEstate.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastUpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdatedBy = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -118,9 +114,7 @@ namespace RealEstate.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastUpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdatedBy = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -285,7 +279,7 @@ namespace RealEstate.Infrastructure.Migrations
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsOpened = table.Column<bool>(type: "bit", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -325,7 +319,8 @@ namespace RealEstate.Infrastructure.Migrations
                     ReraCertificateCopy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TenancyContract = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BusinessDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NumberOfEmployees = table.Column<int>(type: "int", nullable: false)
+                    NumberOfEmployees = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -350,54 +345,36 @@ namespace RealEstate.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Properties",
+                name: "Agents",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PropertyTitle = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    PropertyDescription = table.Column<string>(type: "nvarchar(600)", maxLength: 600, nullable: false),
-                    PropertyTypeId = table.Column<int>(type: "int", nullable: false),
-                    ListingTypeId = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<int>(type: "int", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Bedrooms = table.Column<int>(type: "int", nullable: false),
-                    Bathrooms = table.Column<int>(type: "int", nullable: false),
-                    Size = table.Column<int>(type: "int", nullable: false),
-                    FurnishingTypeId = table.Column<int>(type: "int", nullable: false),
-                    VirtualTourUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    VideoTourUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PostedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AgentId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    userId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    AvailabilityDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    LastUpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdatedBy = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    phoneNumber = table.Column<int>(type: "int", nullable: false),
+                    whatsAppNumber = table.Column<int>(type: "int", nullable: false),
+                    licenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    isCompanyAdminVerified = table.Column<bool>(type: "bit", nullable: false),
+                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LanguagesKnown = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Specialization = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: false),
+                    About = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    yearsOfExperience = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Properties", x => x.Id);
+                    table.PrimaryKey("PK_Agents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Properties_AspNetUsers_userId",
-                        column: x => x.userId,
+                        name: "FK_Agents_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Properties_FurnishingTypes_FurnishingTypeId",
-                        column: x => x.FurnishingTypeId,
-                        principalTable: "FurnishingTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Properties_ListingTypes_ListingTypeId",
-                        column: x => x.ListingTypeId,
-                        principalTable: "ListingTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Properties_PropertyTypes_PropertyTypeId",
-                        column: x => x.PropertyTypeId,
-                        principalTable: "PropertyTypes",
+                        name: "FK_Agents_companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "companies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -450,6 +427,80 @@ namespace RealEstate.Infrastructure.Migrations
                         name: "FK_Subscription_companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AgentImage",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AgentId = table.Column<int>(type: "int", nullable: false),
+                    PublicId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AgentImage", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AgentImage_Agents_AgentId",
+                        column: x => x.AgentId,
+                        principalTable: "Agents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Properties",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PropertyTitle = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PropertyDescription = table.Column<string>(type: "nvarchar(600)", maxLength: 600, nullable: false),
+                    PropertyTypeId = table.Column<int>(type: "int", nullable: false),
+                    ListingTypeId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<int>(type: "int", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Bedrooms = table.Column<int>(type: "int", nullable: false),
+                    Bathrooms = table.Column<int>(type: "int", nullable: false),
+                    Size = table.Column<int>(type: "int", nullable: false),
+                    FurnishingTypeId = table.Column<int>(type: "int", nullable: false),
+                    VirtualTourUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VideoTourUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AgentId = table.Column<int>(type: "int", nullable: false),
+                    AvailabilityDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    LastUpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastUpdatedBy = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Properties", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Properties_Agents_AgentId",
+                        column: x => x.AgentId,
+                        principalTable: "Agents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Properties_FurnishingTypes_FurnishingTypeId",
+                        column: x => x.FurnishingTypeId,
+                        principalTable: "FurnishingTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Properties_ListingTypes_ListingTypeId",
+                        column: x => x.ListingTypeId,
+                        principalTable: "ListingTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Properties_PropertyTypes_PropertyTypeId",
+                        column: x => x.PropertyTypeId,
+                        principalTable: "PropertyTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -536,55 +587,55 @@ namespace RealEstate.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Amenities",
-                columns: new[] { "Id", "LastUpdatedBy", "LastUpdatedOn", "Name" },
+                columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4501), "Central A/C" },
-                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4518), "Balcony" },
-                    { 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4520), "Shared Spa" },
-                    { 4, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4521), "Concierge Service" },
-                    { 5, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4521), "View of Water" },
-                    { 6, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4522), "Pets Allowed" },
-                    { 7, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4523), "Private Garden" },
-                    { 8, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4524), "Private Gym" },
-                    { 9, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4525), "Built in Wardrobes" },
-                    { 10, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4526), "Built in Kitchen Appliances" },
-                    { 11, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4526), "Children's Play Area" },
-                    { 12, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4527), "Maids Room" },
-                    { 13, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4528), "Shared Pool" },
-                    { 14, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4529), "Shared Gym" },
-                    { 15, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4529), "Covered Parking" },
-                    { 16, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4530), "View of Landmark" },
-                    { 17, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4531), "Study" },
-                    { 18, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4532), "Private Pool" },
-                    { 19, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4534), "Private Jacuzzi" },
-                    { 20, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4535), "Walk-in Closet" },
-                    { 21, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4536), "Maid Service" },
-                    { 22, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4537), "Children's Pool" },
-                    { 23, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4537), "Barbecue Area" }
+                    { 1, "Central A/C" },
+                    { 2, "Balcony" },
+                    { 3, "Shared Spa" },
+                    { 4, "Concierge Service" },
+                    { 5, "View of Water" },
+                    { 6, "Pets Allowed" },
+                    { 7, "Private Garden" },
+                    { 8, "Private Gym" },
+                    { 9, "Built in Wardrobes" },
+                    { 10, "Built in Kitchen Appliances" },
+                    { 11, "Children's Play Area" },
+                    { 12, "Maids Room" },
+                    { 13, "Shared Pool" },
+                    { 14, "Shared Gym" },
+                    { 15, "Covered Parking" },
+                    { 16, "View of Landmark" },
+                    { 17, "Study" },
+                    { 18, "Private Pool" },
+                    { 19, "Private Jacuzzi" },
+                    { 20, "Walk-in Closet" },
+                    { 21, "Maid Service" },
+                    { 22, "Children's Pool" },
+                    { 23, "Barbecue Area" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Facilities",
-                columns: new[] { "Id", "LastUpdatedBy", "LastUpdatedOn", "Name" },
+                columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4765), "School" },
-                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4768), "Hospital" },
-                    { 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4769), "Public Transport" },
-                    { 4, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4770), "Shopping Mall" },
-                    { 5, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4771), "Park" },
-                    { 6, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4771), "Metro" }
+                    { 1, "School" },
+                    { 2, "Hospital" },
+                    { 3, "Public Transport" },
+                    { 4, "Shopping Mall" },
+                    { 5, "Park" },
+                    { 6, "Metro" }
                 });
 
             migrationBuilder.InsertData(
                 table: "FurnishingTypes",
-                columns: new[] { "Id", "LastUpdatedBy", "LastUpdatedOn", "Name" },
+                columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4797), "Furnished" },
-                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4800), "Unfurnished" },
-                    { 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 7, 7, 10, 36, 28, 150, DateTimeKind.Local).AddTicks(4800), "Partly Furnished" }
+                    { 1, "Furnished" },
+                    { 2, "Unfurnished" },
+                    { 3, "Partly Furnished" }
                 });
 
             migrationBuilder.InsertData(
@@ -626,6 +677,24 @@ namespace RealEstate.Infrastructure.Migrations
                     { 3, "Civil Company" },
                     { 4, "Free Zone Establishment)" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AgentImage_AgentId",
+                table: "AgentImage",
+                column: "AgentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Agents_CompanyId",
+                table: "Agents",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Agents_UserId",
+                table: "Agents",
+                column: "UserId",
+                unique: true,
+                filter: "[UserId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -679,7 +748,9 @@ namespace RealEstate.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_companies_RepresentativeId",
                 table: "companies",
-                column: "RepresentativeId");
+                column: "RepresentativeId",
+                unique: true,
+                filter: "[RepresentativeId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CompanyFile_CompanyId",
@@ -698,6 +769,11 @@ namespace RealEstate.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Properties_AgentId",
+                table: "Properties",
+                column: "AgentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Properties_FurnishingTypeId",
                 table: "Properties",
                 column: "FurnishingTypeId");
@@ -711,11 +787,6 @@ namespace RealEstate.Infrastructure.Migrations
                 name: "IX_Properties_PropertyTypeId",
                 table: "Properties",
                 column: "PropertyTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Properties_userId",
-                table: "Properties",
-                column: "userId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PropertyAmenties_AmenityId",
@@ -752,6 +823,9 @@ namespace RealEstate.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AgentImage");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -801,7 +875,7 @@ namespace RealEstate.Infrastructure.Migrations
                 name: "Plan");
 
             migrationBuilder.DropTable(
-                name: "companies");
+                name: "Agents");
 
             migrationBuilder.DropTable(
                 name: "FurnishingTypes");
@@ -811,6 +885,9 @@ namespace RealEstate.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "PropertyTypes");
+
+            migrationBuilder.DropTable(
+                name: "companies");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

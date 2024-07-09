@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace RealEstate.Application.DTOs.Request.Property
 {
@@ -45,6 +46,7 @@ namespace RealEstate.Application.DTOs.Request.Property
         [Range(0, int.MaxValue)]
         public int Size { get; set; }
         public int FurnishingTypeId { get; set; }
+        public List<IFormFile> Images { get; set; }
         //public ICollection<PropertyAmenties> PropertyAmenties { get; set; }
         //public ICollection<PropertyNearByFacilities> PropertyNearByFacilities { get; set; }
         //public string VirtualTourUrl { get; set; }

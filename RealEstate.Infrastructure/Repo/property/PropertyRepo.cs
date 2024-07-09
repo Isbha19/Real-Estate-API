@@ -14,29 +14,51 @@ using System.Threading.Tasks;
 using RealEstate.Application.DTOs.Response.Property;
 using RealEstate.Domain.Entities.PropertyEntity;
 using RealEstate.Application.Contracts.property;
+using RealEstate.Application.Helpers;
+using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
+using System.Management;
+using Stripe;
+using FileService = RealEstate.Infrastructure.Services.FileService;
 
 namespace RealEstate.Infrastructure.Repo.property
 {
     public class PropertyRepo : IProperty
     {
         private readonly AppDbContext context;
+        private readonly GetUserHelper getuserHelper;
+        private readonly Services.FileService fileService;
 
-        public PropertyRepo(AppDbContext context)
+        public PropertyRepo(AppDbContext context,GetUserHelper getuserHelper,FileService fileService)
         {
             this.context = context;
+            this.getuserHelper = getuserHelper;
+            this.fileService = fileService;
         }
         public async Task<PropertyDetailDto> GetPropertyById(int id)
         {
             var property = await context.Properties
-                 .Include(p => p.FurnishingType) // Include FurnishingType
-                 .Include(p => p.PropertyType)   // Include PropertyType
-                 .Include(p => p.ListingType)
-                         .Include(p => p.Images) // Include Images
+          .Include(p => p.PropertyType)
+          .Include(p => p.ListingType)
+          .Include(p => p.FurnishingType)
+          .Include(p => p.Images)
+          .Include(p => p.PropertyAmenties)
+              .ThenInclude(pa => pa.Amenity)
+          .Include(p => p.PropertyNearByFacilities)
+              .ThenInclude(nf => nf.Facility)
+          //.Include(p => p.agent)
+          //    .ThenInclude(agent => agent.ImageUrl)
+          //.Include(p => p.agent)
+          //    .ThenInclude(agent => agent.company)
+          //        .ThenInclude(company => company.CompanyLogo)
+          .FirstOrDefaultAsync(p => p.Id == id);
 
-                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (property == null)
                 return null; // Or handle not found scenario as needed
+
+
+
 
             return new PropertyDetailDto
             {
@@ -56,9 +78,18 @@ namespace RealEstate.Infrastructure.Repo.property
                     ImageUrl = i.ImageUrl,
                     PublicId = i.PublicId,
                     IsPrimary = i.IsPrimary
-                }).ToList()
-
-
+                }).ToList(),
+                AvailableFrom = property.AvailabilityDate,
+                Amenities = property.PropertyAmenties.Select(pa => pa.Amenity.Name).ToList(),
+                NearByFacilities = property.PropertyNearByFacilities.Select(nf => nf.Facility.Name).ToList(),
+                //AgentName = property.agent.user.FirstName + " " + property.agent.user.LastName,
+                //AgentImage = property.agent.ImageUrl?.ImageUrl, // Assuming ImageUrl is a string property in AgentImage entity
+                //AgentPhoneNumber = property.agent.phoneNumber,
+                //AgentEmail = property.agent.user.Email,
+                //AgentWhatsapp = property.agent.whatsAppNumber,
+                //CompanyName = property.agent.company.CompanyName,
+                //CompanyLogo = property.agent.company.CompanyLogo?.ImageUrl, // Assuming CompanyLogo is a string property in CompanyFile entity
+                //AgentPropertyCounts = property.agent.company.Agents.Count.ToString()
             };
         }
         public async Task<Property> GetPropertyAsync(int id)
@@ -95,14 +126,22 @@ namespace RealEstate.Infrastructure.Repo.property
                     Bedrooms = p.Bedrooms,
                     ListedDate = p.PostedOn,
                     PrimaryImageUrl = p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl
-
                 })
-                .ToList();
+            .ToList();
         }
 
 
         public async Task<GeneralResponse> AddProperty(propertyDto propertyDto)
         {
+            var user = await getuserHelper.GetUser(); // Assuming getUserHelper.GetUser() is replaced with a proper service call
+            var userId = user.Id;
+            var agent = await context.Agents.FirstOrDefaultAsync(agent => agent.UserId == userId);
+
+            if (agent == null)
+            {
+                return new GeneralResponse(false, "Agent not found");
+            }
+
             var newProperty = new Property
             {
                 PropertyTitle = propertyDto.PropertyTitle,
@@ -114,22 +153,53 @@ namespace RealEstate.Infrastructure.Repo.property
                 Bedrooms = propertyDto.Bedrooms,
                 Bathrooms = propertyDto.Bathrooms,
                 Size = propertyDto.Size,
-                FurnishingTypeId = propertyDto.FurnishingTypeId
+                FurnishingTypeId = propertyDto.FurnishingTypeId,
+                AgentId = agent.Id, // Assuming AgentId is set correctly
+                PostedOn = DateTime.Now,
+                Images = new List<Image>()
             };
-            newProperty.AgentId = "5764cc3b-2c2f-4601-b3f5-653388c6684a";
-            //newProperty.LastUpdatedBy = "5764cc3b-2c2f-4601-b3f5-653388c6684a";
 
             try
             {
                 // Adding and saving the entity
-                //await context.Properties.AddAsync(newProperty);
+                await context.Properties.AddAsync(newProperty);
                 await context.SaveChangesAsync();
+
+                // Add Images to the saved Property entity
+                foreach (var imageDto in propertyDto.Images)
+                {
+                    // Upload image to cloud and get necessary details (PublicId, ImageUrl)
+                    var result = await fileService.UploadPhotoAsync(imageDto);
+
+                    if (result == null || result.Error != null)
+                    {
+                        return new GeneralResponse(false, "Error uploading the image");
+                    }
+
+                    // Create new Image entity
+                    var newImage = new Image
+                    {
+                        ImageUrl = result.SecureUrl?.AbsoluteUri ?? string.Empty,
+                        PublicId = result.PublicId ?? string.Empty,
+                        IsPrimary = newProperty.Images.Count == 0 // Set IsPrimary based on existing count
+                    };
+
+                    // Associate Image with Property
+                    newImage.PropertId = newProperty.Id; 
+                    newImage.Property = newProperty;
+
+                    newProperty.Images.Add(newImage);
+                }
+
+                // Save changes to include Images
+                await context.SaveChangesAsync();
+                
                 return new GeneralResponse(true, "Property Added Successfully");
             }
             catch (DbUpdateException ex)
             {
                 // Handle specific database exceptions (e.g., constraint violations)
-                return new GeneralResponse(false, $"Failed to add property: {ex.InnerException}");
+                return new GeneralResponse(false, $"Failed to add property: {ex.InnerException?.Message}");
             }
             catch (Exception ex)
             {

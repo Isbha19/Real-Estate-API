@@ -39,5 +39,14 @@ namespace RealEstate.API.Controllers
 
             return Ok(result);
         }
+        [HttpPost("verify/{agentId}")]
+        [Authorize]
+
+        public async Task<IActionResult> VerifyAgent(int agentId)
+        {
+            var result = await agent.VerifyAgent(agentId);
+            return Ok(result);
+
+        }
     }
 }

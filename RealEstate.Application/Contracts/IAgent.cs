@@ -15,6 +15,7 @@ namespace RealEstate.Application.Contracts
     {
         Task<GeneralResponse> RegisterAgentAsync(AgentRegisterDto agent);
         Task<IEnumerable<AgentDetailDto>> GetUnVerifiedAgentsDetailsAsync();
+        Task<GeneralResponse> VerifyAgent(int agentId);
 
 
     }

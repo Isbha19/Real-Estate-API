@@ -12,8 +12,8 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240708140802_lilchange")]
-    partial class lilchange
+    [Migration("20240709093905_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -206,7 +206,9 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("Agents");
                 });
@@ -351,7 +353,9 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("CompanyStructureId");
 
-                    b.HasIndex("RepresentativeId");
+                    b.HasIndex("RepresentativeId")
+                        .IsUnique()
+                        .HasFilter("[RepresentativeId] IS NOT NULL");
 
                     b.ToTable("companies");
                 });
@@ -531,7 +535,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Amenity", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.Amenity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -664,7 +668,7 @@ namespace RealEstate.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Facility", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.Facility", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -712,7 +716,7 @@ namespace RealEstate.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.FurnishingType", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.FurnishingType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -746,7 +750,7 @@ namespace RealEstate.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Image", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -784,7 +788,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("Images");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.ListingType", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.ListingType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -817,7 +821,7 @@ namespace RealEstate.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.Property", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -825,8 +829,8 @@ namespace RealEstate.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AgentId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AgentId")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("AvailabilityDate")
                         .HasColumnType("date");
@@ -881,10 +885,9 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<string>("VirtualTourUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("userId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("AgentId");
 
                     b.HasIndex("FurnishingTypeId");
 
@@ -892,12 +895,10 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.HasIndex("PropertyTypeId");
 
-                    b.HasIndex("userId");
-
                     b.ToTable("Properties");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyAmenties", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.PropertyAmenties", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -926,7 +927,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("PropertyAmenties");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyNearByFacilities", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.PropertyNearByFacilities", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -955,7 +956,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("PropertyNearByFacilities");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyType", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.PropertyType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1116,8 +1117,8 @@ namespace RealEstate.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("RealEstate.Domain.Entities.User", "user")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithOne("Agent")
+                        .HasForeignKey("RealEstate.Domain.Entities.AgentEntity.Agent", "UserId");
 
                     b.Navigation("company");
 
@@ -1150,8 +1151,8 @@ namespace RealEstate.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("RealEstate.Domain.Entities.User", "Representative")
-                        .WithMany()
-                        .HasForeignKey("RepresentativeId");
+                        .WithOne("company")
+                        .HasForeignKey("RealEstate.Domain.Entities.CompanyEntity.Company", "RepresentativeId");
 
                     b.Navigation("BusinessActivityType");
 
@@ -1197,57 +1198,59 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Image", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.Image", b =>
                 {
-                    b.HasOne("RealEstate.Domain.Entities.Property.Property", "Property")
+                    b.HasOne("RealEstate.Domain.Entities.PropertyEntity.Property", "Property")
                         .WithMany("Images")
                         .HasForeignKey("PropertyId");
 
                     b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.Property", b =>
                 {
-                    b.HasOne("RealEstate.Domain.Entities.Property.FurnishingType", "FurnishingType")
+                    b.HasOne("RealEstate.Domain.Entities.AgentEntity.Agent", "Agent")
+                        .WithMany("Properties")
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RealEstate.Domain.Entities.PropertyEntity.FurnishingType", "FurnishingType")
                         .WithMany()
                         .HasForeignKey("FurnishingTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RealEstate.Domain.Entities.Property.ListingType", "ListingType")
+                    b.HasOne("RealEstate.Domain.Entities.PropertyEntity.ListingType", "ListingType")
                         .WithMany()
                         .HasForeignKey("ListingTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RealEstate.Domain.Entities.Property.PropertyType", "PropertyType")
+                    b.HasOne("RealEstate.Domain.Entities.PropertyEntity.PropertyType", "PropertyType")
                         .WithMany()
                         .HasForeignKey("PropertyTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RealEstate.Domain.Entities.User", "user")
-                        .WithMany()
-                        .HasForeignKey("userId");
+                    b.Navigation("Agent");
 
                     b.Navigation("FurnishingType");
 
                     b.Navigation("ListingType");
 
                     b.Navigation("PropertyType");
-
-                    b.Navigation("user");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyAmenties", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.PropertyAmenties", b =>
                 {
-                    b.HasOne("RealEstate.Domain.Entities.Property.Amenity", "Amenity")
+                    b.HasOne("RealEstate.Domain.Entities.PropertyEntity.Amenity", "Amenity")
                         .WithMany("PropertyAmenities")
                         .HasForeignKey("AmenityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RealEstate.Domain.Entities.Property.Property", "Property")
+                    b.HasOne("RealEstate.Domain.Entities.PropertyEntity.Property", "Property")
                         .WithMany("PropertyAmenties")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1258,15 +1261,15 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.PropertyNearByFacilities", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.PropertyNearByFacilities", b =>
                 {
-                    b.HasOne("RealEstate.Domain.Entities.Property.Facility", "Facility")
+                    b.HasOne("RealEstate.Domain.Entities.PropertyEntity.Facility", "Facility")
                         .WithMany("PropertyNearByFacilities")
                         .HasForeignKey("FacilityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RealEstate.Domain.Entities.Property.Property", "Property")
+                    b.HasOne("RealEstate.Domain.Entities.PropertyEntity.Property", "Property")
                         .WithMany("PropertyNearByFacilities")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1280,6 +1283,8 @@ namespace RealEstate.Infrastructure.Migrations
             modelBuilder.Entity("RealEstate.Domain.Entities.AgentEntity.Agent", b =>
                 {
                     b.Navigation("ImageUrl");
+
+                    b.Navigation("Properties");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.Company", b =>
@@ -1291,17 +1296,17 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Subscription");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Amenity", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.Amenity", b =>
                 {
                     b.Navigation("PropertyAmenities");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Facility", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.Facility", b =>
                 {
                     b.Navigation("PropertyNearByFacilities");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Property.Property", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.PropertyEntity.Property", b =>
                 {
                     b.Navigation("Images");
 
@@ -1312,7 +1317,11 @@ namespace RealEstate.Infrastructure.Migrations
 
             modelBuilder.Entity("RealEstate.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Agent");
+
                     b.Navigation("Notifications");
+
+                    b.Navigation("company");
                 });
 #pragma warning restore 612, 618
         }

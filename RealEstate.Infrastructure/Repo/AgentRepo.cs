@@ -14,6 +14,7 @@ using RealEstate.Domain.Entities.AgentEntity;
 using RealEstate.Domain.Entities.CompanyEntity;
 using RealEstate.Infrastructure.Data;
 using RealEstate.Infrastructure.Services;
+using System.Security.Policy;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace RealEstate.Infrastructure.Repo
@@ -23,15 +24,17 @@ namespace RealEstate.Infrastructure.Repo
     {
         private readonly FileService imageUploadService;
         private readonly AppDbContext context;
-        private readonly UserManager<User> userManager;
+        private readonly UserManager<Domain.Entities.User> userManager;
         private readonly GetUserHelper getuserHelper;
+        private readonly NotificationService notificationService;
 
-        public AgentRepo(FileService imageUploadService,AppDbContext context, UserManager<User> userManager,GetUserHelper getuserHelper)
+        public AgentRepo(FileService imageUploadService,AppDbContext context, UserManager<User> userManager,GetUserHelper getuserHelper,NotificationService notificationService)
         {
             this.imageUploadService = imageUploadService;
             this.context = context;
             this.userManager = userManager;
             this.getuserHelper = getuserHelper;
+            this.notificationService = notificationService;
         }
         public async Task<GeneralResponse> RegisterAgentAsync(AgentRegisterDto model)
         {
@@ -83,12 +86,47 @@ namespace RealEstate.Infrastructure.Repo
                 PublicId = uploadResult.PublicId,
                 AgentId = agent.Id // Set the AgentId here
             };
-
+            var company = await context.companies.FirstOrDefaultAsync(u => u.Id == model.CompanyId);
+            var companyAdminId = company?.RepresentativeId;
+            var message = $"User named {user.FirstName} {user.LastName} has registered under your company. Please verify their registration to ensure they are authorized to represent your company.";
+            var url = "/company-dashboard/unverified-agents";
+            await notificationService.NotifyUserAsync(companyAdminId, message, url);
             context.AgentImage.Add(agentImage);
             await context.SaveChangesAsync();
          
             return new GeneralResponse(true, "Registration successful! You can list properties once your company verifies you. We will notify you upon verification.");
             
+        }
+        public async Task<GeneralResponse> VerifyAgent(int agentId)
+        {
+            var agent = await context.Agents.FindAsync(agentId);
+
+            if (agent == null)
+            {
+                return new GeneralResponse(false, "Agent not found");
+            }
+
+            if (agent.isCompanyAdminVerified)
+            {
+                return new GeneralResponse(false, "Agent already verified");
+            }
+
+            agent.isCompanyAdminVerified = true;
+            await context.SaveChangesAsync();
+
+            var userId = agent.UserId; // Assuming agent has a UserId property
+            var message = $"Congratulations!🎉 You are now a verified agent, verified by your company. You can now list properties.";
+            var url = "/list-property"; // Example URL for agent's dashboard
+
+            await notificationService.NotifyUserAsync(userId, message, url);
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (!await userManager.IsInRoleAsync(user, Constant.Agent))
+            {
+                await userManager.AddToRoleAsync(user, Constant.Agent);
+            }
+
+            return new GeneralResponse(true, "Agent verified successfully");
         }
         public async Task<IEnumerable<AgentDetailDto>> GetUnVerifiedAgentsDetailsAsync()
         {
