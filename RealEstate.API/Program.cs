@@ -32,6 +32,9 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<ChatHub>("/chathub");
+
+
 app.MapControllers();
 
 #region contextSeed

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using RealEstate.Infrastructure.Data;
-using RealEstate.Domain.Entities;
+
 namespace RealEstate.Infrastructure.Services
 {
     public class NotificationService
@@ -14,7 +14,7 @@ namespace RealEstate.Infrastructure.Services
         }
         public async Task NotifyUserAsync(string userId, string message, string url)
         {
-            var notification = new Notification
+            var notification = new Domain.Entities.Notification
             {
                 UserId = userId,
                 Message = message,

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstate.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240711114742_addedMessageEntity")]
+    partial class addedMessageEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -505,7 +508,7 @@ namespace RealEstate.Infrastructure.Migrations
                     b.ToTable("Subscription");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Message", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Message.Message", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -516,17 +519,8 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DateRead")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("ReceiverId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("RecipientDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("SenderDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("SenderId")
                         .HasColumnType("nvarchar(450)");
@@ -1029,28 +1023,28 @@ namespace RealEstate.Infrastructure.Migrations
                         {
                             Id = 1,
                             LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 12, 7, 44, 1, 498, DateTimeKind.Local).AddTicks(2778),
+                            LastUpdatedOn = new DateTime(2024, 7, 11, 15, 47, 41, 708, DateTimeKind.Local).AddTicks(2989),
                             Name = "Apartment"
                         },
                         new
                         {
                             Id = 2,
                             LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 12, 7, 44, 1, 498, DateTimeKind.Local).AddTicks(2795),
+                            LastUpdatedOn = new DateTime(2024, 7, 11, 15, 47, 41, 708, DateTimeKind.Local).AddTicks(3005),
                             Name = "Villa"
                         },
                         new
                         {
                             Id = 3,
                             LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 12, 7, 44, 1, 498, DateTimeKind.Local).AddTicks(2796),
+                            LastUpdatedOn = new DateTime(2024, 7, 11, 15, 47, 41, 708, DateTimeKind.Local).AddTicks(3005),
                             Name = "Townhouse"
                         },
                         new
                         {
                             Id = 4,
                             LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 12, 7, 44, 1, 498, DateTimeKind.Local).AddTicks(2797),
+                            LastUpdatedOn = new DateTime(2024, 7, 11, 15, 47, 41, 708, DateTimeKind.Local).AddTicks(3007),
                             Name = "Penthouse"
                         });
                 });
@@ -1266,17 +1260,15 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Plan");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Message", b =>
+            modelBuilder.Entity("RealEstate.Domain.Entities.Message.Message", b =>
                 {
                     b.HasOne("RealEstate.Domain.Entities.User", "Receiver")
-                        .WithMany("MessagesRecieved")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .WithMany()
+                        .HasForeignKey("ReceiverId");
 
                     b.HasOne("RealEstate.Domain.Entities.User", "Sender")
-                        .WithMany("MessagesSent")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .WithMany()
+                        .HasForeignKey("SenderId");
 
                     b.Navigation("Receiver");
 
@@ -1412,10 +1404,6 @@ namespace RealEstate.Infrastructure.Migrations
             modelBuilder.Entity("RealEstate.Domain.Entities.User", b =>
                 {
                     b.Navigation("Agent");
-
-                    b.Navigation("MessagesRecieved");
-
-                    b.Navigation("MessagesSent");
 
                     b.Navigation("Notifications");
 

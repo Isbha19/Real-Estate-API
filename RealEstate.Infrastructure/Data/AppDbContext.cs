@@ -29,6 +29,7 @@ namespace RealEstate.Infrastructure.Data
 
         public DbSet<Agent> Agents { get; set; }
         public DbSet<AgentImage> AgentImage { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,6 +47,17 @@ namespace RealEstate.Infrastructure.Data
            .HasOne(n => n.User)
            .WithMany(u => u.Notifications)
            .HasForeignKey(n => n.UserId);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(u => u.Receiver)
+                .WithMany(m => m.MessagesRecieved)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+               .HasOne(u => u.Sender)
+               .WithMany(m => m.MessagesSent)
+               .OnDelete(DeleteBehavior.Restrict);
+
 
             base.OnModelCreating(modelBuilder);
 

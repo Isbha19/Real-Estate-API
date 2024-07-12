@@ -18,6 +18,9 @@ namespace RealEstate.Domain.Entities
         public ICollection<Notification> Notifications { get; set; }
         public Agent Agent { get; set; }
         public Company company { get; set; }
+        public ICollection<Message> MessagesSent { get; set; }
+        public ICollection<Message> MessagesRecieved { get; set; }
+
 
 
     }

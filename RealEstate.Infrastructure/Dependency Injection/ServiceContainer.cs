@@ -15,6 +15,7 @@ using RealEstate.Infrastructure.Data;
 using RealEstate.Infrastructure.Repo;
 using RealEstate.Infrastructure.Repo.property;
 using RealEstate.Infrastructure.Services;
+using RealEstate.Infrastructure.Services.Notification;
 using System.Text;
 
 
@@ -63,8 +64,12 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             services.AddScoped<INotification, NotificationRepo>();
             services.AddScoped<ICompanyService, companyService>();
             services.AddScoped<IAgent, AgentRepo>();
+            services.AddScoped<IMessage, MessageRepo>();
+
+            services.AddSingleton<chatService>();
 
 
+            services.AddSignalR(); // Add SignalR service
 
             services.AddHttpContextAccessor();
         
