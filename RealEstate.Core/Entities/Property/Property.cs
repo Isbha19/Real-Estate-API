@@ -18,11 +18,11 @@ namespace RealEstate.Domain.Entities.PropertyEntity
 
         [Required]
         public int PropertyTypeId { get; set; }
-        public PropertyType PropertyType { get; set; }
+        public virtual PropertyType PropertyType { get; set; }
 
         [Required]
         public int ListingTypeId { get; set; }
-        public ListingType ListingType { get; set; }
+        public virtual ListingType ListingType { get; set; }
 
         [Required]
         [Range(0, int.MaxValue)]
@@ -44,11 +44,11 @@ namespace RealEstate.Domain.Entities.PropertyEntity
         public int Size { get; set; }
 
         public int FurnishingTypeId { get; set; }
-        public FurnishingType FurnishingType { get; set; }
+        public virtual FurnishingType FurnishingType { get; set; }
 
-        public ICollection<PropertyAmenties> PropertyAmenties { get; set; }
-        public ICollection<PropertyNearByFacilities> PropertyNearByFacilities { get; set; }
-        public ICollection<Image> Images { get; set; }
+        public virtual ICollection<PropertyAmenties> PropertyAmenties { get; set; }
+        public virtual ICollection<PropertyNearByFacilities> PropertyNearByFacilities { get; set; }
+        public virtual ICollection<Image> Images { get; set; }
 
         public string VirtualTourUrl { get; set; }
         public string VideoTourUrl { get; set; }
@@ -60,7 +60,7 @@ namespace RealEstate.Domain.Entities.PropertyEntity
         [ForeignKey("Agent")]
         public int AgentId { get; set; }  // Foreign key to Agent entity
 
-        public Agent Agent { get; set; }  // Navigation property to Agent
+        public virtual Agent Agent { get; set; }  // Navigation property to Agent
 
         public DateOnly AvailabilityDate { get; set; }
     }

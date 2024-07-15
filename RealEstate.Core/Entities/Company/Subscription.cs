@@ -16,9 +16,9 @@ namespace RealEstate.Domain.Entities.CompanyEntity
         public DateTime? SubscriptionEndDate { get; set; }
         public string PlanId { get; set; }
 
-        public Plan Plan { get; set; }
+        public virtual Plan Plan { get; set; }
         public bool IsActive { get; set; }
         public int CompanyId { get; set; }
-        public Company Company { get; set; }
+        public virtual Company Company { get; set; }
     }
 }

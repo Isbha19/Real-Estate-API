@@ -11,7 +11,7 @@ namespace RealEstate.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class MessagesController : ControllerBase
     {
         private readonly IMessage messageRepo;
@@ -24,7 +24,7 @@ namespace RealEstate.API.Controllers
             this.getuserHelper = getuserHelper;
             this.userManager = userManager;
         }
-        [HttpPost]
+        [HttpPost("send-message")]
         public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
         {
             var user =await getuserHelper.GetUser();
@@ -62,16 +62,48 @@ namespace RealEstate.API.Controllers
             }
           return BadRequest();
         }
-        [HttpGet]
+        [HttpGet("get-messages-for-user")]
         public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageForUser([FromQuery]MessageParams messageParams)
         {
             var messages = await messageRepo.GetMessagesForUser(messageParams);
             return Ok(messages);
         }
+        [HttpGet("get-chats-for-user")]
+        public async Task<ActionResult<IEnumerable<UserChatsDto>>> GetChatsForUser()
+        {
+            var chats = await messageRepo.GetChatUsersAsync();
+            return Ok(chats);
+        }
         [HttpGet("thread/{recipientId}")]
         public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageThread(string recipientId)
         {
             return Ok(await messageRepo.GetMessageThread(recipientId));
+        }
+        [HttpDelete("delete-message/{messageId}")]
+        public async Task<IActionResult> DeleteMessage(int messageId)
+        {
+            var user =await getuserHelper.GetUser();
+            string userId=user.Id;
+            var message=await messageRepo.GetMessage(messageId);
+            if(message.Sender.Id!=userId&& message.Receiver.Id != userId)
+            {
+                return Unauthorized();
+            }
+
+            if (message.Sender.Id == userId)
+            {
+                message.SenderDeleted = true;
+            }
+            if(message.Receiver.Id == userId)
+            {
+                message.RecipientDeleted = true;
+            }
+            if(message.SenderDeleted&& message.RecipientDeleted)
+            {
+                messageRepo.DeleteMessage(message);
+            }
+            if(await messageRepo.SaveAllAsync()) { return Ok(); }
+            return BadRequest("Problem deleting the message");
         }
     }
 }

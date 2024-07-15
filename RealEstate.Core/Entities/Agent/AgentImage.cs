@@ -14,7 +14,7 @@ namespace RealEstate.Domain.Entities.AgentEntity
         [Required]
         public string ImageUrl { get; set; }
         public int AgentId { get; set; }
-        public Agent Agent { get; set; }
+        public virtual Agent Agent { get; set; }
 
         public string PublicId { get; set; }
     }

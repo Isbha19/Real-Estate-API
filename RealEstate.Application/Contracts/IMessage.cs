@@ -1,16 +1,19 @@
 ﻿using RealEstate.Application.DTOs.Request.Chat;
 using RealEstate.Application.DTOs.Response.Chat;
 using RealEstate.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using RealEstate.Domain.Entities.signalr;
 
 namespace RealEstate.Application.Contracts
 {
     public interface IMessage
     {
+        void AddGroup(Group group);
+        void RemoveConnection(Connection connection);
+        Task<Connection> GetConnection(string connectionId);
+        Task<Group> GetGroup(string groupName);
+        Task<Group> GetGroupForConnection(string connectionId);
+        Task<IEnumerable<UserChatsDto>> GetChatUsersAsync();
+
         void AddMessage(Message message);
         void DeleteMessage(Message message);
         Task<Message> GetMessage(int messageId);

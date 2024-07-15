@@ -16,6 +16,7 @@ using RealEstate.Infrastructure.Repo;
 using RealEstate.Infrastructure.Repo.property;
 using RealEstate.Infrastructure.Services;
 using RealEstate.Infrastructure.Services.Notification;
+using RealEstate.Infrastructure.SignalR;
 using System.Text;
 
 
@@ -27,7 +28,8 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             IConfiguration configuration)
         {
             services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("Default")));
+            options.UseSqlServer(configuration.GetConnectionString("Default"))
+             .UseLazyLoadingProxies());
             services.AddIdentityCore<User>(options =>
             {
                 options.Password.RequiredLength = 6;
@@ -53,7 +55,24 @@ namespace RealEstate.Infrastructure.Dependency_Injection
                         ValidateAudience = false
 
                     };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) && 
+                            path.StartsWithSegments("/hubs"))
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+
+
+                        }
+                    };
                 });
+            services.AddSingleton<PresenceTracker>();
             //Repos
             services.AddScoped<IUser, UserRepo>();
             services.AddScoped<IAdmin, AdminRepo>();
@@ -81,7 +100,7 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             services.AddScoped<IContextSeedService, ContextSeedService>();
             services.AddScoped<NotificationService>();
             services.AddScoped<GetUserHelper>();
-
+            
 
             //to respond with an Array containing error messages when the model state is invalid
             services.Configure<ApiBehaviorOptions>(options =>

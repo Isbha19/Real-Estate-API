@@ -4,6 +4,7 @@ using RealEstate.Domain.Entities;
 using RealEstate.Domain.Entities.AgentEntity;
 using RealEstate.Domain.Entities.CompanyEntity;
 using RealEstate.Domain.Entities.PropertyEntity;
+using RealEstate.Domain.Entities.signalr;
 
 namespace RealEstate.Infrastructure.Data
 {
@@ -30,6 +31,10 @@ namespace RealEstate.Infrastructure.Data
         public DbSet<Agent> Agents { get; set; }
         public DbSet<AgentImage> AgentImage { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<Connection> Connections { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

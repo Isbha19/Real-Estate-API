@@ -21,6 +21,8 @@ namespace RealEstate.Application.DTOs.Response.Property
         public List<string> NearByFacilities { get; set; }
 
         public string AgentName { get; set; }
+        public string AgentUserId { get; set; }
+
         public string AgentImage { get; set; }
         public int AgentPhoneNumber { get; set; }
         public string AgentEmail { get; set; }

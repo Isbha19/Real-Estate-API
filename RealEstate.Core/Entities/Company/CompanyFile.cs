@@ -15,6 +15,6 @@ namespace RealEstate.Domain.Entities.CompanyEntity
         public string ImageUrl { get; set; }
         public int CompanyId { get; set; }
         public string PublicId { get; set; }
-        public Company Company { get; set; }
+        public virtual Company Company { get; set; }
     }
 }

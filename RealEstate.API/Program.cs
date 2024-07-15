@@ -2,7 +2,9 @@ using RealEstate.Infrastructure.Dependency_Injection;
 using RealEstate.Application.Services;
 using RealEstate.API.ExceptionHandling;
 using Stripe;
-using RealEstate.Infrastructure.Services;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using RealEstate.Infrastructure.SignalR;
+using Microsoft.Extensions.Options;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -12,6 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 builder.Services.InfrastructureServices(builder.Configuration);
+
+
 var app = builder.Build();
 // Configure Stripe
 var configuration = builder.Configuration;
@@ -32,7 +36,10 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapHub<ChatHub>("/chathub");
+app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<MessageHub>("hubs/message");
+app.MapHub<NotificationHub>("/hubs/notification");
+
 
 
 app.MapControllers();

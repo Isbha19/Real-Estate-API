@@ -12,7 +12,7 @@ namespace RealEstate.Domain.Entities.AgentEntity
     {
         public int Id { get; set; }
         public string UserId { get; set; }
-        public User user { get; set; }
+        public virtual User user { get; set; }
         public int phoneNumber { get; set; }
         public int whatsAppNumber { get; set; }
         public string licenseNumber { get; set; }
@@ -22,14 +22,14 @@ namespace RealEstate.Domain.Entities.AgentEntity
         public string Nationality { get; set; }
         public string LanguagesKnown { get; set; }
         public string Specialization { get; set; }
-        public AgentImage ImageUrl { get; set; }
+        public virtual AgentImage ImageUrl { get; set; }
 
         public int CompanyId {  get; set; }
-        public Company company { get; set; }
+        public virtual Company company { get; set; }
         public string About { get; set; }
         public int yearsOfExperience { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<Property> Properties { get; set; }
+        public virtual ICollection<Property> Properties { get; set; }
     }
 }

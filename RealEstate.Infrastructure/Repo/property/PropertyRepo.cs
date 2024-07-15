@@ -82,6 +82,7 @@ namespace RealEstate.Infrastructure.Repo.property
                 AgentName = property.Agent.user.FirstName + " " + property.Agent.user.LastName,
                 AgentImage = property.Agent.ImageUrl?.ImageUrl, // Assuming ImageUrl is a string property in AgentImage entity
                 AgentPhoneNumber = property.Agent.phoneNumber,
+                AgentUserId=property.Agent.user.Id,
                 AgentEmail = property.Agent.user.Email,
                 AgentWhatsapp = property.Agent.whatsAppNumber,
                 CompanyName = property.Agent.company.CompanyName,
