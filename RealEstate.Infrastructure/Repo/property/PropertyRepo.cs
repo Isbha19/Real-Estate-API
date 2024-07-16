@@ -391,11 +391,23 @@ namespace RealEstate.Infrastructure.Repo.property
         }
         public async Task<List<PropertyListDto>> GetFilteredPropertiesAsync(PropertyFilterDto filter)
         {
-            var query = _propertyRepository.GetAll();
+            var query = context.Properties.AsQueryable();
+
+            query = query.Include(p => p.Images);
+            query = query.Include(p => p.PropertyType);
+            query = query.Include(p => p.ListingType);
+            query = query.Include(p => p.FurnishingType);
+            query = query.Include(p => p.PropertyAmenties).ThenInclude(pa => pa.Amenity); // Include PropertyAmenties and Amenities
+            query = query.Include(p => p.PropertyNearByFacilities).ThenInclude(nf => nf.Facility); // Include PropertyNearByFacilities and Facilities
+
+
+
 
             if (!string.IsNullOrEmpty(filter.Location))
             {
-                query = query.Where(p => p.Location.Contains(filter.Location));
+                var normalizedLocation = filter.Location.ToUpper(); // or ToLower()
+
+                query = query.Where(p => p.Location.ToUpper().Contains(normalizedLocation));
             }
             if (filter.ListingType.HasValue)
             {
@@ -405,13 +417,17 @@ namespace RealEstate.Infrastructure.Repo.property
             {
                 query = query.Where(p => p.PropertyTypeId == filter.PropertyType.Value);
             }
+            if (filter.Furnished.HasValue)
+            {
+                query = query.Where(p => p.FurnishingTypeId == filter.Furnished.Value);
+            }
             if (filter.Bedrooms != null && filter.Bedrooms.Any())
             {
-                query = query.Where(p => filter.Bedrooms.Contains(p.Bedrooms));
+        query = query.Where(p => filter.Bedrooms.Contains(p.Bedrooms) || (filter.Bedrooms.Contains(7) && p.Bedrooms >= 7));
             }
             if (filter.Bathrooms != null && filter.Bathrooms.Any())
             {
-                query = query.Where(p => filter.Bathrooms.Contains(p.Bathrooms));
+                query = query.Where(p => filter.Bathrooms.Contains(p.Bathrooms) || (filter.Bathrooms.Contains(7) && p.Bathrooms >= 7));
             }
             if (filter.MinPrice.HasValue)
             {
@@ -429,9 +445,17 @@ namespace RealEstate.Infrastructure.Repo.property
             {
                 query = query.Where(p => p.Size <= filter.MaxSize.Value);
             }
-            if (filter.VirtualTour.HasValue)
+            if (filter.VirtualTour.HasValue && filter.VirtualTour.Value)
             {
-                query = query.Where(p => p.VirtualTour == filter.VirtualTour.Value);
+                query = query.Where(p => !string.IsNullOrEmpty(p.VirtualTourUrl));
+            }
+            if (filter.Amenities != null && filter.Amenities.Any())
+            {
+                query = query.Where(p => filter.Amenities.All(a => p.PropertyAmenties.Any(pa => pa.Amenity.Id == a)));
+            }
+            if (filter.NearbyFacilities != null && filter.NearbyFacilities.Any())
+            {
+                query = query.Where(p => filter.NearbyFacilities.All(f => p.PropertyNearByFacilities.Any(nf => nf.Facility.Id == f)));
             }
 
             var properties = await query.ToListAsync();
@@ -448,8 +472,8 @@ namespace RealEstate.Infrastructure.Repo.property
                 price = p.Price,
                 Bathrooms = p.Bathrooms,
                 Bedrooms = p.Bedrooms,
-                ListedDate = p.ListedDate,
-                PrimaryImageUrl = p.PrimaryImageUrl
+                ListedDate = p.PostedOn,
+                PrimaryImageUrl = p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl,
             }).ToList();
 
             return propertyListDtos;

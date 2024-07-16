@@ -60,6 +60,12 @@ namespace RealEstate.API.Controllers
             var result = await propertyPhoto.AddPropertyPhotoAsync(file,propertyId);
             return Ok(result);
         }
+        [HttpPost("filter-properties")]
+        public async Task<IActionResult> FilterProperties([FromBody] PropertyFilterDto filter)
+        {
+            var result = await property.GetFilteredPropertiesAsync(filter);
+            return Ok(result);
+        }
         [HttpPost("set-primary-photo/{propertyId}/{photoPublicId}")]
         public async Task<IActionResult> SetPrimaryPhoto(int propertyId, string photoPublicId)
         {

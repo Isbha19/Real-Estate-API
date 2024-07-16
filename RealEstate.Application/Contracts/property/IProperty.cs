@@ -26,6 +26,8 @@ namespace RealEstate.Application.Contracts.property
         Task<IEnumerable<Facility>> GetNearbyFacilitiesAsync();
 
         Task<IEnumerable<Amenity>> GetAmenitiesAsync();
+        Task<List<PropertyListDto>> GetFilteredPropertiesAsync(PropertyFilterDto filter);
+
 
 
 
