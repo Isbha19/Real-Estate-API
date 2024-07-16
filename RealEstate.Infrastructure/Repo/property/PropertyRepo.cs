@@ -389,6 +389,71 @@ namespace RealEstate.Infrastructure.Repo.property
             return new GeneralResponse(true, "company verified");
 
         }
+        public async Task<List<PropertyListDto>> GetFilteredPropertiesAsync(PropertyFilterDto filter)
+        {
+            var query = _propertyRepository.GetAll();
+
+            if (!string.IsNullOrEmpty(filter.Location))
+            {
+                query = query.Where(p => p.Location.Contains(filter.Location));
+            }
+            if (filter.ListingType.HasValue)
+            {
+                query = query.Where(p => p.ListingTypeId == filter.ListingType.Value);
+            }
+            if (filter.PropertyType.HasValue)
+            {
+                query = query.Where(p => p.PropertyTypeId == filter.PropertyType.Value);
+            }
+            if (filter.Bedrooms != null && filter.Bedrooms.Any())
+            {
+                query = query.Where(p => filter.Bedrooms.Contains(p.Bedrooms));
+            }
+            if (filter.Bathrooms != null && filter.Bathrooms.Any())
+            {
+                query = query.Where(p => filter.Bathrooms.Contains(p.Bathrooms));
+            }
+            if (filter.MinPrice.HasValue)
+            {
+                query = query.Where(p => p.Price >= filter.MinPrice.Value);
+            }
+            if (filter.MaxPrice.HasValue)
+            {
+                query = query.Where(p => p.Price <= filter.MaxPrice.Value);
+            }
+            if (filter.MinSize.HasValue)
+            {
+                query = query.Where(p => p.Size >= filter.MinSize.Value);
+            }
+            if (filter.MaxSize.HasValue)
+            {
+                query = query.Where(p => p.Size <= filter.MaxSize.Value);
+            }
+            if (filter.VirtualTour.HasValue)
+            {
+                query = query.Where(p => p.VirtualTour == filter.VirtualTour.Value);
+            }
+
+            var properties = await query.ToListAsync();
+
+            // Map properties to PropertyListDto
+            var propertyListDtos = properties.Select(p => new PropertyListDto
+            {
+                Id = p.Id,
+                PropertyTitle = p.PropertyTitle,
+                PropertyType = p.PropertyType.Name,
+                ListingType = p.ListingType.Name,
+                Location = p.Location,
+                size = p.Size,
+                price = p.Price,
+                Bathrooms = p.Bathrooms,
+                Bedrooms = p.Bedrooms,
+                ListedDate = p.ListedDate,
+                PrimaryImageUrl = p.PrimaryImageUrl
+            }).ToList();
+
+            return propertyListDtos;
+        }
         public void DeleteProperty(int Id)
         {
             throw new NotImplementedException();
@@ -417,71 +482,7 @@ namespace RealEstate.Infrastructure.Repo.property
         {
             return await context.Facilities.ToListAsync();
         }
-        //public async Task<IEnumerable<Property>> GetFilteredPropertiesAsync(PropertyFilterDto filter)
-        //{
-        //    var query = _context.Properties
-        //        .Include(p => p.PropertyType)
-        //        .Include(p => p.ListingType)
-        //        .Include(p => p.Images)
-        //        .AsQueryable();
-
-        //    if (!string.IsNullOrEmpty(filter.Keyword))
-        //    {
-        //        query = query.Where(p => p.PropertyTitle.Contains(filter.Keyword));
-        //    }
-        //    if (!string.IsNullOrEmpty(filter.PropertyType))
-        //    {
-        //        query = query.Where(p => p.PropertyType.Name == filter.PropertyType);
-        //    }
-        //    if (!string.IsNullOrEmpty(filter.Location))
-        //    {
-        //        query = query.Where(p => p.Location == filter.Location);
-        //    }
-        //    if (filter.MinBeds.HasValue)
-        //    {
-        //        query = query.Where(p => p.Bedrooms >= filter.MinBeds.Value);
-        //    }
-        //    if (filter.MinBaths.HasValue)
-        //    {
-        //        query = query.Where(p => p.Bathrooms >= filter.MinBaths.Value);
-        //    }
-        //    if (!string.IsNullOrEmpty(filter.PriceRange))
-        //    {
-        //        var prices = filter.PriceRange.Split('-');
-        //        if (prices.Length == 2 && decimal.TryParse(prices[0], out var minPrice) && decimal.TryParse(prices[1], out var maxPrice))
-        //        {
-        //            query = query.Where(p => p.Price >= minPrice && p.Price <= maxPrice);
-        //        }
-        //    }
-        //    if (!string.IsNullOrEmpty(filter.NearbyFacilities))
-        //    {
-        //        query = query.Where(p => p.NearbyFacilities.Contains(filter.NearbyFacilities));
-        //    }
-        //    if (!string.IsNullOrEmpty(filter.Amenities))
-        //    {
-        //        query = query.Where(p => p.Amenities.Contains(filter.Amenities));
-        //    }
-        //    if (!string.IsNullOrEmpty(filter.Furnished))
-        //    {
-        //        query = query.Where(p => p.Furnished == (filter.Furnished == "Yes"));
-        //    }
-        //    if (!string.IsNullOrEmpty(filter.Size))
-        //    {
-        //        var sizes = filter.Size.Split('-');
-        //        if (sizes.Length == 2 && decimal.TryParse(sizes[0], out var minSize) && decimal.TryParse(sizes[1], out var maxSize))
-        //        {
-        //            query = query.Where(p => p.Size >= minSize && p.Size <= maxSize);
-        //        }
-        //    }
-        //    if (!string.IsNullOrEmpty(filter.VirtualTour))
-        //    {
-        //        query = query.Where(p => p.VirtualTourUrl.Contains(filter.VirtualTour));
-        //    }
-
-        //    query = query.Where(p => p.IsCompanyAdminVerified); // Ensure only verified properties are included
-
-        //    return await query.ToListAsync();
-        //}
+    
 
 
     }

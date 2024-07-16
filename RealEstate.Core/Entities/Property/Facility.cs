@@ -13,6 +13,6 @@ namespace RealEstate.Domain.Entities.PropertyEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public virtual ICollection<PropertyNearByFacilities> PropertyNearByFacilities { get; set; }
+        public  ICollection<PropertyNearByFacilities> PropertyNearByFacilities { get; set; }
     }
 }

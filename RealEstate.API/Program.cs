@@ -5,6 +5,7 @@ using Stripe;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using RealEstate.Infrastructure.SignalR;
 using Microsoft.Extensions.Options;
+using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

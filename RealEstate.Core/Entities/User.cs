@@ -15,11 +15,11 @@ namespace RealEstate.Domain.Entities
 
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
         public string Provider { get; set; }
-        public virtual ICollection<Notification> Notifications { get; set; }
-        public virtual Agent Agent { get; set; }
-        public virtual Company company { get; set; }
-        public virtual ICollection<Message> MessagesSent { get; set; }
-        public virtual ICollection<Message> MessagesRecieved { get; set; }
+        public  ICollection<Notification> Notifications { get; set; }
+        public  Agent Agent { get; set; }
+        public  Company company { get; set; }
+        public  ICollection<Message> MessagesSent { get; set; }
+        public  ICollection<Message> MessagesRecieved { get; set; }
 
 
 

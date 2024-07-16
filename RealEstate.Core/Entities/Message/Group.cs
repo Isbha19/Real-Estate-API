@@ -16,7 +16,7 @@ namespace RealEstate.Domain.Entities.signalr
         }
         [Key]
         public string Name { get; set; }
-        public virtual ICollection<Connection> Connections { get; set; } = new List<Connection>();
+        public  ICollection<Connection> Connections { get; set; } = new List<Connection>();
     }
 
     

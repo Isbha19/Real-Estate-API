@@ -14,6 +14,6 @@ namespace RealEstate.Domain.Entities.PropertyEntity
         public string ImageUrl { get; set; }
         public bool IsPrimary { get; set; }
         public int PropertId { get; set; }
-        public virtual Property Property { get; set; }
+        public  Property Property { get; set; }
     }
 }

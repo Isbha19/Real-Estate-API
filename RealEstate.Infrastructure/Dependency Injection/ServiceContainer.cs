@@ -27,8 +27,7 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             IConfiguration configuration)
         {
             services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("Default"))
-             .UseLazyLoadingProxies());
+            options.UseSqlServer(configuration.GetConnectionString("Default")));
             services.AddIdentityCore<User>(options =>
             {
                 options.Password.RequiredLength = 6;

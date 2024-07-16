@@ -9,9 +9,9 @@ namespace RealEstate.Domain.Entities.PropertyEntity
     public class PropertyNearByFacilities:baseEntity
     {
         public int PropertyId { get; set; }
-        public virtual Property Property { get; set; }
+        public  Property Property { get; set; }
 
         public int FacilityId { get; set; }
-        public virtual Facility Facility { get; set; }
+        public  Facility Facility { get; set; }
     }
 }
