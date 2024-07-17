@@ -19,7 +19,7 @@ namespace RealEstate.Infrastructure.Services
             this.context = context;
             this.hubContext = hubContext;
         }
-        public async Task NotifyUserAsync(string userId, string message, string url)
+        public async Task NotifyUserAsync(string userId, string message, string? url)
         {
             var notification = new Domain.Entities.Notification
             {
@@ -43,7 +43,7 @@ namespace RealEstate.Infrastructure.Services
             await hubContext.Clients.User(userId).SendAsync("ReceiveNotification",newNotification);
 
         }
-        public async Task StoreOfflineNotificationAsync(string userId, string message, string url)
+        public async Task StoreOfflineNotificationAsync(string userId, string message, string? url)
         {
             var notification = new Notification
             {

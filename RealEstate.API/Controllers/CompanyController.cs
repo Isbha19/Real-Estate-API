@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RealEstate.Application.Contracts;
 using RealEstate.Application.DTOs.Request.Company;
 using RealEstate.Application.DTOs.Request.Property;
-using RealEstate.Infrastructure.Services;
+using RealEstate.Infrastructure.Services.Subscription;
 using Stripe;
 
 namespace RealEstate.API.Controllers
@@ -18,17 +18,15 @@ namespace RealEstate.API.Controllers
         private readonly ICompany company;
         private readonly IConfiguration configuration;
         private readonly StripeWebHookHandler stripeWebhookHandler;
-        private readonly StripeService stripeService;
         private readonly string _webhookSecret;
 
 
-        public CompanyController(ICompany company, IConfiguration configuration, StripeWebHookHandler stripeWebhookHandler, StripeService stripeService)
+        public CompanyController(ICompany company, IConfiguration configuration, StripeWebHookHandler stripeWebhookHandler)
         {
             this.company = company;
             this.configuration = configuration;
             this.stripeWebhookHandler = stripeWebhookHandler;
-            this.stripeService = stripeService;
-            _webhookSecret = configuration["Stripe:WebhookSecret"];
+           _webhookSecret = configuration["Stripe:WebhookSecret"];
 
 
         }
@@ -117,6 +115,14 @@ namespace RealEstate.API.Controllers
             {
                 return BadRequest(result);
             }
+            return Ok(result);
+        }
+        [HttpGet("Get-companyDashboard-statistics")]
+        [Authorize]
+
+        public async Task<IActionResult> GetCompanyDasboardStatistics()
+        {
+            var result = await company.GetCompanyDashboardStatitics();
             return Ok(result);
         }
         [HttpGet("Get-company-by-User")]

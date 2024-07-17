@@ -1,4 +1,5 @@
 ﻿using RealEstate.Domain.Entities.AgentEntity;
+using RealEstate.Domain.Entities.CompanyEntity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -62,6 +63,7 @@ namespace RealEstate.Domain.Entities.PropertyEntity
 
         public  Agent Agent { get; set; }  // Navigation property to Agent
 
+    
         public DateOnly AvailabilityDate { get; set; }
     }
 }

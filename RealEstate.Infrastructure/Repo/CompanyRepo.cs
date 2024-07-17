@@ -12,11 +12,9 @@ using System.Security.Claims;
 using RealEstate.Infrastructure.Services;
 using Stripe.BillingPortal;
 using RealEstate.Application.DTOs.Response.Company;
-using System.ComponentModel.Design;
 using RealEstate.Application.Services;
 using RealEstate.Domain.Entities.CompanyEntity;
 using RealEstate.Application.Helpers;
-using RealEstate.Application.DTOs.Response.Property;
 
 namespace RealEstate.Infrastructure.Repo
 {
@@ -243,6 +241,45 @@ namespace RealEstate.Infrastructure.Repo
             return new GeneralResponse(true, "company verified");
 
         }
+      
+        public async Task<DashboardStatisticsDto> GetCompanyDashboardStatitics()
+        {
+            var user = await GetUser();
+            string userId = user.Id;
+
+            // Fetch company details for the authorized user
+            var company = await context.companies
+                .Include(c => c.Subscription)
+                .ThenInclude(c => c.Plan)
+                .Include(c => c.Agents)
+                .ThenInclude(a => a.Properties)
+                .FirstOrDefaultAsync(c => c.RepresentativeId == userId && c.isAdminVerified);
+
+            if (company == null)
+            {
+                // Handle the case where the company is not found
+                return null;
+            }
+
+            // Calculate the number of properties listed by agents under the given company
+            var propertiesListedCount = company.Agents.SelectMany(a => a.Properties).Count();
+
+            // Calculate the sum of all property views for properties under the given company
+            var propertyViews = company.Agents.SelectMany(a => a.Properties).Sum(p => p.PropertyViews);
+
+            var statisticsDto = new DashboardStatisticsDto
+            {
+                propertiesUsed = company.UsedPropertyCounts,
+                propertyLimit = company.Subscription.Plan.NumberOfListings,
+                PropertiesListedCount = propertiesListedCount,
+                NumberOfAgents = company.Agents.Count,
+                PropertyViews = propertyViews
+            };
+
+            return statisticsDto;
+        }
+
+
         public async Task<IEnumerable<CompanyDetailsDto>> GetUnVerifiedCompaniesDetailsAsync()
         {
             var verifiedCompanies = await context.companies
@@ -411,6 +448,6 @@ namespace RealEstate.Infrastructure.Repo
                 .FirstOrDefaultAsync(c => c.Id == companyId);
         }
 
-       
+      
     }
 }

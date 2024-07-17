@@ -5,6 +5,7 @@ using RealEstate.Application.DTOs.Request.Property;
 using RealEstate.Application.DTOs.Response;
 using RealEstate.Application.DTOs.Response.Property;
 using RealEstate.Application.Helpers;
+using RealEstate.Domain.Entities.CompanyEntity;
 using RealEstate.Domain.Entities.PropertyEntity;
 using RealEstate.Infrastructure.Data;
 using RealEstate.Infrastructure.Services;
@@ -145,12 +146,24 @@ namespace RealEstate.Infrastructure.Repo.property
         {
             var user = await getuserHelper.GetUser(); // Assuming getUserHelper.GetUser() is replaced with a proper service call
             var userId = user.Id;
-            var agent = await context.Agents.FirstOrDefaultAsync(agent => agent.UserId == userId);
+            var agent = await context.Agents
+                .Include(a => a.company)
+                     .ThenInclude(c => c.Representative)
+                .FirstOrDefaultAsync(a => a.UserId == userId);
 
             if (agent == null)
             {
                 return new GeneralResponse(false, "Agent not found");
             }
+            var company = agent.company;
+        
+
+            if (company == null)
+            {
+                return new GeneralResponse(false, "Company not found");
+            }
+
+           
 
             var newProperty = new Property
             {
@@ -201,6 +214,7 @@ namespace RealEstate.Infrastructure.Repo.property
                 // Adding and saving the entity
                 await context.Properties.AddAsync(newProperty);
                 await context.SaveChangesAsync();
+              
 
                 // Add Images to the saved Property entity
                 foreach (var imageDto in propertyDto.Images)
@@ -230,8 +244,14 @@ namespace RealEstate.Infrastructure.Repo.property
 
                 // Save changes to include Images
                 await context.SaveChangesAsync();
+                var companyAdmin = company.RepresentativeId;
+                var message = $"🏠 A new property '{newProperty.PropertyTitle}' has been added by agent '{agent.user.FirstName} {agent.user.LastName}' and needs verification. Please review it as soon as possible. 👍";
+                var url = "/company-dashboard/unverified-properties";
 
-                return new GeneralResponse(true, "Property Added Successfully");
+                await notificationService.NotifyUserAsync(companyAdmin, message, url);
+
+                return new GeneralResponse(true, "Property Details Saved Successfully, It will be posted once you company representative verifies it");
+              
             }
             catch (DbUpdateException ex)
             {
@@ -366,8 +386,23 @@ namespace RealEstate.Infrastructure.Repo.property
         {
             var property = await context.Properties
         .Include(p => p.Agent)
+         .ThenInclude(a => a.company)
+                .ThenInclude(c => c.Subscription)
+                    .ThenInclude(s => s.Plan)
+        .Include(p => p.Agent)
         .ThenInclude(a => a.user)
         .FirstOrDefaultAsync(p => p.Id == propertyId);
+
+            var company = property.Agent.company;
+            if (company.Subscription.SubscriptionEndDate < DateTime.UtcNow)
+            {
+                return new GeneralResponse(false, "Subscription has expired");
+            }
+
+            if (company.UsedPropertyCounts >= company.Subscription.Plan.NumberOfListings)
+            {
+                return new GeneralResponse(false, "Property limit for the current subscription plan has been reached. You can upgrade to the next package by going to the Manage Billing section in your dashboard.");
+            }
             if (property == null)
             {
                 return new GeneralResponse(false, "property not found");
@@ -379,7 +414,9 @@ namespace RealEstate.Infrastructure.Repo.property
             }
             property.IsCompanyAdminVerified = true;
             await context.SaveChangesAsync();
-
+            company.UsedPropertyCounts++;
+            context.companies.Update(company);
+            await context.SaveChangesAsync();
             var userId = property.Agent.UserId;
             var message = "🎉 Congratulations! The property you submitted has been successfully verified by our admin team. To view your listing, please click here. 🏡✅";
             var url = $"/property-detail/{property.Id}";

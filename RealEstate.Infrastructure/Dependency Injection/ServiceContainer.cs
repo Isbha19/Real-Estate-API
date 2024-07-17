@@ -15,6 +15,7 @@ using RealEstate.Infrastructure.Data;
 using RealEstate.Infrastructure.Repo;
 using RealEstate.Infrastructure.Repo.property;
 using RealEstate.Infrastructure.Services;
+using RealEstate.Infrastructure.Services.Subscription;
 using RealEstate.Infrastructure.SignalR;
 using System.Text;
 
@@ -92,7 +93,7 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             //Services
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<FileService>();
-            services.AddScoped<StripeService>();
+            services.AddHostedService<SubscriptionResetService>();
             services.AddScoped<StripeWebHookHandler>();
             services.AddScoped<IContextSeedService, ContextSeedService>();
             services.AddScoped<NotificationService>();

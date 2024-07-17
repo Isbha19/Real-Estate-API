@@ -37,6 +37,10 @@ namespace RealEstate.API.Controllers
         public async Task<IActionResult> VerifyProperty(int propertyId)
         {
             var result = await property.VerifyProperty(propertyId);
+            if(!result.Success)
+            {
+return BadRequest(result);  
+            }
             return Ok(result);
 
         }

@@ -63,7 +63,7 @@ namespace RealEstate.Infrastructure.Data
                .WithMany(m => m.MessagesSent)
                .OnDelete(DeleteBehavior.Restrict);
 
-
+          
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Amenity>().HasData(

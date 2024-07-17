@@ -9,9 +9,10 @@ using Stripe;
 using RealEstate.Application.Contracts;
 using System.Numerics;
 using RealEstate.Application.Extensions;
+using RealEstate.Domain.Entities.CompanyEntity;
 
 
-namespace RealEstate.Infrastructure.Services
+namespace RealEstate.Infrastructure.Services.Subscription
 {
     public class StripeWebHookHandler
     {
@@ -22,12 +23,12 @@ namespace RealEstate.Infrastructure.Services
         private readonly NotificationService notificationService;
 
         public StripeWebHookHandler(ILogger<StripeWebHookHandler> logger, UserManager<User> userManager,
-            AppDbContext context,ICompany company,NotificationService notificationService)
+            AppDbContext context, ICompany company, NotificationService notificationService)
         {
             _logger = logger;
             _userManager = userManager;
             _context = context;
-            this._company = company;
+            _company = company;
             this.notificationService = notificationService;
         }
 
@@ -73,14 +74,14 @@ namespace RealEstate.Infrastructure.Services
                 var user = await _userManager.FindByEmailAsync(customer.Email);
                 if (user != null)
                 {
-                    var response= await _company.ValidateUserForPayment();
+                    var response = await _company.ValidateUserForPayment();
                     bool isValidUser = response.Success;
                     if (!isValidUser)
                     {
                         _logger.LogWarning("User is not validated for payment.");
                         throw new Exception("User is not validated for payment.");
                     }
-               
+
                 }
                 else
                 {
@@ -106,8 +107,8 @@ namespace RealEstate.Infrastructure.Services
             }
 
             var plan = subscriptionItem.Plan;
-          
-          
+
+
             var customerId = subscription.CustomerId;
             var customerService = new CustomerService();
             var customer = await customerService.GetAsync(customerId);
@@ -134,9 +135,9 @@ namespace RealEstate.Infrastructure.Services
                             SubscriptionStatus = stripeSubscription.Status,
                             SubscriptionStartDate = DateTime.UtcNow,
                             SubscriptionEndDate = stripeSubscription.CurrentPeriodEnd,
-                            IsActive=true,
+                            IsActive = true,
                             CompanyId = company.Id,
-                            PlanId= plan.Id,
+                            PlanId = plan.Id,
                         };
 
 
@@ -154,7 +155,7 @@ namespace RealEstate.Infrastructure.Services
                         var userId = company.RepresentativeId;
                         var message = $"Payment Successful! Your company subscription to '{planName}' plan is now active. Your agents can now list properties and access advanced features.";
                         var url = "/company-dashboard";
-                        
+
                         await notificationService.NotifyUserAsync(userId, message, url);
                     }
                     else
@@ -169,7 +170,7 @@ namespace RealEstate.Infrastructure.Services
                 }
             }
         }
-        
+
         private async Task HandleCustomerSubscriptionDeletedEvent(Event stripeEvent)
         {
             var subscription = stripeEvent.Data.Object as Stripe.Subscription;
@@ -207,12 +208,12 @@ namespace RealEstate.Infrastructure.Services
                 }
             }
         }
-        
+
         private async Task HandleCustomerSubscriptionUpdatedEvent(Event stripeEvent)
         {
-        var subscription = stripeEvent.Data.Object as Stripe.Subscription;
-        var customerService = new CustomerService();
-        var customer = await customerService.GetAsync(subscription.CustomerId);
+            var subscription = stripeEvent.Data.Object as Stripe.Subscription;
+            var customerService = new CustomerService();
+            var customer = await customerService.GetAsync(subscription.CustomerId);
             var subscriptionItem = subscription.Items.Data.FirstOrDefault();
             if (subscriptionItem == null)
             {
@@ -222,35 +223,88 @@ namespace RealEstate.Infrastructure.Services
 
             var plan = subscriptionItem.Plan;
             if (customer.Email != null)
-        {
-            var user = await _userManager.FindByEmailAsync(customer.Email);
-            if (user != null)
             {
-                var company = await _context.companies
-                    .Include(c => c.Subscription)
-                    .FirstOrDefaultAsync(c => c.RepresentativeId == user.Id);
-                if (company != null && company.Subscription != null && company.Subscription.StripeSubscriptionId == subscription.Id)
+                var user = await _userManager.FindByEmailAsync(customer.Email);
+                if (user != null)
                 {
-                    company.Subscription.SubscriptionStatus = subscription.Status;
-                    company.Subscription.SubscriptionEndDate = subscription.CurrentPeriodEnd;
-                    company.Subscription.IsActive = subscription.Status == "active";
+                    var company = await _context.companies
+                        .Include(c=>c.Subscription)
+                        .ThenInclude(s=>s.Plan)
+                        .FirstOrDefaultAsync(c => c.RepresentativeId == user.Id);
+                    var currentPlanId=company.Subscription.PlanId;
+                    if (company != null && company.Subscription != null && company.Subscription.StripeSubscriptionId == subscription.Id)
+                    {
+                        if (!CanDowngrade(company, plan.Id))
+                        {
+                            _logger.LogWarning("Cannot downgrade due to exceeded usage limits.");
+                            await RevertDowngrade(subscription, currentPlanId);
+                            await notificationService.NotifyUserAsync(user.Id, "Downgrade failed, You have exceeded the usage limits for the selected plan.","/");
+                            return;
+                        }
+                        company.Subscription.SubscriptionStatus = subscription.Status;
+                        company.Subscription.SubscriptionEndDate = subscription.CurrentPeriodEnd;
+                        company.Subscription.IsActive = subscription.Status == "active";
                         if (company.Subscription.PlanId != plan.Id)
                         {
                             company.Subscription.PlanId = plan.Id;
                         }
                         await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Company not found for user or subscription mismatch.");
+                    }
                 }
                 else
                 {
-                    _logger.LogWarning("Company not found for user or subscription mismatch.");
+                    _logger.LogError("No user found");
+                    throw new Exception("No user found");
                 }
+            }
+        }
+        private async Task RevertDowngrade(Stripe.Subscription subscription, string originalPlanId)
+        {
+            var subscriptionService = new SubscriptionService();
+            var updateOptions = new SubscriptionUpdateOptions
+            {
+                
+                Items = new List<SubscriptionItemOptions>
+        {
+            new SubscriptionItemOptions
+            {
+                Id = subscription.Items.Data.First().Id,
+                Plan = originalPlanId, // Revert to original plan
+            }
+        }
+            };
+
+            await subscriptionService.UpdateAsync(subscription.Id, updateOptions);
+        }
+
+        private bool CanDowngrade(Company company, string newPlanId)
+        {
+            int newPlanLimit = GetPlanLimit(newPlanId);
+            return company.UsedPropertyCounts <= newPlanLimit;
+        }
+
+        private int GetPlanLimit(string planId)
+        {
+            if (planId == "price_1PaegrGFthNCZxNO1kdaJ4ct")
+            {
+                return 5;
+            }else if (planId == "price_1PZ4m0GFthNCZxNOoti2pHeh")
+            {
+                return 20;
+            }
+            else if (planId == "price_1PZ4mUGFthNCZxNOwjVLIVd6")
+            {
+                return 50;
             }
             else
             {
-                _logger.LogError("No user found");
-                throw new Exception("No user found");
+                throw new ArgumentException("Invalid plan ID");
             }
         }
-        }
+
     }
 }

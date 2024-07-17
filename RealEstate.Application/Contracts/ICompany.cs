@@ -26,6 +26,7 @@ namespace RealEstate.Application.Contracts
         Task<GeneralResponse> ValidateUserForPayment();
         Task<IEnumerable<CompanyNames>> GetCompanyNamesAsync();
 
+        Task<DashboardStatisticsDto> GetCompanyDashboardStatitics();
 
 
         Task<string> CreateCustomerPortalSession(string customerId);
