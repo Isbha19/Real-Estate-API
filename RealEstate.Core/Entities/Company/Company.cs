@@ -39,8 +39,8 @@ namespace RealEstate.Domain.Entities.CompanyEntity
         public string TenancyContract { get; set; }
         public  CompanyFile CompanyLogo { get; set; }
         public  ICollection<Agent> Agents { get; set; }
-
         public int UsedPropertyCounts { get; set; }
+        public decimal SubscriptionAmtPaid { get; set; }
 
         public string BusinessDescription { get; set; }
         public int NumberOfEmployees { get; set; }

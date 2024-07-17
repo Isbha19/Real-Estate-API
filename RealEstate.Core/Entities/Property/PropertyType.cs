@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace RealEstate.Domain.Entities.PropertyEntity
 {
-    public class PropertyType:baseEntity
+    public class PropertyType
     {
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 }

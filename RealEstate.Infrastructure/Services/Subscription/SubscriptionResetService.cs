@@ -38,7 +38,7 @@ namespace RealEstate.Infrastructure.Services.Subscription
 
                         foreach (var company in companies)
                         {
-                            if (company.Subscription.SubscriptionEndDate <= DateTime.UtcNow)
+                            if (company?.Subscription?.SubscriptionEndDate <= DateTime.UtcNow)
                             {
                                 company.UsedPropertyCounts = 0; // Reset properties listed count
                             }

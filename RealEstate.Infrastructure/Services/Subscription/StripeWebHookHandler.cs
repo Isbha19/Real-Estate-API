@@ -127,6 +127,15 @@ namespace RealEstate.Infrastructure.Services.Subscription
                     {
                         var subscriptionService = new SubscriptionService();
                         var stripeSubscription = await subscriptionService.GetAsync(subscription.Id);
+                        var invoiceService = new InvoiceService();
+                        var latestInvoice = await invoiceService.ListAsync(new InvoiceListOptions
+                        {
+                            Subscription = subscription.Id,
+                            Limit = 1
+                        });
+
+                        var amountPaid = latestInvoice.Data.FirstOrDefault()?.AmountPaid / 100m ?? 0m;
+
 
                         var newsubscription = new Domain.Entities.CompanyEntity.Subscription
                         {
@@ -142,6 +151,8 @@ namespace RealEstate.Infrastructure.Services.Subscription
 
 
                         company.Subscription = newsubscription;
+                        company.SubscriptionAmtPaid += amountPaid; // Update amount paid
+
                         await _context.SaveChangesAsync();
                         if (!await _userManager.IsInRoleAsync(user, Constant.CompanyAdmin))
                         {
@@ -222,6 +233,7 @@ namespace RealEstate.Infrastructure.Services.Subscription
             }
 
             var plan = subscriptionItem.Plan;
+
             if (customer.Email != null)
             {
                 var user = await _userManager.FindByEmailAsync(customer.Email);
@@ -231,8 +243,13 @@ namespace RealEstate.Infrastructure.Services.Subscription
                         .Include(c=>c.Subscription)
                         .ThenInclude(s=>s.Plan)
                         .FirstOrDefaultAsync(c => c.RepresentativeId == user.Id);
-                    var currentPlanId=company.Subscription.PlanId;
-                    if (company != null && company.Subscription != null && company.Subscription.StripeSubscriptionId == subscription.Id)
+                    var currentPlanId = "";
+                    if (company?.Subscription?.Plan != null)
+                    {
+                        currentPlanId = company.Subscription?.PlanId;
+
+                    }
+                    if (company != null && company.Subscription != null && company.Subscription.Plan!=null && company.Subscription.StripeSubscriptionId == subscription.Id)
                     {
                         if (!CanDowngrade(company, plan.Id))
                         {
@@ -241,6 +258,15 @@ namespace RealEstate.Infrastructure.Services.Subscription
                             await notificationService.NotifyUserAsync(user.Id, "Downgrade failed, You have exceeded the usage limits for the selected plan.","/");
                             return;
                         }
+                        var invoiceService = new InvoiceService();
+                        var latestInvoice = await invoiceService.ListAsync(new InvoiceListOptions
+                        {
+                            Subscription = subscription.Id,
+                            Limit = 1
+                        });
+
+                        var amountPaid = latestInvoice.Data.FirstOrDefault()?.AmountPaid / 100m ?? 0m;
+
                         company.Subscription.SubscriptionStatus = subscription.Status;
                         company.Subscription.SubscriptionEndDate = subscription.CurrentPeriodEnd;
                         company.Subscription.IsActive = subscription.Status == "active";
@@ -248,6 +274,8 @@ namespace RealEstate.Infrastructure.Services.Subscription
                         {
                             company.Subscription.PlanId = plan.Id;
                         }
+                        company.SubscriptionAmtPaid += amountPaid; // Update amount paid
+
                         await _context.SaveChangesAsync();
                     }
                     else

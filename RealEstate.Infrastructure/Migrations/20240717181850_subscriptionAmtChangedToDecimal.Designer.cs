@@ -12,8 +12,8 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240717173929_again")]
-    partial class again
+    [Migration("20240717181850_subscriptionAmtChangedToDecimal")]
+    partial class subscriptionAmtChangedToDecimal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -328,6 +328,9 @@ namespace RealEstate.Infrastructure.Migrations
 
                     b.Property<string>("ReraCertificateNumber")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("SubscriptionAmtPaid")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TenancyContract")
                         .HasColumnType("nvarchar(max)");
@@ -888,9 +891,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Property<int>("Bedrooms")
                         .HasColumnType("int");
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<int>("FurnishingTypeId")
                         .HasColumnType("int");
 
@@ -944,8 +944,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AgentId");
-
-                    b.HasIndex("CompanyId");
 
                     b.HasIndex("FurnishingTypeId");
 
@@ -1022,12 +1020,6 @@ namespace RealEstate.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("LastUpdatedBy")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastUpdatedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -1039,29 +1031,21 @@ namespace RealEstate.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 17, 21, 39, 28, 879, DateTimeKind.Local).AddTicks(7937),
                             Name = "Apartment"
                         },
                         new
                         {
                             Id = 2,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 17, 21, 39, 28, 879, DateTimeKind.Local).AddTicks(7956),
                             Name = "Villa"
                         },
                         new
                         {
                             Id = 3,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 17, 21, 39, 28, 879, DateTimeKind.Local).AddTicks(7957),
                             Name = "Townhouse"
                         },
                         new
                         {
                             Id = 4,
-                            LastUpdatedBy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedOn = new DateTime(2024, 7, 17, 21, 39, 28, 879, DateTimeKind.Local).AddTicks(7957),
                             Name = "Penthouse"
                         });
                 });
@@ -1348,12 +1332,6 @@ namespace RealEstate.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RealEstate.Domain.Entities.CompanyEntity.Company", "Company")
-                        .WithMany("Properties")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("RealEstate.Domain.Entities.PropertyEntity.FurnishingType", "FurnishingType")
                         .WithMany()
                         .HasForeignKey("FurnishingTypeId")
@@ -1373,8 +1351,6 @@ namespace RealEstate.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Agent");
-
-                    b.Navigation("Company");
 
                     b.Navigation("FurnishingType");
 
@@ -1440,8 +1416,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Agents");
 
                     b.Navigation("CompanyLogo");
-
-                    b.Navigation("Properties");
 
                     b.Navigation("Subscription");
                 });

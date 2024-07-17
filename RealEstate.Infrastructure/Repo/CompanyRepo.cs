@@ -273,7 +273,8 @@ namespace RealEstate.Infrastructure.Repo
                 propertyLimit = company.Subscription.Plan.NumberOfListings,
                 PropertiesListedCount = propertiesListedCount,
                 NumberOfAgents = company.Agents.Count,
-                PropertyViews = propertyViews
+                PropertyViews = propertyViews,
+                SubscriptionAmtPaid=company.SubscriptionAmtPaid
             };
 
             return statisticsDto;
