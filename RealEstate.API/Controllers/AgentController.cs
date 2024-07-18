@@ -5,6 +5,7 @@ using RealEstate.Application.Contracts;
 using RealEstate.Application.DTOs.Request.Agent;
 using RealEstate.Application.DTOs.Request.Company;
 using RealEstate.Domain.Entities.CompanyEntity;
+using RealEstate.Infrastructure.Repo;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace RealEstate.API.Controllers
@@ -44,6 +45,33 @@ namespace RealEstate.API.Controllers
         public async Task<IActionResult> GetVerifiedAgentDetails()
         {
             var result = await agent.GetVerifiedAgentDetailsAsync();
+
+            return Ok(result);
+        }
+        [HttpPost("mark-as-sold")]
+        public async Task<IActionResult> MarkPropertyAsSoldAsync([FromBody] MarkPropertyAsSoldDto dto)
+        {
+            if (dto == null)
+            {
+                return BadRequest("Invalid property data.");
+            }
+
+            var result = await agent.MarkPropertyAsSoldAsync(dto);
+
+            if (result.Success)
+            {
+                return Ok(result.Message);
+            }
+
+            return BadRequest(result.Message);
+        }
+    
+    [HttpGet("get-properties-byAgent")]
+        [Authorize]
+
+        public async Task<IActionResult> GetPropertiesByAgent()
+        {
+            var result = await agent.GetPropertiesbyAgentAsync();
 
             return Ok(result);
         }

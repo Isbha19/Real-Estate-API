@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts;
 using RealEstate.Application.DTOs.Account;
+using RealEstate.Application.DTOs.Request;
 using RealEstate.Application.DTOs.Request.Account;
 using RealEstate.Application.DTOs.Response.Account;
+using RealEstate.Domain.Entities.CompanyEntity;
 using RealEstate.Infrastructure.Repo;
 using System.Security.Claims;
 
@@ -128,5 +130,14 @@ namespace RealEstate.API.Controllers
             }
             return Ok(result);
         }
+        [HttpGet("get-all-users")]
+
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var result = await _user.GetAllUsersAsync();
+
+            return Ok(result);
+        }
+      
     }
 }

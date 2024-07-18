@@ -27,6 +27,8 @@ namespace RealEstate.Infrastructure.Data
 
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Plan> Plan { get; set; }
+        public DbSet<Testimonial> Testimonials { get; set; }
+
 
         public DbSet<Agent> Agents { get; set; }
         public DbSet<AgentImage> AgentImage { get; set; }

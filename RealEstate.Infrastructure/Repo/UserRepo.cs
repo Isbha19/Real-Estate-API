@@ -18,6 +18,9 @@ using System.Security.Claims;
 using System.Text;
 using System.Net.Http.Json;
 using Google.Apis.Auth;
+using RealEstate.Application.DTOs.Response.Company;
+using RealEstate.Infrastructure.Data;
+using RealEstate.Application.Helpers;
 
 namespace RealEstate.Infrastructure.Repo
 {
@@ -28,16 +31,19 @@ namespace RealEstate.Infrastructure.Repo
         private readonly UserManager<User> _userManager;
         private readonly IEmailService emailService;
         private readonly IConfiguration config;
+        private readonly AppDbContext context;
         private readonly HttpClient _facebookHttpClient;
         public UserRepo(IConfiguration configuration, SignInManager<User> signInManager,
             UserManager<User> userManager, IEmailService emailService,
-            IConfiguration config)
+            IConfiguration config,AppDbContext context
+            )
         {
             _configuration = configuration;
             _signInManager = signInManager;
             _userManager = userManager;
             this.emailService = emailService;
             this.config = config;
+            this.context = context;
             _facebookHttpClient = new HttpClient
             {
                 BaseAddress = new Uri("https://graph.facebook.com")
@@ -332,6 +338,21 @@ namespace RealEstate.Infrastructure.Repo
             var userDto = await CreateApplicationUserDto(user);
             return new GeneralResponseGen<UserDto>(true, $"Login with {model.Provider} successful", userDto);
         }
+        public async Task<IEnumerable<AllUsersDto>> GetAllUsersAsync()
+        {
+            var users = await context.Users
+                       .Select(c => new AllUsersDto
+                       {
+                           UserId=c.Id,
+                           UserName=c.FirstName+" "+c.LastName,
+                           Email=c.Email,
+
+                       })
+                       .ToListAsync();
+
+            return users;
+        }
+       
 
 
         #region Private Helper Methods

@@ -7,6 +7,7 @@ using RealEstate.Application.DTOs.Request.Company;
 using RealEstate.Application.DTOs.Response;
 using RealEstate.Application.DTOs.Response.Agent;
 using RealEstate.Application.DTOs.Response.Company;
+using RealEstate.Application.DTOs.Response.Property;
 using RealEstate.Application.Extensions;
 using RealEstate.Application.Helpers;
 using RealEstate.Domain.Entities;
@@ -214,6 +215,91 @@ namespace RealEstate.Infrastructure.Repo
 
             return agentList;
         }
+
+        public async Task<IEnumerable<PropertyDetailForDashboardDto>> GetPropertiesbyAgentAsync()
+        {
+            var user = await getuserHelper.GetUser();
+            if (user == null)
+            {
+                return Enumerable.Empty<PropertyDetailForDashboardDto>();
+            }
+
+            var agent = await context.Agents
+                .Include(a => a.Properties)
+                .ThenInclude(p => p.PropertyType)
+                .Include(a => a.Properties)
+                .ThenInclude(p => p.ListingType)
+                .Include(a => a.Properties)
+                .ThenInclude(p => p.Images)
+                .Include(a => a.Properties)
+                .ThenInclude(p => p.SoldToUser)
+
+                .FirstOrDefaultAsync(a => a.UserId == user.Id);
+
+            if (agent == null)
+            {
+                return Enumerable.Empty<PropertyDetailForDashboardDto>();
+            }
+            var agentProperties = agent.Properties.Select(p => new PropertyDetailForDashboardDto
+            {
+                PropertyId = p.Id,
+                PropertyTitle = p.PropertyTitle,
+                PropertyType = p.PropertyType.Name,
+                ListingType = p.ListingType.Name,
+                Location = p.Location,
+                Price = p.Price,
+                Bedrooms = p.Bedrooms,
+                Bathrooms = p.Bathrooms,
+                Size = p.Size,
+                PropertyViews = p.PropertyViews,
+                AgentName = $"{agent.user.FirstName} {agent.user.LastName}", // Assuming you have a User navigation property
+                PostedOn = p.PostedOn,
+                PrimaryImageUrl = p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl,
+               isVerified=p.IsCompanyAdminVerified,
+               isSold=p.isSold,
+                soldTo = p.SoldToUser != null ? $"{p.SoldToUser.FirstName} {p.SoldToUser.LastName}" : "Not Sold Yet",
+                Revenue = p.Revenue
+
+    });
+
+            return agentProperties;
+        }
+        public async Task<GeneralResponse> MarkPropertyAsSoldAsync(MarkPropertyAsSoldDto dto)
+        {
+            // Retrieve the property from the database
+            var property = await context.Properties.FindAsync(dto.PropertyId);
+            if (property == null)
+            {
+                return new GeneralResponse(false, "Property not found");
+            }
+
+            // Check if the property is already marked as sold
+            if (property.isSold)
+            {
+                return new GeneralResponse(false, "Property is already marked as sold");
+            }
+            var soldToUser = await userManager.FindByIdAsync(dto.SoldToUserId);
+            if (soldToUser == null)
+            {
+                return new GeneralResponse(false, "User not found");
+            }
+            // Update the property details
+            property.isSold = true;
+            property.Revenue = dto.Revenue;
+            property.SoldToUserId = dto.SoldToUserId;
+            property.SoldToUser = soldToUser;
+            property.SoldOn = DateTime.UtcNow; // Assuming you want to store the date of the sale
+
+            // Save the changes to the database
+            await context.SaveChangesAsync();
+
+            // Optionally, send a notification to the user who bought the property
+            var message = $"Congratulations!🎉 You have successfully purchased the property '{property.PropertyTitle}'. We value your feedback! Please take a moment to share your experience by adding a testimonial. Click here";
+            var url = "/testimonial-form"; // Example URL for the property details page
+            await notificationService.NotifyUserAsync(dto.SoldToUserId, message, url);
+            return new GeneralResponse(true, "Property marked as sold successfully");
+        }
+
 
 
     }

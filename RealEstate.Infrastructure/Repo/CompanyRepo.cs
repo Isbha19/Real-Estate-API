@@ -266,6 +266,10 @@ namespace RealEstate.Infrastructure.Repo
 
             // Calculate the sum of all property views for properties under the given company
             var propertyViews = company.Agents.SelectMany(a => a.Properties).Sum(p => p.PropertyViews);
+            var propertiesSoldCount = company.Agents.SelectMany(a => a.Properties).Count(p => p.isSold);
+            var totalRevenue = company.Agents.SelectMany(a => a.Properties).Where(p => p.isSold).Sum(p => p.Revenue);
+
+
 
             var statisticsDto = new DashboardStatisticsDto
             {
@@ -274,7 +278,9 @@ namespace RealEstate.Infrastructure.Repo
                 PropertiesListedCount = propertiesListedCount,
                 NumberOfAgents = company.Agents.Count,
                 PropertyViews = propertyViews,
-                SubscriptionAmtPaid=company.SubscriptionAmtPaid
+                SubscriptionAmtPaid=company.SubscriptionAmtPaid,
+                PropertiesSold=propertiesSoldCount,
+                TotalRevenue=totalRevenue,
             };
 
             return statisticsDto;

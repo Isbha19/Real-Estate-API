@@ -84,6 +84,7 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             services.AddScoped<IAgent, AgentRepo>();
             services.AddScoped<IMessage, MessageRepo>();
 
+            services.AddScoped<ITestimonial, TestimonialRepo>();
 
 
             services.AddSignalR(); // Add SignalR service

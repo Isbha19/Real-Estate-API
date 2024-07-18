@@ -56,7 +56,12 @@ namespace RealEstate.Domain.Entities.PropertyEntity
         public bool IsCompanyAdminVerified { get; set; }
         public DateTime PostedOn { get; set; } = DateTime.Now;
         public int PropertyViews { get; set; } = 0;
+        public Boolean isSold { get; set; }
+        public decimal Revenue { get; set; }
 
+        public string SoldToUserId { get; set; }
+        public User SoldToUser { get; set; }
+        public DateTime SoldOn {  get; set; }
 
         [ForeignKey("Agent")]
         public int AgentId { get; set; }  // Foreign key to Agent entity

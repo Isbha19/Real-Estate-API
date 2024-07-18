@@ -21,5 +21,9 @@ namespace RealEstate.Application.DTOs.Response.Property
         public string AgentName { get; set; }
         public DateTime PostedOn { get; set; }
         public string PrimaryImageUrl { get; set; }
+        public bool isSold { get; set; }
+        public decimal Revenue { get; set; }
+        public string soldTo { get; set; }
+        public bool isVerified { get; set; }
     }
 }

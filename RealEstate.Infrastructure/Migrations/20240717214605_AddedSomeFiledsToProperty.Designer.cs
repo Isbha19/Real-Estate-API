@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstate.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240717214605_AddedSomeFiledsToProperty")]
+    partial class AddedSomeFiledsToProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1061,41 +1064,6 @@ namespace RealEstate.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.Testimonial", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("SubmittedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Testimonials");
-                });
-
             modelBuilder.Entity("RealEstate.Domain.Entities.User", b =>
                 {
                     b.Property<string>("Id")
@@ -1447,17 +1415,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Facility");
 
                     b.Navigation("Property");
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.Testimonial", b =>
-                {
-                    b.HasOne("RealEstate.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.signalr.Connection", b =>

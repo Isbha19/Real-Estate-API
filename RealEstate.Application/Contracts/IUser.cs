@@ -16,6 +16,8 @@ namespace RealEstate.Application.Contracts
         Task<GeneralResponse> ResetPassword(ResetPasswordDto resetPasswordDto);
         Task<GeneralResponseGen<UserDto>> RegisterWithThirdParty(RegisterWithExternalDto model);
         Task<GeneralResponseGen<UserDto>> LoginWithThirdParty(LoginWithExternalDto model);
+        Task<IEnumerable<AllUsersDto>> GetAllUsersAsync();
+
 
     }
 }
