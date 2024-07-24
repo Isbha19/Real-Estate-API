@@ -16,8 +16,8 @@ namespace RealEstate.Application.DTOs.Response.Chat
         public string ReceiverName { get; set; }
         //public string RecipientPhotoUrl { get; set; }
         public string Content { get; set; }
-        public DateTime? DateRead { get; set; }
-        public DateTime SentAt { get; set; } 
+        public DateTimeOffset? DateRead { get; set; }
+        public DateTimeOffset SentAt { get; set; } 
       
     }
 }

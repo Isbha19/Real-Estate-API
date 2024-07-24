@@ -10,8 +10,9 @@ namespace RealEstate.Domain.Entities
         public  User Receiver { get; set; }
 
         public string Content { get; set; }
-        public DateTime? DateRead { get; set; }
-        public DateTime SentAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset? DateRead { get; set; }
+        public DateTimeOffset SentAt { get; set; } = DateTimeOffset.UtcNow;
+
         public bool SenderDeleted { get; set; }
         public bool RecipientDeleted { get; set; }
 

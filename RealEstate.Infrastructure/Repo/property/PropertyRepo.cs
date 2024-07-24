@@ -246,7 +246,7 @@ namespace RealEstate.Infrastructure.Repo.property
                 await context.SaveChangesAsync();
                 var companyAdmin = company.RepresentativeId;
                 var message = $"🏠 A new property '{newProperty.PropertyTitle}' has been added by agent '{agent.user.FirstName} {agent.user.LastName}' and needs verification. Please review it as soon as possible. 👍";
-                var url = "/company-dashboard/unverified-properties";
+                var url = "/company-dashboard/properties/unverified-properties";
 
                 await notificationService.NotifyUserAsync(companyAdmin, message, url);
 

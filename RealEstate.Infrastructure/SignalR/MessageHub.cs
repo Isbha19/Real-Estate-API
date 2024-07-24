@@ -72,15 +72,14 @@ namespace RealEstate.Infrastructure.SignalR
             {
                 Sender = sender,
                 Receiver = recipient,
-                Content = createMessageDto.Content
-
+                Content = createMessageDto.Content,
             };
             var groupName = GetGroupName(sender.Id, recipient.Id);
             var group = await messageRepo.GetGroup(groupName);
             if (group.Connections.Any(x => x.UserId == recipient.Id))
             {
                 // The recipient has the chat box open
-                message.DateRead = DateTime.UtcNow;
+                message.DateRead = DateTimeOffset.UtcNow;
             }
             else
             {
@@ -142,6 +141,7 @@ namespace RealEstate.Infrastructure.SignalR
             var groupName = GetGroupName(user.Id, recipient.Id);
             await Clients.Group(groupName).SendAsync("UserStoppedTyping", user.Id);
         }
+   
         private async Task<Group> AddToGroup(string groupName)
         {
 
