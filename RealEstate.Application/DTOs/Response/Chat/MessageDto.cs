@@ -9,6 +9,7 @@ namespace RealEstate.Application.DTOs.Response.Chat
 {
     public class MessageDto
     {
+        public int messageId { get; set; }
         public string SenderId { get; set; }
         public string SenderName { get; set; }
         //public string SenderPhotoUrl { get; set; }

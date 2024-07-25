@@ -8,11 +8,7 @@ using RealEstate.Application.Helpers;
 using RealEstate.Domain.Entities;
 using RealEstate.Domain.Entities.signalr;
 using RealEstate.Infrastructure.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace RealEstate.Infrastructure.SignalR
 {
@@ -76,35 +72,15 @@ namespace RealEstate.Infrastructure.SignalR
             };
             var groupName = GetGroupName(sender.Id, recipient.Id);
             var group = await messageRepo.GetGroup(groupName);
-            if (group.Connections.Any(x => x.UserId == recipient.Id))
-            {
-                // The recipient has the chat box open
-                message.DateRead = DateTimeOffset.UtcNow;
-            }
-            else
-            {
-                var connections = await tracker.GetConnectionsForUser(recipient.Id);
-
-                var notificationMessage = $"You have received a new message from {sender.FirstName} {sender.LastName}";
-                var notificationUrl = "/messages"; // Adjust URL as per your application logic
-
-                if (connections != null)
-                {
-                   
-                    // Send notification to recipient if they are online but chat box is not open
-                    await notificationService.NotifyUserAsync(recipient.Id, notificationMessage, notificationUrl);
-                }
-                else
-                {
-                    // Store notification for offline users
-                    await notificationService.StoreOfflineNotificationAsync(recipient.Id, notificationMessage, notificationUrl);
-                }
-            }
+           
             messageRepo.AddMessage(message);
+
+
             if (await messageRepo.SaveAllAsync())
             {
                 var messageDto = new MessageDto
                 {
+                    messageId = message.Id,
                     SenderId = message.Sender.Id,
                     SenderName = $"{sender.FirstName} {sender.LastName}",
                     ReceiverId = recipient.Id,
@@ -112,9 +88,38 @@ namespace RealEstate.Infrastructure.SignalR
                     Content = message.Content,
                     SentAt = message.SentAt,
                 };
+                if (group.Connections.Any(x => x.UserId == recipient.Id))
+                {
+                    // The recipient has the chat box open
+                    message.DateRead = DateTimeOffset.UtcNow;
+                    await messageRepo.SaveAllAsync(); // Save the changes after updating DateRead
+
+                    await Clients.Caller.SendAsync("MessageRead", message.Id);
+
+                }
+                else
+                {
+                    var connections = await tracker.GetConnectionsForUser(recipient.Id);
+
+                    var notificationMessage = $"You have received a new message from {sender.FirstName} {sender.LastName}";
+                    var notificationUrl = "/messages"; // Adjust URL as per your application logic
+
+                    if (connections != null)
+                    {
+
+                        // Send notification to recipient if they are online but chat box is not open
+                        await notificationService.NotifyUserAsync(recipient.Id, notificationMessage, notificationUrl);
+                    }
+                    else
+                    {
+                        // Store notification for offline users
+                        await notificationService.StoreOfflineNotificationAsync(recipient.Id, notificationMessage, notificationUrl);
+                    }
+                }
 
                 await Clients.Group(groupName).SendAsync("NewMessage", messageDto);
             }
+
         }
         public async Task SendTypingNotification(string recipientId)
       {

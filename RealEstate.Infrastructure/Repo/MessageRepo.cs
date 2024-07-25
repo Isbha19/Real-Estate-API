@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using RealEstate.Application.Contracts;
 using RealEstate.Application.DTOs.Account;
@@ -8,6 +9,7 @@ using RealEstate.Application.Helpers;
 using RealEstate.Domain.Entities;
 using RealEstate.Domain.Entities.signalr;
 using RealEstate.Infrastructure.Data;
+using RealEstate.Infrastructure.SignalR;
 
 namespace RealEstate.Infrastructure.Repo
 {
@@ -16,12 +18,14 @@ namespace RealEstate.Infrastructure.Repo
         private readonly AppDbContext context;
         private readonly GetUserHelper getUserHelper;
         private readonly UserManager<User> userManager;
+        private readonly IHubContext<MessageHub> hubContext;
 
-        public MessageRepo(AppDbContext context, GetUserHelper getUserHelper, UserManager<User> userManager)
+        public MessageRepo(AppDbContext context, GetUserHelper getUserHelper, UserManager<User> userManager, IHubContext<MessageHub> hubContext)
         {
             this.context = context;
             this.getUserHelper = getUserHelper;
             this.userManager = userManager;
+            this.hubContext = hubContext;
         }
 
         public void AddGroup(Group group)
@@ -116,12 +120,18 @@ namespace RealEstate.Infrastructure.Repo
                 foreach (var message in unreadMessages)
                 {
                     message.DateRead = DateTime.UtcNow;
+
                 }
                 await context.SaveChangesAsync();
+                foreach (var message in unreadMessages)
+                {
+                    await hubContext.Clients.User(recipientId).SendAsync("MessageRead", message.Id);
+                }
             }
 
             var messageDtos = messages.Select(m => new MessageDto
             {
+                messageId=m.Id,
                 SenderId = m.Sender.Id,
                 SenderName = m.Sender.FirstName + " " + m.Sender.LastName,
                 ReceiverId = m.Receiver.Id,
