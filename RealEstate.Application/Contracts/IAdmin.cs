@@ -9,6 +9,8 @@ namespace RealEstate.Application.Contracts
         Task<GetMembersResponse> GetMembers();
         Task<GetMemberResponse> GetMember(string userId);
         Task<GeneralResponse> AddEditMember(MemberAddEditDto memberAddEditDto);
+        Task<AdminDashboardStatisticsDto> GetDashboardStatisticsAsync();
+        Task<UserRoleStatisticsDto> GetUserRoleStatisticsAsync();
 
         Task<GeneralResponse> LockMember(string userId);
         Task<GeneralResponse> UnLockMember(string userId);

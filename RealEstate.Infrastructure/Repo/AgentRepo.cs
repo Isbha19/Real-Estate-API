@@ -264,6 +264,33 @@ namespace RealEstate.Infrastructure.Repo
 
             return agentProperties;
         }
+        public async Task<List<TopAgentDto>> GetTopPerformingAgentsAsync()
+        {
+            var user = await getuserHelper.GetUser();
+
+            // Get the company ID based on the representative ID of the current user
+            var companyId = await context.companies
+                .Where(c => c.RepresentativeId == user.Id)
+                .Select(c => c.Id)
+                .FirstOrDefaultAsync();
+
+            return await context.Agents
+                        .Include(agent => agent.user) // Include the User navigation property
+                        .Include(agent=>agent.ImageUrl)
+                .Where(agent => agent.CompanyId == companyId) // Filter agents by the current company ID
+                .Select(agent => new TopAgentDto
+                {
+                    AgentId = agent.Id,
+                    AgentName = $"{agent.user.FirstName} {agent.user.LastName}", // Concatenate first name and last name
+                    PropertiesSold = context.Properties.Count(p => p.AgentId == agent.Id && p.isSold),
+                    PropertyViews = context.Properties.Where(p => p.AgentId == agent.Id).Sum(p => p.PropertyViews),
+                    AgentImage=agent.ImageUrl.ImageUrl
+                })
+                .OrderByDescending(a => a.PropertiesSold) // Order by PropertiesSold or PropertyViews based on your criteria
+                .Take(10)
+                .ToListAsync();
+        }
+
         public async Task<GeneralResponse> MarkPropertyAsSoldAsync(MarkPropertyAsSoldDto dto)
         {
             // Retrieve the property from the database

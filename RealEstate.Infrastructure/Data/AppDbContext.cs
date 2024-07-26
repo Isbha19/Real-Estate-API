@@ -32,6 +32,8 @@ namespace RealEstate.Infrastructure.Data
 
 
         public DbSet<Agent> Agents { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
+
         public DbSet<AgentImage> AgentImage { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Group> Groups { get; set; }

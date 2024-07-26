@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts;
 using RealEstate.Application.DTOs.Request.Agent;
 using RealEstate.Application.DTOs.Request.Company;
+using RealEstate.Application.DTOs.Response.Agent;
 using RealEstate.Domain.Entities.CompanyEntity;
 using RealEstate.Infrastructure.Repo;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -48,6 +49,13 @@ namespace RealEstate.API.Controllers
 
             return Ok(result);
         }
+        [HttpGet("top-agents")]
+        public async Task<ActionResult<List<TopAgentDto>>> GetTopPerformingAgents()
+        {
+            var agents = await agent.GetTopPerformingAgentsAsync();
+            return Ok(agents);
+        }
+
         [HttpPost("mark-as-sold")]
         public async Task<IActionResult> MarkPropertyAsSoldAsync([FromBody] MarkPropertyAsSoldDto dto)
         {

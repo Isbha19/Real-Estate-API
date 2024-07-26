@@ -9,6 +9,8 @@ using RealEstate.Domain.Entities.CompanyEntity;
 using RealEstate.Domain.Entities.PropertyEntity;
 using RealEstate.Infrastructure.Data;
 using RealEstate.Infrastructure.Services;
+using System.Globalization;
+using System.Management;
 using FileService = RealEstate.Infrastructure.Services.FileService;
 
 namespace RealEstate.Infrastructure.Repo.property
@@ -426,6 +428,92 @@ namespace RealEstate.Infrastructure.Repo.property
             return new GeneralResponse(true, "company verified");
 
         }
+        public async Task<PropertyStatisticsDto> GetPropertiesStatistics(string type, int year, int month = 0)
+        {
+            var propertiesStatistics = new PropertyStatisticsDto
+            {
+                Labels = new List<string>(),
+                ListedProperties = new List<int>(),
+                SoldProperties = new List<int>()
+            };
+
+            var user = await getuserHelper.GetUser();
+
+            // Get the company ID based on the representative ID of the current user
+            var companyId = await context.companies
+                .Where(c => c.RepresentativeId == user.Id)
+                .Select(c => c.Id)
+                .FirstOrDefaultAsync();
+
+            // Define the base query
+            IQueryable<Property> query = context.Properties
+                .Where(p => p.Agent.CompanyId == companyId) // Filter properties by the user's company
+                .AsQueryable();
+
+
+            if (type == "yearly")
+            {
+                propertiesStatistics.Labels = Enumerable.Range(2018, DateTime.Now.Year - 2018 + 1).Select(y => y.ToString()).ToList();
+                foreach (var label in propertiesStatistics.Labels)
+                {
+                    int currentYear = int.Parse(label); 
+                    propertiesStatistics.ListedProperties.Add(await query.CountAsync(p => p.PostedOn.Year == currentYear));
+                    propertiesStatistics.SoldProperties.Add(await query.CountAsync(p => p.isSold && p.SoldOn.Year == currentYear));
+                }
+            }
+            else if (type == "monthly" && year > 0)
+            {
+                propertiesStatistics.Labels = Enumerable.Range(1, 12).Select(m => CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)).ToList();
+                foreach (var label in propertiesStatistics.Labels)
+                {
+                    int currentMonth = DateTime.ParseExact(label, "MMMM", CultureInfo.CurrentCulture).Month; // Changed from `month` to `currentMonth`
+                    propertiesStatistics.ListedProperties.Add(await query.CountAsync(p => p.PostedOn.Year == year && p.PostedOn.Month == currentMonth));
+                    propertiesStatistics.SoldProperties.Add(await query.CountAsync(p => p.isSold && p.SoldOn.Year == year && p.SoldOn.Month == currentMonth));
+                }
+            }
+            else if (type == "daily" && year > 0 && month > 0)
+            {
+                int daysInMonth = DateTime.DaysInMonth(year, month);
+                propertiesStatistics.Labels = Enumerable.Range(1, daysInMonth).Select(d => d.ToString()).ToList();
+                foreach (var label in propertiesStatistics.Labels)
+                {
+                    int currentDay = int.Parse(label); // Changed from `day` to `currentDay`
+                    propertiesStatistics.ListedProperties.Add(await query.CountAsync(p => p.PostedOn.Year == year && p.PostedOn.Month == month && p.PostedOn.Day == currentDay));
+                    propertiesStatistics.SoldProperties.Add(await query.CountAsync(p => p.isSold && p.SoldOn.Year == year && p.SoldOn.Month == month && p.SoldOn.Day == currentDay));
+                }
+            }
+
+            return propertiesStatistics;
+        }
+        public async Task<List<TopPropertiesDto>> GetTopPropertiesAsync()
+        {
+            var user = await getuserHelper.GetUser();
+
+            // Get the company ID based on the representative ID of the current user
+            var companyId = await context.companies
+                .Where(c => c.RepresentativeId == user.Id)
+                .Select(c => c.Id)
+                .FirstOrDefaultAsync();
+
+
+            return await context.Properties
+                .Include(p => p.Images)
+                .Include(p=>p.Agent)
+               .Where(p => p.Agent.CompanyId == companyId) // Filter by AgentId and CompanyId
+
+                .OrderByDescending(p => p.PropertyViews)
+                .Take(10)
+                .Select(p => new TopPropertiesDto
+                {
+                    propertyId = p.Id,
+                    PropertyTitle = p.PropertyTitle,
+                    PropertyViews = p.PropertyViews,
+                    PrimaryImageUrl = p.Images.FirstOrDefault(i => i.IsPrimary).ImageUrl
+                })
+                .ToListAsync();
+        }
+
+
         public async Task<List<PropertyListDto>> GetFilteredPropertiesAsync(PropertyFilterDto filter)
         {
             var query = context.Properties.AsQueryable();

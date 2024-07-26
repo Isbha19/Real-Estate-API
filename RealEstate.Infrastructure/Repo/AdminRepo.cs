@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using System.Data;
 using RealEstate.Application.DTOs.Request.Account;
 using RealEstate.Application.DTOs.Account;
+using RealEstate.Application.DTOs.Response.Company;
+using RealEstate.Infrastructure.Data;
 
 
 namespace RealEstate.Infrastructure.Repo
@@ -17,12 +19,14 @@ namespace RealEstate.Infrastructure.Repo
     {
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly AppDbContext context;
 
         public AdminRepo(UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,AppDbContext context)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
+            this.context = context;
         }
 
 
@@ -225,6 +229,56 @@ namespace RealEstate.Infrastructure.Repo
 
 
         }
+
+        public async Task<AdminDashboardStatisticsDto> GetDashboardStatisticsAsync()
+        {
+            var totalRegisteredUsers = await userManager.Users.CountAsync();
+            var totalCompanies = await context.companies.CountAsync();
+            var totalAgents = await context.Agents.CountAsync();
+            var totalSubscriptions = await context.Subscriptions.CountAsync();
+
+            // Assuming you have a field in Subscription that tracks cancellation
+            //var cancelledSubscriptions = await context.Subscriptions.CountAsync(s => s.IsCancelled);
+
+            // Get today's revenue
+            var today = DateTime.UtcNow.Date;
+            var revenueToday = await context.Subscriptions
+                .Include(s => s.Plan)
+                .Where(s => s.SubscriptionStartDate == today)
+                .SumAsync(s => s.Plan.Price);
+            //Assuming Amount is the revenue field
+
+           // Get total revenue
+           var totalRevenue = await context.companies.SumAsync(s => s.SubscriptionAmtPaid);
+
+            var totalProperties = await context.Properties.CountAsync();
+
+            return new AdminDashboardStatisticsDto
+            {
+                TotalRegisteredUsers = totalRegisteredUsers,
+                TotalCompanies = totalCompanies,
+                TotalAgents = totalAgents,
+                TotalSubscriptions = totalSubscriptions,
+                RevenueToday = revenueToday,
+                TotalRevenue = totalRevenue,
+                CancelledSubscriptions = 0,
+                TotalProperties = totalProperties
+            };
+        }
+        public async Task<UserRoleStatisticsDto> GetUserRoleStatisticsAsync()
+        {
+            var totalUsers = await userManager.Users.CountAsync();
+            var totalCompanyAdmins = await userManager.GetUsersInRoleAsync(Constant.CompanyAdmin);
+            var totalAgents = await userManager.GetUsersInRoleAsync(Constant.Agent);
+
+            return new UserRoleStatisticsDto
+            {
+                TotalUsers = totalUsers,
+                TotalCompanyAdmins = totalCompanyAdmins.Count,
+                TotalAgents = totalAgents.Count
+            };
+        }
+
 
         #region private helper methods
         private bool IsAdmin(string userId)

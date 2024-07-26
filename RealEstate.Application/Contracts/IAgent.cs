@@ -17,6 +17,8 @@ namespace RealEstate.Application.Contracts
         Task<GeneralResponse> RegisterAgentAsync(AgentRegisterDto agent);
         Task<IEnumerable<AgentDetailDto>> GetUnVerifiedAgentsDetailsAsync();
         Task<IEnumerable<AgentDetailDto>> GetVerifiedAgentDetailsAsync();
+        Task<List<TopAgentDto>> GetTopPerformingAgentsAsync();
+
         Task<IEnumerable<PropertyDetailForDashboardDto>> GetPropertiesbyAgentAsync();
         Task<GeneralResponse> MarkPropertyAsSoldAsync(MarkPropertyAsSoldDto dto);
         Task<GeneralResponse> VerifyAgent(int agentId);

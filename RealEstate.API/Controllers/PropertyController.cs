@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.property;
 using RealEstate.Application.DTOs.Request.Property;
 using RealEstate.Domain.Entities.CompanyEntity;
+using RealEstate.Infrastructure.Repo.property;
 
 namespace RealEstate.API.Controllers
 {
@@ -44,6 +45,20 @@ return BadRequest(result);
             return Ok(result);
 
         }
+        [HttpGet("properties/statistics")]
+        public async Task<IActionResult> GetPropertiesStatistics([FromQuery] string type, [FromQuery] int year, [FromQuery] int month = 0)
+        {
+            var statistics = await property.GetPropertiesStatistics(type, year, month);
+            return Ok(statistics);
+        }
+
+        [HttpGet("top-properties")]
+        public async Task<IActionResult> GetTopProperties()
+        {
+            var properties = await property.GetTopPropertiesAsync();
+            return Ok(properties);
+        }
+
 
         [HttpGet("get-company-properties")]
         public async Task<IActionResult> GetCompanyProperties()

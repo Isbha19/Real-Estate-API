@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts;
 using RealEstate.Application.DTOs.Request.Admin;
+using RealEstate.Infrastructure.Repo;
 
 
 namespace RealEstate.API.Controllers
@@ -91,6 +92,12 @@ namespace RealEstate.API.Controllers
                 return Ok(result.Roles);
             }
             return BadRequest();
+        }
+        [HttpGet("dashboard-statistics")]
+        public async Task<IActionResult> GetDashboardStatistics()
+        {
+            var statistics = await admin.GetDashboardStatisticsAsync();
+            return Ok(statistics);
         }
 
     }
