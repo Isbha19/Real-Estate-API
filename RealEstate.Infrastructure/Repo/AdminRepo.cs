@@ -11,6 +11,7 @@ using RealEstate.Application.DTOs.Request.Account;
 using RealEstate.Application.DTOs.Account;
 using RealEstate.Application.DTOs.Response.Company;
 using RealEstate.Infrastructure.Data;
+using RealEstate.Application.DTOs.Request.Company;
 
 
 namespace RealEstate.Infrastructure.Repo
@@ -265,17 +266,51 @@ namespace RealEstate.Infrastructure.Repo
                 TotalProperties = totalProperties
             };
         }
+        public async Task<List<TopPerformingCompany>> GetTopPerformingCompaniesAsync()
+        {
+            return await context.companies
+                .Include(c=>c.CompanyLogo)
+                .Select(c => new
+                {
+                    Company = c,
+                    TotalRevenue = c.Agents
+                        .SelectMany(a => a.Properties)
+                        .Sum(p => p.Revenue), // Assuming Property has a Revenue property
+                    TotalListings = c.Agents
+                        .SelectMany(a => a.Properties)
+                        .Count() // Count of all properties/listings for the company's agents
+                })
+                .OrderByDescending(x => x.TotalRevenue) // First order by total revenue
+                .ThenByDescending(x => x.TotalListings) // Then order by total listings
+                .Take(10)
+                .Select(x => new TopPerformingCompany
+                {
+                    Id = x.Company.Id,
+                    Name = x.Company.CompanyName,
+                    Revenue = x.TotalRevenue,
+                    PropertiesCount = x.TotalListings,
+                    CompanyLogo=x.Company.CompanyLogo.ImageUrl,
+                })
+                .ToListAsync();
+        }
+
         public async Task<UserRoleStatisticsDto> GetUserRoleStatisticsAsync()
         {
             var totalUsers = await userManager.Users.CountAsync();
             var totalCompanyAdmins = await userManager.GetUsersInRoleAsync(Constant.CompanyAdmin);
             var totalAgents = await userManager.GetUsersInRoleAsync(Constant.Agent);
+            // Calculate total number of company admins and agents
+            var totalAdminsAndAgents = totalCompanyAdmins.Count + totalAgents.Count;
 
+            // Calculate the total number of normal users
+            var totalNormalUsers = totalUsers - totalAdminsAndAgents;
             return new UserRoleStatisticsDto
             {
                 TotalUsers = totalUsers,
                 TotalCompanyAdmins = totalCompanyAdmins.Count,
-                TotalAgents = totalAgents.Count
+                TotalAgents = totalAgents.Count,
+              
+                TotalNormalUsers = totalNormalUsers
             };
         }
 

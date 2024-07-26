@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Stripe;
 using Stripe.Checkout;
-using Stripe.Climate;
-
 
 namespace RealEstate.Infrastructure.Services.Subscription
 {
@@ -26,19 +24,17 @@ namespace RealEstate.Infrastructure.Services.Subscription
             {
                 Name = name,
                 Description = description, // Set the description here
-                 Metadata = new Dictionary<string, string>
+                Metadata = new Dictionary<string, string>
         {
             { "feature_in_portal", "true" } // Custom metadata to track
         }
-
             };
+
             var productService = new Stripe.ProductService(_stripeClient);
             var product = await productService.CreateAsync(productOptions);
 
-            // Update customer portal settings to include new product
-
-            return await productService.CreateAsync(productOptions);
-
+            // Return the created product
+            return product;
         }
 
         public async Task<Price> CreatePriceAsync(long amount, string currency, string productId)
@@ -80,8 +76,31 @@ namespace RealEstate.Infrastructure.Services.Subscription
         public async Task DeleteProductAsync(string productId)
         {
             var productService = new Stripe.ProductService(_stripeClient);
+            var priceService = new Stripe.PriceService(_stripeClient);
+
+            // Retrieve all prices associated with the product
+            var prices = await priceService.ListAsync(new PriceListOptions { Product = productId });
+
+            // Deactivate each price
+            foreach (var price in prices)
+            {
+                await priceService.UpdateAsync(price.Id, new PriceUpdateOptions { Active = false });
+            }
+
+            // Now deactivate the product
             await productService.UpdateAsync(productId, new ProductUpdateOptions { Active = false });
-            await productService.DeleteAsync(productId);
+
+            // Attempt to delete the product
+            try
+            {
+                await productService.DeleteAsync(productId);
+            }
+            catch (StripeException ex)
+            {
+                // Handle any exceptions that occur during deletion
+                Console.WriteLine($"Failed to delete product: {ex.Message}");
+            }
         }
+
     }
 }

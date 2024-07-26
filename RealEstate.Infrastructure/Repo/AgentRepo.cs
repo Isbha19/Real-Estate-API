@@ -290,6 +290,7 @@ namespace RealEstate.Infrastructure.Repo
                 .Take(10)
                 .ToListAsync();
         }
+      
 
         public async Task<GeneralResponse> MarkPropertyAsSoldAsync(MarkPropertyAsSoldDto dto)
         {

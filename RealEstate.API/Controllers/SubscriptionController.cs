@@ -73,9 +73,16 @@ namespace RealEstate.API.Controllers
                 context.Plan.Add(plan);
                 await context.SaveChangesAsync();
                 await transaction.CommitAsync();
+                var newproduct = new PlanDto
+                {
+                    Name = product.Name,
+                    Price = request.Price,
+                    NumberOfListings = request.NumberOfListings,
+                    PaymentLink = paymentLink
 
+                };
 
-                return Ok(new { Product = product, Price = price, PaymentLink = paymentLink });
+                return Ok(newproduct);
             }
             catch (System.Exception ex)
             {

@@ -99,6 +99,18 @@ namespace RealEstate.API.Controllers
             var statistics = await admin.GetDashboardStatisticsAsync();
             return Ok(statistics);
         }
+        [HttpGet("user-role-statistics")]
+        public async Task<IActionResult> GetUserRoleStatistics()
+        {
+            var statistics = await admin.GetUserRoleStatisticsAsync();
+            return Ok(statistics);
+        }
+        [HttpGet("top-performing-companies")]
+        public async Task<IActionResult> GetTopPerformingCompanies()
+        {
+            var statistics = await admin.GetTopPerformingCompaniesAsync();
+            return Ok(statistics);
+        }
 
     }
 }

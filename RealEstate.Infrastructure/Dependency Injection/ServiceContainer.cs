@@ -88,8 +88,7 @@ namespace RealEstate.Infrastructure.Dependency_Injection
 
             services.AddScoped<ITestimonial, TestimonialRepo>();
             services.AddScoped<ISubscription, Subscriptionrepo>();
-
-
+           
 
             services.AddSignalR(); // Add SignalR service
 
