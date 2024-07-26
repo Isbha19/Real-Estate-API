@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstate.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using RealEstate.Infrastructure.Data;
 namespace RealEstate.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240725062543_added-paymentLinkField")]
+    partial class addedpaymentLinkField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -425,6 +428,93 @@ namespace RealEstate.Infrastructure.Migrations
                             Id = 4,
                             Name = "Free Zone Establishment)"
                         });
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.Plan", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfListings")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Plan");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "price_1PaegrGFthNCZxNO1kdaJ4ct",
+                            Name = "Starter",
+                            NumberOfListings = 5,
+                            Price = 100
+                        },
+                        new
+                        {
+                            Id = "price_1PZ4m0GFthNCZxNOoti2pHeh",
+                            Name = "Basic",
+                            NumberOfListings = 20,
+                            Price = 350
+                        },
+                        new
+                        {
+                            Id = "price_1PZ4mUGFthNCZxNOwjVLIVd6",
+                            Name = "Premium",
+                            NumberOfListings = 50,
+                            Price = 700
+                        });
+                });
+
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.Subscription", b =>
+                {
+                    b.Property<int>("SubscriptionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubscriptionId"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PlanId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StripeSubscriptionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SubscriptionEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("SubscriptionStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SubscriptionStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SubscriptionId");
+
+                    b.HasIndex("CompanyId")
+                        .IsUnique();
+
+                    b.HasIndex("PlanId");
+
+                    b.ToTable("Subscription");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.Message", b =>
@@ -977,146 +1067,6 @@ namespace RealEstate.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.SubscriptionEntity.Description", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Descriptions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1
-                        },
-                        new
-                        {
-                            Id = 2
-                        },
-                        new
-                        {
-                            Id = 3
-                        },
-                        new
-                        {
-                            Id = 4
-                        },
-                        new
-                        {
-                            Id = 5
-                        });
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.SubscriptionEntity.Plan", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NumberOfListings")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PaymentLink")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Plan");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "price_1PaegrGFthNCZxNO1kdaJ4ct",
-                            Name = "Starter",
-                            NumberOfListings = 5,
-                            Price = 100
-                        },
-                        new
-                        {
-                            Id = "price_1PZ4m0GFthNCZxNOoti2pHeh",
-                            Name = "Basic",
-                            NumberOfListings = 20,
-                            Price = 350
-                        },
-                        new
-                        {
-                            Id = "price_1PZ4mUGFthNCZxNOwjVLIVd6",
-                            Name = "Premium",
-                            NumberOfListings = 50,
-                            Price = 700
-                        });
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.SubscriptionEntity.PlanDescription", b =>
-                {
-                    b.Property<string>("PlanId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("DescriptionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PlanId", "DescriptionId");
-
-                    b.HasIndex("DescriptionId");
-
-                    b.ToTable("PlanDescriptions");
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.SubscriptionEntity.Subscription", b =>
-                {
-                    b.Property<int>("SubscriptionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubscriptionId"));
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PlanId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("StripeCustomerId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StripeSubscriptionId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SubscriptionEndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("SubscriptionStartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubscriptionStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SubscriptionId");
-
-                    b.HasIndex("CompanyId")
-                        .IsUnique();
-
-                    b.HasIndex("PlanId");
-
-                    b.ToTable("Subscription");
-                });
-
             modelBuilder.Entity("RealEstate.Domain.Entities.Testimonial", b =>
                 {
                     b.Property<int>("Id")
@@ -1374,6 +1324,23 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("RealEstate.Domain.Entities.CompanyEntity.Subscription", b =>
+                {
+                    b.HasOne("RealEstate.Domain.Entities.CompanyEntity.Company", "Company")
+                        .WithOne("Subscription")
+                        .HasForeignKey("RealEstate.Domain.Entities.CompanyEntity.Subscription", "CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RealEstate.Domain.Entities.CompanyEntity.Plan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Plan");
+                });
+
             modelBuilder.Entity("RealEstate.Domain.Entities.Message", b =>
                 {
                     b.HasOne("RealEstate.Domain.Entities.User", "Receiver")
@@ -1488,42 +1455,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("RealEstate.Domain.Entities.SubscriptionEntity.PlanDescription", b =>
-                {
-                    b.HasOne("RealEstate.Domain.Entities.SubscriptionEntity.Description", "Description")
-                        .WithMany()
-                        .HasForeignKey("DescriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RealEstate.Domain.Entities.SubscriptionEntity.Plan", "Plan")
-                        .WithMany("PlanDescriptions")
-                        .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Description");
-
-                    b.Navigation("Plan");
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.SubscriptionEntity.Subscription", b =>
-                {
-                    b.HasOne("RealEstate.Domain.Entities.CompanyEntity.Company", "Company")
-                        .WithOne("Subscription")
-                        .HasForeignKey("RealEstate.Domain.Entities.SubscriptionEntity.Subscription", "CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RealEstate.Domain.Entities.SubscriptionEntity.Plan", "Plan")
-                        .WithMany()
-                        .HasForeignKey("PlanId");
-
-                    b.Navigation("Company");
-
-                    b.Navigation("Plan");
-                });
-
             modelBuilder.Entity("RealEstate.Domain.Entities.Testimonial", b =>
                 {
                     b.HasOne("RealEstate.Domain.Entities.User", "User")
@@ -1575,11 +1506,6 @@ namespace RealEstate.Infrastructure.Migrations
                     b.Navigation("PropertyAmenties");
 
                     b.Navigation("PropertyNearByFacilities");
-                });
-
-            modelBuilder.Entity("RealEstate.Domain.Entities.SubscriptionEntity.Plan", b =>
-                {
-                    b.Navigation("PlanDescriptions");
                 });
 
             modelBuilder.Entity("RealEstate.Domain.Entities.User", b =>

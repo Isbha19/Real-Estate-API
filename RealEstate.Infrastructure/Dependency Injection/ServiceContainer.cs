@@ -8,12 +8,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RealEstate.Application.Contracts;
 using RealEstate.Application.Contracts.property;
+using RealEstate.Application.Contracts.Subscription;
 using RealEstate.Application.Helpers;
 using RealEstate.Application.Services;
 using RealEstate.Domain.Entities;
 using RealEstate.Infrastructure.Data;
 using RealEstate.Infrastructure.Repo;
 using RealEstate.Infrastructure.Repo.property;
+using RealEstate.Infrastructure.Repo.Subscription;
 using RealEstate.Infrastructure.Services;
 using RealEstate.Infrastructure.Services.Subscription;
 using RealEstate.Infrastructure.SignalR;
@@ -85,6 +87,8 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             services.AddScoped<IMessage, MessageRepo>();
 
             services.AddScoped<ITestimonial, TestimonialRepo>();
+            services.AddScoped<ISubscription, Subscriptionrepo>();
+
 
 
             services.AddSignalR(); // Add SignalR service
@@ -99,6 +103,7 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             services.AddScoped<IContextSeedService, ContextSeedService>();
             services.AddScoped<NotificationService>();
             services.AddScoped<GetUserHelper>();
+            services.AddScoped<StripeProductsService>();
             
 
             //to respond with an Array containing error messages when the model state is invalid

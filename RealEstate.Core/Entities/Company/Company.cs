@@ -3,7 +3,7 @@
 
 using RealEstate.Domain.Entities.AgentEntity;
 using RealEstate.Domain.Entities.PropertyEntity;
-
+using RealEstate.Domain.Entities.SubscriptionEntity;
 namespace RealEstate.Domain.Entities.CompanyEntity
 {
     public class Company

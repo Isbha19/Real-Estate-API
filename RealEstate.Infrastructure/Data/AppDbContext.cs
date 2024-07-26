@@ -5,6 +5,7 @@ using RealEstate.Domain.Entities.AgentEntity;
 using RealEstate.Domain.Entities.CompanyEntity;
 using RealEstate.Domain.Entities.PropertyEntity;
 using RealEstate.Domain.Entities.signalr;
+using RealEstate.Domain.Entities.SubscriptionEntity;
 
 namespace RealEstate.Infrastructure.Data
 {
@@ -35,12 +36,25 @@ namespace RealEstate.Infrastructure.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<Connection> Connections { get; set; }
-
+        public DbSet<Description> Descriptions { get; set; }
+        public DbSet<PlanDescription> PlanDescriptions { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           
+            modelBuilder.Entity<PlanDescription>()
+           .HasKey(pd => new { pd.PlanId, pd.DescriptionId });
+
+            modelBuilder.Entity<PlanDescription>()
+                .HasOne(pd => pd.Plan)
+                .WithMany(p => p.PlanDescriptions)
+                .HasForeignKey(pd => pd.PlanId);
+
+            modelBuilder.Entity<PlanDescription>()
+                .HasOne(pd => pd.Description)
+                .WithMany()
+                .HasForeignKey(pd => pd.DescriptionId);
+
             modelBuilder.Entity<Company>()
        .HasOne(c => c.CompanyLogo)
        .WithOne(cf => cf.Company)
@@ -92,6 +106,15 @@ namespace RealEstate.Infrastructure.Data
                 new Amenity { Id = 21, Name = "Maid Service" },
                 new Amenity { Id = 22, Name = "Children's Pool" },
                 new Amenity { Id = 23, Name = "Barbecue Area" }
+
+            );
+
+            modelBuilder.Entity<Description>().HasData(
+                 new Amenity { Id = 1, Name = "Listing Management" },
+                new Amenity { Id = 2, Name = "Agent Management" },
+                new Amenity { Id = 3, Name = "Priority placement" },
+                new Amenity { Id = 4, Name = "Advanced features" },
+                new Amenity { Id = 5, Name = "Premium Badge" }
 
             );
 

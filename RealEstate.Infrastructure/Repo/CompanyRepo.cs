@@ -15,6 +15,9 @@ using RealEstate.Application.DTOs.Response.Company;
 using RealEstate.Application.Services;
 using RealEstate.Domain.Entities.CompanyEntity;
 using RealEstate.Application.Helpers;
+using Stripe;
+using Microsoft.Extensions.Configuration;
+using FileService = RealEstate.Infrastructure.Services.FileService;
 
 namespace RealEstate.Infrastructure.Repo
 {
@@ -27,11 +30,14 @@ namespace RealEstate.Infrastructure.Repo
         private readonly ICompanyService companyService;
         private readonly GetUserHelper getUserHelper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly StripeClient _stripeClient;
+        private readonly IConfiguration configuration;
+        private readonly string secretKey;
 
         public CompanyRepo(UserManager<User> userManager, AppDbContext context, IHttpContextAccessor httpContextAccess,
             FileService fileService,
             NotificationService notificationService,
-            ICompanyService companyService,GetUserHelper getUserHelper)
+            ICompanyService companyService,GetUserHelper getUserHelper, IConfiguration configuration)
         {
             this.userManager = userManager;
             this.context = context;
@@ -40,7 +46,10 @@ namespace RealEstate.Infrastructure.Repo
             this.companyService = companyService;
             this.getUserHelper = getUserHelper;
             this._httpContextAccessor = httpContextAccess;
+            secretKey = configuration["Stripe:SecretKey"];
 
+            _stripeClient = new StripeClient(secretKey);
+            this.configuration = configuration;
         }
 
         public async Task<IEnumerable<CompanyStructure>> GetCompanyStructuresAsync()
@@ -147,11 +156,9 @@ namespace RealEstate.Infrastructure.Repo
                 ReturnUrl = "https://localhost:4200/company-dashboard"
             };
 
-            var service = new SessionService();
-            var session = await service.CreateAsync(options); 
+            var service = new Stripe.BillingPortal.SessionService(_stripeClient);
+            var session = await service.CreateAsync(options);
 
-            // session.Url contains the customer portal URL
-            // Return the URL to the frontend
             return session.Url;
         }
 

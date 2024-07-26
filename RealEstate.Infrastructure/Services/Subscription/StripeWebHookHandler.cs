@@ -10,6 +10,7 @@ using RealEstate.Application.Contracts;
 using System.Numerics;
 using RealEstate.Application.Extensions;
 using RealEstate.Domain.Entities.CompanyEntity;
+using RealEstate.Domain.Entities.SubscriptionEntity;
 
 
 namespace RealEstate.Infrastructure.Services.Subscription
@@ -137,7 +138,7 @@ namespace RealEstate.Infrastructure.Services.Subscription
                         var amountPaid = latestInvoice.Data.FirstOrDefault()?.AmountPaid / 100m ?? 0m;
 
 
-                        var newsubscription = new Domain.Entities.CompanyEntity.Subscription
+                        var newsubscription = new Domain.Entities.SubscriptionEntity.Subscription
                         {
                             StripeCustomerId = customerId,
                             StripeSubscriptionId = subscription.Id,

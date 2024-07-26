@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using RealEstate.Infrastructure.SignalR;
 using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
+using RealEstate.Infrastructure.Services.Subscription;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -51,6 +52,7 @@ try
 {
     var contextSeedService = scope.ServiceProvider.GetService<IContextSeedService>(); // Resolve using the interface
     await contextSeedService.InitializeContextAsync();
+
 }
 catch (Exception ex)
 {
