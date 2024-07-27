@@ -43,7 +43,7 @@ stages:
   jobs:
   - job: ReleaseJob
     pool:
-      vmImage: 'windows-2022'
+      name: 'my-computer'
     steps:
     - download: current
       artifact: drop
