@@ -30,7 +30,7 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             IConfiguration configuration)
         {
             services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("Default")));
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentityCore<User>(options =>
             {
                 options.Password.RequiredLength = 6;
@@ -146,6 +146,17 @@ namespace RealEstate.Infrastructure.Dependency_Injection
                     }
                 });
                         });
+            var serviceProvider = services.BuildServiceProvider();
+            try
+            {
+                var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+                dbContext.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                // Handle or log the exception as needed
+                Console.WriteLine($"An error occurred while migrating the database: {ex.Message}");
+            }
             return services;
         }
     }
