@@ -18,6 +18,8 @@ stages:
 - stage: Build
   jobs:
   - job: BuildJob
+    pool: 
+      name: my-computer 
     steps:
     - task: NuGetToolInstaller@1
 
