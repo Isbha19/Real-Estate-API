@@ -46,9 +46,6 @@ else
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseStaticFiles(); // Serve static files (like HTML, CSS, and images)
-app.UseDefaultFiles(); // Serve default files (like index.html)
-app.UseDirectoryBrowser(); // Enable directory browsing (optional)
 
 app.MapHub<PresenceHub>("hubs/presence");
 app.MapHub<MessageHub>("hubs/message");
