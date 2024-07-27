@@ -29,10 +29,20 @@ app.UseCors(opt =>
 });
 // Configure the HTTP request pipeline.
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage(); // This will show detailed error pages in development
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error"); // Handle exceptions in production
+    app.UseHsts();
+}
 
-app.UseExceptionHandler(_ => { });
+
+//app.UseExceptionHandler(_ => { });
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
