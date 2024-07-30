@@ -31,7 +31,10 @@ StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
 
 app.UseCors(opt =>
 {
-    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
+    opt.AllowAnyHeader()
+          .AllowAnyMethod()
+          .AllowCredentials()
+          .AllowAnyOrigin();
 });
 // Configure the HTTP request pipeline.
 
