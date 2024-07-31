@@ -29,9 +29,22 @@ var app = builder.Build();
 var configuration = builder.Configuration;
 StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
 
-app.UseCors(opt =>
+//app.UseCors(opt =>
+//{
+//    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
+//});
+builder.Services.AddCors(options =>
 {
-    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
+    options.AddDefaultPolicy(builder =>
+    {
+
+        builder.AllowAnyOrigin()
+             .AllowAnyHeader()
+             .AllowAnyMethod()
+             .WithExposedHeaders("*");
+    });
+
+
 });
 
 app.UseSwagger();
@@ -49,6 +62,8 @@ else
 
 //app.UseExceptionHandler(_ => { });
 app.UseHttpsRedirection();
+app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("*"));
+
 app.UseAuthentication();
 app.UseAuthorization();
 
