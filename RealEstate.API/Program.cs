@@ -29,23 +29,11 @@ var app = builder.Build();
 var configuration = builder.Configuration;
 StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
 
-//app.UseCors(opt =>
-//{
-//    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
-//});
-// Configure the HTTP request pipeline.
-builder.Services.AddCors(options =>
+app.UseCors(opt =>
 {
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.AllowAnyOrigin()
-             .AllowAnyHeader()
-             .AllowAnyMethod()
-             .WithExposedHeaders("*");
-    });
-
-
+    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
 });
+
 app.UseSwagger();
 app.UseSwaggerUI();
 if (app.Environment.IsDevelopment())
