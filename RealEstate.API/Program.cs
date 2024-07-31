@@ -22,28 +22,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 builder.Services.InfrastructureServices(builder.Configuration);
 
-// Add CORS settings
-var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddDefaultPolicy(policyBuilder =>
-//    {
-//        policyBuilder.WithOrigins(allowedOrigins)
-//                     .AllowAnyHeader()
-//                     .AllowAnyMethod()
-//                     .WithExposedHeaders("*")
-//                     .AllowCredentials();
-//    });
-//});
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddDefaultPolicy(policy =>
     {
-        builder.WithOrigins("https://estahub-m5mvcg3dya-uc.a.run.app") // Specify your frontend URL
-               .AllowAnyHeader()
-               .AllowAnyMethod()
-               .AllowCredentials(); // Allow credentials
+        policy.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+               
     });
 });
 
@@ -56,9 +43,6 @@ StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
 //{
 //    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
 //});
-app.UseHttpsRedirection();
-// Enable CORS
-app.UseCors();
 
 
 app.UseSwagger();
@@ -73,9 +57,8 @@ else
     app.UseHsts();
 }
 
-
-//app.UseExceptionHandler(_ => { });
-
+app.UseCors();
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
