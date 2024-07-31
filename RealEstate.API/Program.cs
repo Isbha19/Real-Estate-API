@@ -10,9 +10,6 @@ using RealEstate.Infrastructure.Services.Subscription;
 var builder = WebApplication.CreateBuilder(args);
 
 // Load configuration based on the environment
-builder.Configuration.SetBasePath(Directory.GetCurrentDirectory());
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
 // Add services to the container.
 
@@ -27,7 +24,6 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(builder =>
     {
 
-        // builder.WithOrigins("https://wegapfrontend.azurewebsites.net")
         builder.AllowAnyOrigin()
              .AllowAnyHeader()
              .AllowAnyMethod()
