@@ -47,6 +47,8 @@ StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
 //{
 //    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
 //});
+app.UseHttpsRedirection();
+app.UseCors();
 
 
 app.UseSwagger();
@@ -63,8 +65,6 @@ else
 
 
 //app.UseExceptionHandler(_ => { });
-app.UseHttpsRedirection();
-app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("*"));
 
 app.UseAuthentication();
 app.UseAuthorization();
