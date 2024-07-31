@@ -25,18 +25,27 @@ builder.Services.InfrastructureServices(builder.Configuration);
 // Add CORS settings
 var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(policyBuilder =>
+//    {
+//        policyBuilder.WithOrigins(allowedOrigins)
+//                     .AllowAnyHeader()
+//                     .AllowAnyMethod()
+//                     .WithExposedHeaders("*")
+//                     .AllowCredentials();
+//    });
+//});
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policyBuilder =>
+    options.AddDefaultPolicy(builder =>
     {
-        policyBuilder.WithOrigins(allowedOrigins)
-                     .AllowAnyHeader()
-                     .AllowAnyMethod()
-                     .WithExposedHeaders("*")
-                     .AllowCredentials();
+        builder.WithOrigins("https://estahub-m5mvcg3dya-uc.a.run.app") // Specify your frontend URL
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowCredentials(); // Allow credentials
     });
 });
-
 
 var app = builder.Build();
 // Configure Stripe
