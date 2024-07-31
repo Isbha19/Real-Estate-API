@@ -36,6 +36,12 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Log the current environment
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Current environment: {Environment}", builder.Environment.EnvironmentName);
+
+
 // Configure Stripe
 var configuration = builder.Configuration;
 StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
