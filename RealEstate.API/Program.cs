@@ -11,10 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Load configuration based on the environment
 
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 builder.Services.InfrastructureServices(builder.Configuration);
@@ -29,8 +33,6 @@ builder.Services.AddCors(options =>
              .AllowAnyMethod()
              .WithExposedHeaders("*");
     });
-
-
 });
 
 var app = builder.Build();
