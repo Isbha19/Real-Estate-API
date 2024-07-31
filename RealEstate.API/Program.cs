@@ -23,16 +23,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 builder.Services.InfrastructureServices(builder.Configuration);
 
-
-var app = builder.Build();
-// Configure Stripe
-var configuration = builder.Configuration;
-StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
-
-//app.UseCors(opt =>
-//{
-//    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
-//});
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
@@ -46,6 +36,18 @@ builder.Services.AddCors(options =>
 
 
 });
+
+
+var app = builder.Build();
+// Configure Stripe
+var configuration = builder.Configuration;
+StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
+
+//app.UseCors(opt =>
+//{
+//    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
+//});
+
 
 app.UseSwagger();
 app.UseSwaggerUI();
