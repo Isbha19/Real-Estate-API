@@ -11,9 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Load configuration based on the environment
-builder.Configuration.SetBasePath(Directory.GetCurrentDirectory());
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                   .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+//builder.Configuration.SetBasePath(Directory.GetCurrentDirectory());
+//builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+//                   .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
 // Add services to the container.
 
@@ -29,15 +29,23 @@ var app = builder.Build();
 var configuration = builder.Configuration;
 StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
 
-app.UseCors(opt =>
-{
-    opt.AllowAnyHeader()
-          .AllowAnyMethod()
-          .AllowCredentials()
-          .AllowAnyOrigin();
-});
+//app.UseCors(opt =>
+//{
+//    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
+//});
 // Configure the HTTP request pipeline.
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+             .AllowAnyHeader()
+             .AllowAnyMethod()
+             .WithExposedHeaders("*");
+    });
 
+
+});
 app.UseSwagger();
 app.UseSwaggerUI();
 if (app.Environment.IsDevelopment())
