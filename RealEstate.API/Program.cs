@@ -25,12 +25,11 @@ builder.Services.InfrastructureServices(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowEstaHub", policy =>
     {
-        policy.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
-               
+        policy.WithOrigins("https://estahub-m5mvcg3dya-uc.a.run.app")
+             .AllowAnyMethod()
+             .AllowAnyHeader();
     });
 });
 
@@ -57,7 +56,7 @@ else
     app.UseHsts();
 }
 
-app.UseCors();
+app.UseCors("AllowEstaHub");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
