@@ -22,15 +22,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 builder.Services.InfrastructureServices(builder.Configuration);
 
-
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowEstaHub", policy =>
+    options.AddDefaultPolicy(builder =>
     {
-        policy.WithOrigins("https://estahub-m5mvcg3dya-uc.a.run.app")
+
+        // builder.WithOrigins("https://wegapfrontend.azurewebsites.net")
+        builder.AllowAnyOrigin()
+             .AllowAnyHeader()
              .AllowAnyMethod()
-             .AllowAnyHeader();
+             .WithExposedHeaders("*");
     });
+
+
 });
 
 var app = builder.Build();
@@ -55,9 +59,9 @@ else
     app.UseExceptionHandler("/Home/Error"); // Handle exceptions in production
     app.UseHsts();
 }
-
-app.UseCors("AllowEstaHub");
 app.UseHttpsRedirection();
+
+app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("*"));
 app.UseAuthentication();
 app.UseAuthorization();
 
