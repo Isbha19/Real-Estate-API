@@ -9,11 +9,10 @@ using System.Text.Json.Serialization;
 using RealEstate.Infrastructure.Services.Subscription;
 var builder = WebApplication.CreateBuilder(args);
 
-
 // Load configuration based on the environment
-//builder.Configuration.SetBasePath(Directory.GetCurrentDirectory());
-//builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-//                   .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+builder.Configuration.SetBasePath(Directory.GetCurrentDirectory());
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
 // Add services to the container.
 
@@ -23,18 +22,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 builder.Services.InfrastructureServices(builder.Configuration);
 
+// Add CORS settings
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddDefaultPolicy(policyBuilder =>
     {
-
-        builder.AllowAnyOrigin()
-             .AllowAnyHeader()
-             .AllowAnyMethod()
-             .WithExposedHeaders("*");
+        policyBuilder.WithOrigins(allowedOrigins)
+                     .AllowAnyHeader()
+                     .AllowAnyMethod()
+                     .WithExposedHeaders("*")
+                     .AllowCredentials();
     });
-
-
 });
 
 
@@ -48,6 +48,7 @@ StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
 //    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
 //});
 app.UseHttpsRedirection();
+// Enable CORS
 app.UseCors();
 
 
