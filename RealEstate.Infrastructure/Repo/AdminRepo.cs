@@ -23,7 +23,7 @@ namespace RealEstate.Infrastructure.Repo
         private readonly AppDbContext context;
 
         public AdminRepo(UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager,AppDbContext context)
+            RoleManager<IdentityRole> roleManager, AppDbContext context)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
@@ -33,19 +33,41 @@ namespace RealEstate.Infrastructure.Repo
 
         public async Task<GetMembersResponse> GetMembers()
         {
-            var members = await userManager.Users
-                 .Where(x => x.UserName != Constant.AdminUserName)
-                 //projection
-                 .Select(member => new MemberViewDto
-                 {
-                     Id = member.Id,
-                     UserName = member.UserName,
-                     FirstName = member.FirstName,
-                     LastName = member.LastName,
-                     DateCreated = member.DateCreated,
-                     IsLocked = userManager.IsLockedOutAsync(member).GetAwaiter().GetResult(),
-                     Roles = userManager.GetRolesAsync(member).GetAwaiter().GetResult()
-                 }).ToListAsync();
+
+            List<MemberViewDto> members = new List<MemberViewDto>();
+            var users = await userManager.Users.
+                Where(x => x.UserName != Constant.AdminUserName)
+                .ToListAsync();
+
+
+            foreach (var user in users)
+            {
+                var memberToAdd = new MemberViewDto
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    DateCreated = user.DateCreated,
+                    IsLocked=await userManager.IsLockedOutAsync(user),
+                    Roles=await userManager.GetRolesAsync(user)
+
+                };
+                members.Add(memberToAdd);   
+            }
+            //var members = await userManager.Users
+            //     .Where(x => x.UserName != Constant.AdminUserName)
+            //     //projection
+            //     .Select(member => new MemberViewDto
+            //     {
+            //         Id = member.Id,
+            //         UserName = member.UserName,
+            //         FirstName = member.FirstName,
+            //         LastName = member.LastName,
+            //         DateCreated = member.DateCreated,
+            //         IsLocked = userManager.IsLockedOutAsync(member).GetAwaiter().GetResult(),
+            //         Roles = userManager.GetRolesAsync(member).GetAwaiter().GetResult()
+            //     }).ToListAsync();
 
             var response = new GetMembersResponse
             {
@@ -58,16 +80,28 @@ namespace RealEstate.Infrastructure.Repo
         }
         public async Task<GetMemberResponse> GetMember(string Id)
         {
-            var member = await userManager.Users
-                .Where(x => x.UserName != Constant.AdminUserName && x.Id == Id)
-                .Select(m => new MemberAddEditDto
-                {
-                    Id = m.Id,
-                    UserName = m.UserName,
-                    FirstName = m.FirstName,
-                    LastName = m.LastName,
-                    Roles = string.Join(",", userManager.GetRolesAsync(m).GetAwaiter().GetResult())
-                }).FirstOrDefaultAsync();
+            var user = await userManager.Users.
+                Where(x => x.UserName != Constant.AdminUserName && x.Id == Id)
+                .FirstOrDefaultAsync();
+            var member = new MemberAddEditDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Roles = string.Join(",", await userManager.GetRolesAsync(user))
+
+            };
+            //var member = await userManager.Users
+            //    .Where(x => x.UserName != Constant.AdminUserName && x.Id == Id)
+            //    .Select(m => new MemberAddEditDto
+            //    {
+            //        Id = m.Id,
+            //        UserName = m.UserName,
+            //        FirstName = m.FirstName,
+            //        LastName = m.LastName,
+            //        Roles = string.Join(",", userManager.GetRolesAsync(m).GetAwaiter().GetResult())
+            //    }).FirstOrDefaultAsync();
 
             if (member == null)
             {
@@ -148,7 +182,7 @@ namespace RealEstate.Infrastructure.Repo
                     FirstName = model.FirstName.ToLower(),
                     LastName = model.LastName.ToLower(),
                     UserName = model.UserName.ToLower(),
-                    Email=model.UserName.ToLower(),
+                    Email = model.UserName.ToLower(),
                     EmailConfirmed = true
 
                 };
@@ -226,7 +260,7 @@ namespace RealEstate.Infrastructure.Repo
             };
             return new GeneralResponse(true, message, newuser);
 
-                
+
 
 
         }
@@ -249,8 +283,8 @@ namespace RealEstate.Infrastructure.Repo
                 .SumAsync(s => s.Plan.Price);
             //Assuming Amount is the revenue field
 
-           // Get total revenue
-           var totalRevenue = await context.companies.SumAsync(s => s.SubscriptionAmtPaid);
+            // Get total revenue
+            var totalRevenue = await context.companies.SumAsync(s => s.SubscriptionAmtPaid);
 
             var totalProperties = await context.Properties.CountAsync();
 
@@ -269,7 +303,7 @@ namespace RealEstate.Infrastructure.Repo
         public async Task<List<TopPerformingCompany>> GetTopPerformingCompaniesAsync()
         {
             return await context.companies
-                .Include(c=>c.CompanyLogo)
+                .Include(c => c.CompanyLogo)
                 .Select(c => new
                 {
                     Company = c,
@@ -289,7 +323,7 @@ namespace RealEstate.Infrastructure.Repo
                     Name = x.Company.CompanyName,
                     Revenue = x.TotalRevenue,
                     PropertiesCount = x.TotalListings,
-                    CompanyLogo=x.Company.CompanyLogo.ImageUrl,
+                    CompanyLogo = x.Company.CompanyLogo.ImageUrl,
                 })
                 .ToListAsync();
         }
@@ -309,7 +343,7 @@ namespace RealEstate.Infrastructure.Repo
                 TotalUsers = totalUsers,
                 TotalCompanyAdmins = totalCompanyAdmins.Count,
                 TotalAgents = totalAgents.Count,
-              
+
                 TotalNormalUsers = totalNormalUsers
             };
         }
@@ -326,7 +360,7 @@ namespace RealEstate.Infrastructure.Repo
             return await userManager.Users.AnyAsync(x => x.Email == email.ToLower());
         }
 
-     
+
 
 
         #endregion
