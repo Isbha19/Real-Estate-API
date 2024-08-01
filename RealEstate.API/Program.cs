@@ -67,13 +67,14 @@ app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExpose
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapControllers();
+
 app.MapHub<PresenceHub>("hubs/presence");
 app.MapHub<MessageHub>("hubs/message");
 app.MapHub<NotificationHub>("/hubs/notification");
 
 
 
-app.MapControllers();
 
 #region contextSeed
 using var scope = app.Services.CreateScope();
