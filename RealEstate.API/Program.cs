@@ -22,17 +22,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 builder.Services.InfrastructureServices(builder.Configuration);
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowSpecificOrigin", b =>
-//    {
-//        b
-//            .WithOrigins(builder.Configuration["JWT:ClientUrl"])
-//             .AllowAnyMethod()
-//        .AllowAnyHeader()
-//        .AllowCredentials();
-//    });
-//});
 
 
 var app = builder.Build();
@@ -55,7 +44,10 @@ else
 }
 app.UseHttpsRedirection();
 app.UseRouting();
-//app.UseCors("AllowSpecificOrigin");
+app.UseCors(opt =>
+{
+    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
+}); 
 
 app.UseAuthentication();
 app.UseAuthorization();
