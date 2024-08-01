@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RealEstate.Application.Contracts;
@@ -103,8 +104,8 @@ namespace RealEstate.Infrastructure.Dependency_Injection
             services.AddScoped<NotificationService>();
             services.AddScoped<GetUserHelper>();
             services.AddScoped<StripeProductsService>();
-            
 
+          
             //to respond with an Array containing error messages when the model state is invalid
             services.Configure<ApiBehaviorOptions>(options =>
             {

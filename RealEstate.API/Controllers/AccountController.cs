@@ -17,10 +17,14 @@ namespace RealEstate.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IUser _user;
+        private readonly IConfiguration config;
+        private readonly IHostEnvironment environment;
 
-        public AccountController(IUser user)
+        public AccountController(IUser user,IConfiguration config, IHostEnvironment environment)
         {
             this._user = user;
+            this.config = config;
+            this.environment = environment;
         }
         [HttpPost("login")]
 
@@ -138,6 +142,14 @@ namespace RealEstate.API.Controllers
 
             return Ok(result);
         }
-      
+        [HttpGet("client-url")]
+        public IActionResult GetClientUrl()
+        {
+            var clientUrl = config["JWT:ClientUrl"];
+            return Ok(new { ClientUrl = clientUrl,
+                Environment = environment.EnvironmentName
+            });
+        }
+
     }
 }
