@@ -62,7 +62,7 @@ else
     app.UseHsts();
 }
 app.UseHttpsRedirection();
-
+app.UseRouting();
 app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("*"));
 app.UseAuthentication();
 app.UseAuthorization();
