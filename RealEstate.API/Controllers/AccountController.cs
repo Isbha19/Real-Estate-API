@@ -150,6 +150,11 @@ namespace RealEstate.API.Controllers
                 Environment = environment.EnvironmentName
             });
         }
+        [HttpGet("demo-controller")]
+        public IActionResult Get()
+        {
+            return Ok(new { Message = "CI/CD is working!" });
+        }
 
     }
 }
