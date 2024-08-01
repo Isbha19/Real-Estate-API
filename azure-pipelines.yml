@@ -39,3 +39,20 @@ stages:
         PathtoPublish: '$(build.artifactStagingDirectory)'
         ArtifactName: 'drop'
 
+
+- stage: Release
+  jobs:
+  - job: ReleaseJob
+    pool:
+      name: 'my-computer'
+    steps:
+    - download: current
+      artifact: drop
+
+    - task: AzureWebApp@1
+      inputs:
+        azureSubscription: 'AzureSubscription'  # Change to your service connection name
+        appType: 'webAppLinux'
+        appName: 'Estahub'  # Change to your app name
+        package: '$(Pipeline.Workspace)/drop/WebApp.zip'
+        startupCommand: 'dotnet Store.WebApi.dll'
