@@ -24,13 +24,12 @@ builder.Services.AddExceptionHandler<AppExceptionHandler>();
 builder.Services.InfrastructureServices(builder.Configuration);
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin", b =>
+    options.AddPolicy("CorsPolicy", builder =>
     {
-        b
-            .WithOrigins(builder.Configuration["JWT:ClientUrl"])
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+            builder.AllowAnyHeader()
+                   .AllowAnyMethod()
+                   .SetIsOriginAllowed((host) => true)
+                   .AllowCredentials();
     });
 });
 
@@ -55,19 +54,19 @@ else
 }
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("AllowSpecificOrigin"); // Use the defined CORS policy
+app.UseCors("CorsPolicy"); // Use the defined CORS policy
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<PresenceHub>("hubs/presence");
-app.MapHub<MessageHub>("hubs/message");
-app.MapHub<NotificationHub>("/hubs/notification");
-
-
-
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<PresenceHub>("/hubs/presence").RequireCors("CorsPolicy");
+    endpoints.MapHub<MessageHub>("/hubs/message").RequireCors("CorsPolicy");
+    endpoints.MapHub<NotificationHub>("/hubs/notification").RequireCors("CorsPolicy");
+});
 
 #region contextSeed
 using var scope = app.Services.CreateScope();
