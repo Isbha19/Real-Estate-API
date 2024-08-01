@@ -22,17 +22,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 builder.Services.InfrastructureServices(builder.Configuration);
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin", b =>
-    {
-        b
-            .WithOrigins(builder.Configuration["JWT:ClientUrl"])
-             .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials();
-    });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowSpecificOrigin", b =>
+//    {
+//        b
+//            .WithOrigins(builder.Configuration["JWT:ClientUrl"])
+//             .AllowAnyMethod()
+//        .AllowAnyHeader()
+//        .AllowCredentials();
+//    });
+//});
 
 
 var app = builder.Build();
@@ -55,19 +55,18 @@ else
 }
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("AllowSpecificOrigin");
+//app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers(); // Ensure this is called before mapping hubs
-    endpoints.MapHub<PresenceHub>("/hubs/presence").RequireCors("AllowSpecificOrigin");
-    endpoints.MapHub<MessageHub>("/hubs/message").RequireCors("AllowSpecificOrigin");
-    endpoints.MapHub<NotificationHub>("/hubs/notification").RequireCors("AllowSpecificOrigin");
-});
+
+app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<MessageHub>("hubs/message");
+app.MapHub<NotificationHub>("/hubs/notification");
+
+
 
 
 #region contextSeed
