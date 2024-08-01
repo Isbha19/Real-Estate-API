@@ -153,7 +153,9 @@ namespace RealEstate.Infrastructure.Repo
             var options = new SessionCreateOptions
             {
                 Customer = customerId, 
-                ReturnUrl = "https://localhost:4200/company-dashboard"
+                ReturnUrl = $"{configuration["JWT:ClientUrl"]}/company-dashboard"
+
+
             };
 
             var service = new Stripe.BillingPortal.SessionService(_stripeClient);

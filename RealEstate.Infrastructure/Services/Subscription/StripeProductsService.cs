@@ -64,8 +64,8 @@ namespace RealEstate.Infrastructure.Services.Subscription
                 },
             },
                 Mode = "subscription",
-                SuccessUrl = "https://localhost:4200/",
-                CancelUrl = "https://localhost:4200/",
+                SuccessUrl = $"{configuration["JWT:ClientUrl"]}/",
+                CancelUrl =  $"{configuration["JWT:ClientUrl"]}/"
 
             };
             var sessionService = new SessionService(_stripeClient);

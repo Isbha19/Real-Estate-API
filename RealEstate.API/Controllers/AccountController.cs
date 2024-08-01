@@ -142,19 +142,8 @@ namespace RealEstate.API.Controllers
 
             return Ok(result);
         }
-        [HttpGet("client-url")]
-        public IActionResult GetClientUrl()
-        {
-            var clientUrl = config["JWT:ClientUrl"];
-            return Ok(new { ClientUrl = clientUrl,
-                Environment = environment.EnvironmentName
-            });
-        }
-        [HttpGet("demo-controller")]
-        public IActionResult Get()
-        {
-            return Ok(new { Message = "CI/CD is working!" });
-        }
+    
+     
 
     }
 }
