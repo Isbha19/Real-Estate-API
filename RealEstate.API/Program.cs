@@ -27,11 +27,13 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("https://estahub-m5mvcg3dya-uc.a.run.app")
-                   .AllowAnyHeader()
-                   .AllowAnyMethod()
-                   .AllowCredentials()
-                   .WithExposedHeaders("*");
+
+        builder.AllowAnyOrigin()
+             .AllowAnyHeader()
+             .AllowAnyMethod()
+             .WithExposedHeaders("*")
+             .SetIsOriginAllowed((host) => true);
+
     });
 });
 
