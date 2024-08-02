@@ -123,7 +123,7 @@ namespace RealEstate.Infrastructure.Repo
             catch (Exception ex)
             {
 
-                return new CompanyRegisterResponse(false, "An error occurred while saving the company details.");
+                return new CompanyRegisterResponse(false, ex?.InnerException?.Message);
             }
         }
         public async Task<SubscriptionPackageDto> GetSubscriptionPackage()
