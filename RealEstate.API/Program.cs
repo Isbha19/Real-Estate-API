@@ -48,7 +48,6 @@ app.UseCors(opt =>
 {
     opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
 }); 
-
 app.UseAuthentication();
 app.UseAuthorization();
 
