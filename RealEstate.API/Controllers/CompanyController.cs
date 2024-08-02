@@ -158,7 +158,7 @@ namespace RealEstate.API.Controllers
             try
             {
                 var stripeEvent = EventUtility.ConstructEvent(json,
-                    Request.Headers["Stripe-Signature"], _webhookSecret);
+                    Request.Headers["Stripe-Signature"], "whsec_aMAtel6mOtQuh7u0K0fF3DLuhWZxcrLu");
 
                 // Handle the event
                 await stripeWebhookHandler.HandleEventAsync(stripeEvent);
