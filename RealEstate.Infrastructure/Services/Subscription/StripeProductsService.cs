@@ -52,25 +52,23 @@ namespace RealEstate.Infrastructure.Services.Subscription
 
         public async Task<string> CreatePaymentLinkAsync(string priceId)
         {
-            var sessionOptions = new SessionCreateOptions
+            var paymentLinkOptions = new PaymentLinkCreateOptions
             {
-                PaymentMethodTypes = new List<string> { "card" },
-                LineItems = new List<SessionLineItemOptions>
+                LineItems = new List<PaymentLinkLineItemOptions>
+        {
+            new PaymentLinkLineItemOptions
             {
-                new SessionLineItemOptions
-                {
-                    Price = priceId,
-                    Quantity = 1,
-                },
+                Price = priceId,
+                Quantity = 1,
             },
-                Mode = "subscription",
-                SuccessUrl = $"{configuration["JWT:ClientUrl"]}/",
-                CancelUrl =  $"{configuration["JWT:ClientUrl"]}/"
-
+        },
+                // For subscriptions, you need to set up the price object in Stripe dashboard
             };
-            var sessionService = new SessionService(_stripeClient);
-            var session = await sessionService.CreateAsync(sessionOptions);
-            return session.Url;
+
+            var paymentLinkService = new PaymentLinkService(_stripeClient);
+            var paymentLink = await paymentLinkService.CreateAsync(paymentLinkOptions);
+
+            return paymentLink.Url;
         }
 
         public async Task DeleteProductAsync(string productId)
