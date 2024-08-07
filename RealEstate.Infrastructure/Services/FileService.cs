@@ -29,7 +29,7 @@ namespace RealEstate.Infrastructure.Services
                 {
                     File = new FileDescription(photo.FileName, stream),
                     Transformation = new Transformation()
-                    .Height(800).Width(800)
+                    .Height(500).Width(800)
                 };
               
                     uploadResult = await cloudinary.UploadAsync(uploadParams);
