@@ -142,8 +142,18 @@ namespace RealEstate.API.Controllers
 
             return Ok(result);
         }
-    
-     
+
+        [HttpGet("check-webhook-secret")]
+        public IActionResult GetWebhookSecret()
+        {
+            var webhookSecret = config["Stripe:WebhookSecret"];
+            if (string.IsNullOrEmpty(webhookSecret))
+            {
+                return NotFound("Webhook secret is not configured.");
+            }
+
+            return Ok(new { WebhookSecret = webhookSecret });
+        }
 
     }
 }
